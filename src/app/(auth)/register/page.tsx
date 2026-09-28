@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import AuthCard from '@/features/auth/components/AuthCard';
+import PasswordInput from '@/features/auth/components/PasswordInput';
 import { useAuthForm } from '@/features/auth/hooks';
 import { z } from 'zod';
 import { useState } from 'react';
@@ -17,8 +18,8 @@ type FormData = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
   const { isPending, startTransition } = useAuthForm();
-  const [errorMessage, setErrorMessage] = useState<string>('');
-  const [successMessage, setSuccessMessage] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
   const form = useForm<FormData>({
     resolver: zodResolver(registerSchema),
@@ -34,7 +35,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: FormData) => {
     setErrorMessage('');
     setSuccessMessage('');
-    
+
     startTransition(async () => {
       try {
         const formData = new FormData();
@@ -42,116 +43,81 @@ export default function RegisterPage() {
         formData.append('email', data.email);
         formData.append('phone', data.phone);
         formData.append('password', data.password);
-
         await registerAction(formData);
-        
-        setSuccessMessage("Account created successfully! Redirecting...");
-      } catch (error: any) {
-        setErrorMessage(error.message || "Registration failed. Please try again.");
+        setSuccessMessage('Account created. Redirecting...');
+      } catch (error: unknown) {
+        setErrorMessage(error instanceof Error ? error.message : 'Registration failed.');
       }
     });
   };
 
   return (
     <AuthCard title="Create your business account">
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-        {errorMessage && (
-          <div className="bg-red-500/10 border border-red-500 text-red-400 p-3 rounded-md text-sm">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+        {errorMessage ? (
+          <div className="rounded-md border border-red-500 bg-red-500/10 p-2 text-sm text-red-400">
             {errorMessage}
           </div>
-        )}
-
-        {successMessage && (
-          <div className="bg-green-500/10 border border-green-500 text-green-400 p-3 rounded-md text-sm">
+        ) : null}
+        {successMessage ? (
+          <div className="rounded-md border border-green-500 bg-green-500/10 p-2 text-sm text-green-400">
             {successMessage}
           </div>
-        )}
+        ) : null}
 
-        <div className="space-y-2">
-          <Label htmlFor="full_name">Full Name</Label>
-          <Input
-            {...form.register('full_name')}
-            type="text"
-            placeholder="John Doe"
-            autoComplete="name"
-          />
-          {form.formState.errors.full_name && (
-            <p className="text-sm text-red-500">{form.formState.errors.full_name.message}</p>
-          )}
+        <div className="space-y-1.5">
+          <Label htmlFor="full_name" className="text-zinc-300">Full name</Label>
+          <Input {...form.register('full_name')} placeholder="Ada Okafor" autoComplete="name" />
+          {form.formState.errors.full_name ? (
+            <p className="text-xs text-red-400">{form.formState.errors.full_name.message}</p>
+          ) : null}
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="email">Email Address</Label>
-          <Input
-            {...form.register('email')}
-            type="email"
-            placeholder="you@example.com"
-            autoComplete="email"
-          />
-          {form.formState.errors.email && (
-            <p className="text-sm text-red-500">{form.formState.errors.email.message}</p>
-          )}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="email" className="text-zinc-300">Email</Label>
+            <Input {...form.register('email')} type="email" placeholder="you@email.com" autoComplete="email" />
+            {form.formState.errors.email ? (
+              <p className="text-xs text-red-400">{form.formState.errors.email.message}</p>
+            ) : null}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="phone" className="text-zinc-300">Phone</Label>
+            <Input {...form.register('phone')} type="tel" placeholder="0801 234 5678" autoComplete="tel" />
+            {form.formState.errors.phone ? (
+              <p className="text-xs text-red-400">{form.formState.errors.phone.message}</p>
+            ) : null}
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
-          <Input
-            {...form.register('phone')}
-            type="tel"
-            placeholder="+234 801 234 5678"
-            autoComplete="tel"
-          />
-          {form.formState.errors.phone && (
-            <p className="text-sm text-red-500">{form.formState.errors.phone.message}</p>
-          )}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="password" className="text-zinc-300">Password</Label>
+            <PasswordInput {...form.register('password')} placeholder="At least 8 characters" autoComplete="new-password" />
+            {form.formState.errors.password ? (
+              <p className="text-xs text-red-400">{form.formState.errors.password.message}</p>
+            ) : null}
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="confirm_password" className="text-zinc-300">Confirm</Label>
+            <PasswordInput {...form.register('confirm_password')} placeholder="Repeat password" autoComplete="new-password" />
+            {form.formState.errors.confirm_password ? (
+              <p className="text-xs text-red-400">{form.formState.errors.confirm_password.message}</p>
+            ) : null}
+          </div>
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <Input
-            {...form.register('password')}
-            type="password"
-            placeholder="••••••••"
-            autoComplete="new-password"
-          />
-          {form.formState.errors.password && (
-            <p className="text-sm text-red-500">{form.formState.errors.password.message}</p>
-          )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="confirm_password">Confirm Password</Label>
-          <Input
-            {...form.register('confirm_password')}
-            type="password"
-            placeholder="••••••••"
-            autoComplete="new-password"
-          />
-          {form.formState.errors.confirm_password && (
-            <p className="text-sm text-red-500">{form.formState.errors.confirm_password.message}</p>
-          )}
-        </div>
-
-        <Button
-          type="submit"
-          className="w-full"
-          disabled={isPending}
-          size="lg"
-        >
-          {isPending ? "Creating account..." : "Create Account"}
+        <Button type="submit" className="w-full" disabled={isPending}>
+          {isPending ? 'Creating account...' : 'Create Account'}
         </Button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-muted-foreground">
+      <div className="mt-4 text-center text-sm text-zinc-400">
         Already have an account?{' '}
-        <Link href="/login" className="text-violet-400 hover:underline font-medium">
+        <Link href="/login" className="font-medium text-violet-400 hover:underline">
           Sign in
         </Link>
       </div>
-
-      <p className="text-center text-xs text-muted-foreground mt-8">
-        By creating an account, you agree to our Terms and Privacy Policy.
-      </p>
     </AuthCard>
   );
 }

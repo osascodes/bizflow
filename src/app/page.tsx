@@ -16,9 +16,14 @@ export default function Home() {
       <Navbar />
 
       <main>
-        <section className="px-6 pb-24 pt-20 md:pt-28">
-          <div className="mx-auto max-w-3xl text-center">
-            <p className="text-sm font-medium text-violet-300">
+        <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pt-28">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="hero-orb hero-orb-left absolute -left-24 top-10 h-72 w-72 rounded-full bg-violet-500/20 blur-3xl" />
+            <div className="hero-orb hero-orb-right absolute -right-16 top-32 h-80 w-80 rounded-full bg-violet-700/15 blur-3xl" />
+          </div>
+
+          <div className="relative mx-auto max-w-3xl text-center">
+            <p className="text-sm font-medium text-violet-300/90">
               Built for vendors who sell from their phone
             </p>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
@@ -31,13 +36,13 @@ export default function Home() {
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/register"
-                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white sm:w-auto"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full bg-violet-500 px-8 text-sm font-semibold text-white transition hover:bg-violet-400 sm:w-auto"
               >
                 Get Started
               </Link>
               <Link
                 href="/login"
-                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-zinc-700 px-8 text-sm font-semibold text-white sm:w-auto"
+                className="inline-flex h-12 w-full items-center justify-center rounded-full border border-zinc-700 px-8 text-sm font-semibold text-white transition hover:bg-white/5 sm:w-auto"
               >
                 Sign In
               </Link>
@@ -68,7 +73,7 @@ export default function Home() {
           <h2 className="text-3xl font-semibold text-white">Create your account</h2>
           <Link
             href="/register"
-            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white"
+            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-violet-500 px-8 text-sm font-semibold text-white transition hover:bg-violet-400"
           >
             Get Started
           </Link>

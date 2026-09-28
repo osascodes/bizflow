@@ -128,3 +128,21 @@
     @apply font-sans;
   }
 }
+
+@keyframes hero-float-left {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(24px, 18px, 0); }
+}
+
+@keyframes hero-float-right {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(-20px, 16px, 0); }
+}
+
+.hero-orb-left {
+  animation: hero-float-left 14s ease-in-out infinite;
+}
+
+.hero-orb-right {
+  animation: hero-float-right 18s ease-in-out infinite;
+}

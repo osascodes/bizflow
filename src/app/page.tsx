@@ -16,24 +16,19 @@ export default function Home() {
       <Navbar />
 
       <main>
-        <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pt-28">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(124,58,237,0.22),_transparent_55%)]" />
-
-          <div className="relative mx-auto max-w-3xl text-center">
-            <p className="animate-in fade-in slide-in-from-bottom-2 text-sm font-medium text-violet-300 duration-700">
+        <section className="px-6 pb-24 pt-20 md:pt-28">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-medium text-violet-300">
               Built for vendors who sell from their phone
             </p>
-            <h1 className="mt-5 animate-in fade-in slide-in-from-bottom-3 text-4xl font-semibold tracking-tight text-white duration-700 md:text-6xl">
-              Run your shop
-              <span className="mt-2 block bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent">
-                from one place.
-              </span>
+            <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
+              Run your shop from one place.
             </h1>
-            <p className="mx-auto mt-5 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-base leading-7 text-zinc-400 duration-700 md:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-400 md:text-lg">
               Inventory, sales, receipts, customers, and debt for fashion vendors,
               shops, and WhatsApp sellers.
             </p>
-            <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-5 flex-col items-center justify-center gap-3 duration-700 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/register"
                 className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white sm:w-auto"

@@ -1,20 +1,16 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-sans",
 });
 
 export const metadata: Metadata = {
   title: "BizFlow — Run your business from your phone",
-  description: "Inventory, sales, receipts, customers, debt tracking, and WhatsApp checkout for small businesses.",
+  description:
+    "Inventory, sales, receipts, customers, debt tracking, and WhatsApp checkout for small businesses.",
 };
 
 export default function RootLayout({
@@ -23,8 +19,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full bg-zinc-950 text-white">{children}</body>
+    <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
+      <body className={`${jakarta.className} min-h-full bg-zinc-950 text-white`}>
+        {children}
+      </body>
     </html>
   );
 }

@@ -17,8 +17,8 @@ export default function Home() {
 
       <main>
         <section className="relative overflow-hidden px-6 pb-24 pt-20 md:pt-28">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-1/2 bg-[radial-gradient(ellipse_at_left,_rgba(124,58,237,0.35),_transparent_70%)]" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(ellipse_at_right,_rgba(192,38,211,0.28),_transparent_70%)]" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(ellipse_at_left,_rgba(124,58,237,0.18),_transparent_72%)] md:w-72" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-[radial-gradient(ellipse_at_right,_rgba(192,38,211,0.14),_transparent_72%)] md:w-72" />
 
           <div className="relative mx-auto max-w-3xl text-center">
             <p className="text-sm font-medium text-violet-300">

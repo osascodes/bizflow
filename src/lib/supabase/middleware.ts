@@ -40,9 +40,9 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/register") ||
     path.startsWith("/forgot-password") ||
     path.startsWith("/reset-password");
-  const isDashboardRoute = path.startsWith("/dashboard");
+  const isAppRoute = path.startsWith("/dashboard") || path.startsWith("/onboarding");
 
-  if (!user && isDashboardRoute) {
+  if (!user && isAppRoute) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     return NextResponse.redirect(redirectUrl);

@@ -2,12 +2,30 @@ import Link from "next/link";
 import Navbar from "@/components/navbar";
 
 const features = [
-  ["Inventory", "See stock on your phone before it runs out."],
-  ["Sales", "Record a sale and send a receipt in seconds."],
-  ["Customers", "Keep names, numbers, and purchase history."],
-  ["Debt", "Know who owes you and what is left to collect."],
-  ["Expenses", "Track money out so profit is not a guess."],
-  ["WhatsApp", "Turn chats into orders without copying prices."],
+  [
+    "Free Online Storefront",
+    "Get a beautiful, custom web link for your business. Customers can browse your catalog and shop directly from their mobile web browser.",
+  ],
+  [
+    "Instant Checkout",
+    "Accept secure digital payments smoothly during customer checkout. Stop tracking down manually sent confirmation screenshots over chat.",
+  ],
+  [
+    "Order Tracker",
+    "Accept storefront purchases and manage pending orders seamlessly from incoming WhatsApp requests all the way to dispatch and package delivery.",
+  ],
+  [
+    "Smart Inventory",
+    "Track your stock levels in real-time. When a customer buys from your storefront link, your backend stock counts update instantly.",
+  ],
+  [
+    "Debt Ledger",
+    "Keep an absolute record of customer credit. View who owes you money and receive automated reminders for outstanding balances.",
+  ],
+  [
+    "Business Analytics",
+    "Monitor automated sales metrics, clean charts, cost structures, and general profitability ratios straight from your dashboard.",
+  ],
 ];
 
 export default function Home() {
@@ -25,11 +43,10 @@ export default function Home() {
               Built for vendors who sell from their phone
             </p>
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
-              Run your shop from one place.
+              Run your business from your phone
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-7 text-zinc-400 md:text-lg">
-              Inventory, sales, receipts, customers, and debt for fashion vendors,
-              shops, and WhatsApp sellers.
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-400 md:text-lg">
+              Get a beautiful public storefront link for your customers to check out seamlessly, while you manage inventory, sales, receipts, and debts effortlessly in the background.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link

@@ -1,12 +1,7 @@
 import { getCurrentUser } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
+import { getLowStockCount } from "@/features/inventory/queries";
 import { redirect } from "next/navigation";
-
-const stats = [
-  ["Sales today", "₦0"],
-  ["Low stock", "0"],
-  ["Debts due", "₦0"],
-];
 
 export default async function DashboardPage() {
   const user = await getCurrentUser();
@@ -14,10 +9,17 @@ export default async function DashboardPage() {
 
   if (!business) redirect("/onboarding");
 
+  const lowStock = await getLowStockCount();
   const name =
     (user?.user_metadata?.full_name as string | undefined) ||
     user?.email ||
     "there";
+
+  const stats = [
+    ["Sales today", "₦0"],
+    ["Low stock", String(lowStock)],
+    ["Debts due", "₦0"],
+  ];
 
   return (
     <main className="px-4 py-8 md:px-8">
@@ -35,9 +37,7 @@ export default async function DashboardPage() {
           ))}
         </div>
 
-        <p className="mt-6 text-sm text-zinc-500">
-          Store link: /store/{business.slug}
-        </p>
+        <p className="mt-6 text-sm text-zinc-500">Store link: /store/{business.slug}</p>
       </div>
     </main>
   );

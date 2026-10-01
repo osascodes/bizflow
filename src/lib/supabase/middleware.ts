@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+const appPrefixes = ["/dashboard", "/onboarding", "/inventory", "/sales", "/debts", "/storefront"];
+
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({
     request,
@@ -40,7 +42,7 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/register") ||
     path.startsWith("/forgot-password") ||
     path.startsWith("/reset-password");
-  const isAppRoute = path.startsWith("/dashboard") || path.startsWith("/onboarding");
+  const isAppRoute = appPrefixes.some((prefix) => path.startsWith(prefix));
 
   if (!user && isAppRoute) {
     const redirectUrl = request.nextUrl.clone();

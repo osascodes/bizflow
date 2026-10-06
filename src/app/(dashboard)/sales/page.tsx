@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getProducts } from "@/features/inventory/queries";
 import { getRecentSales } from "@/features/sales/queries";
@@ -30,7 +31,11 @@ export default async function SalesPage() {
             sales.map((sale) => {
               const item = sale.sale_items?.[0];
               return (
-                <div key={sale.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link
+                  key={sale.id}
+                  href={`/sales/${sale.id}`}
+                  className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h2 className="font-semibold text-white">{item ? `${item.quantity} x ${item.name}` : "Sale"}</h2>
@@ -38,7 +43,7 @@ export default async function SalesPage() {
                     </div>
                     <p className="text-sm text-white">₦{Number(sale.total).toLocaleString()}</p>
                   </div>
-                </div>
+                </Link>
               );
             })
           )}

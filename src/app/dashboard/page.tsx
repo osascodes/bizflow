@@ -1,6 +1,7 @@
 import { getCurrentUser } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getLowStockCount } from "@/features/inventory/queries";
+import { getTodaySalesTotal } from "@/features/sales/queries";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
@@ -10,10 +11,13 @@ export default async function DashboardPage() {
   if (!business) redirect("/onboarding");
 
   let lowStock = 0;
+  let salesToday = 0;
   try {
     lowStock = await getLowStockCount();
+    salesToday = await getTodaySalesTotal();
   } catch {
     lowStock = 0;
+    salesToday = 0;
   }
 
   const name =
@@ -22,9 +26,9 @@ export default async function DashboardPage() {
     "there";
 
   const stats = [
-    ["Sales today", "\u20a60"],
+    ["Sales today", `₦${salesToday.toLocaleString()}`],
     ["Low stock", String(lowStock)],
-    ["Debts due", "\u20a60"],
+    ["Debts due", "₦0"],
   ];
 
   return (

@@ -8,6 +8,7 @@ const items = [
   { href: "/inventory", label: "Stock" },
   { href: "/sales", label: "Sales" },
   { href: "/debts", label: "Debts" },
+  { href: "/expenses", label: "Costs" },
   { href: "/storefront", label: "Store" },
 ];
 
@@ -20,7 +21,7 @@ export default function AppNav() {
       <aside className="hidden w-56 shrink-0 border-r border-zinc-800 p-4 md:block">
         <nav className="flex flex-col gap-1">
           {items.map((item) => {
-            const active = pathname === item.href;
+            const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
             return (
               <Link
                 key={item.href}
@@ -36,14 +37,14 @@ export default function AppNav() {
         </nav>
       </aside>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-5 border-t border-zinc-800 bg-zinc-950/95 px-2 py-2 backdrop-blur md:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-6 border-t border-zinc-800 bg-zinc-950/95 px-1 py-2 backdrop-blur md:hidden">
         {items.map((item) => {
-          const active = pathname === item.href;
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex h-12 items-center justify-center rounded-xl text-xs font-medium ${
+              className={`flex h-12 items-center justify-center rounded-xl text-[11px] font-medium ${
                 active ? "text-white" : "text-zinc-500"
               }`}
             >

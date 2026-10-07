@@ -26,9 +26,9 @@ export default async function DashboardLayout({
           </button>
         </form>
       </header>
-      <div className="flex">
+      <div className="md:flex">
         <AppNav />
-        <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>
+        <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>
   );

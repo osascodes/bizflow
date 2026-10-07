@@ -37,15 +37,15 @@ export default function AppNav() {
         </nav>
       </aside>
 
-      <nav className="fixed inset-x-0 bottom-0 z-20 grid grid-cols-6 border-t border-zinc-800 bg-zinc-950/95 px-1 py-2 backdrop-blur md:hidden">
+      <nav className="sticky top-0 z-20 flex gap-2 overflow-x-auto border-b border-zinc-800 bg-zinc-950 px-3 py-2 md:hidden">
         {items.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
               key={item.href}
               href={item.href}
-              className={`flex h-12 items-center justify-center rounded-xl text-[11px] font-medium ${
-                active ? "text-white" : "text-zinc-500"
+              className={`shrink-0 rounded-full px-3 py-2 text-sm font-medium ${
+                active ? "bg-zinc-800 text-white" : "text-zinc-400"
               }`}
             >
               {item.label}

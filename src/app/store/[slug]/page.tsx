@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
+import OrderForm from "@/features/orders/components/OrderForm";
 
 export default async function PublicStorePage({
   params,
@@ -11,7 +12,7 @@ export default async function PublicStorePage({
 
   const { data: business } = await supabase
     .from("businesses")
-    .select("id, name, phone, category")
+    .select("id, name, phone, category, slug")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -47,6 +48,7 @@ export default async function PublicStorePage({
             ))
           )}
         </div>
+        <OrderForm businessId={business.id} slug={business.slug} products={products ?? []} />
       </div>
     </main>
   );

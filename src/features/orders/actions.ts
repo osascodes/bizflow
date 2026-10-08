@@ -4,31 +4,30 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { revalidatePath } from "next/cache";
 
-export async function placeOrderAction(formData: FormData) {
-  const businessId = String(formData.get("business_id") || "");
-  const productId = String(formData.get("product_id") || "");
-  const productName = String(formData.get("product_name") || "");
-  const quantity = Number(formData.get("quantity") || 0);
-  const customerName = String(formData.get("customer_name") || "").trim();
-  const customerPhone = String(formData.get("customer_phone") || "").trim();
-  const slug = String(formData.get("slug") || "");
-
-  if (!businessId || !productId || !productName) throw new Error("Pick a product");
-  if (!Number.isInteger(quantity) || quantity < 1) throw new Error("Quantity must be at least 1");
-  if (customerName.length < 2) throw new Error("Name is required");
-  if (customerPhone.length < 10) throw new Error("Phone is required");
+export async function placeCartAction(input: {
+  businessId: string;
+  slug: string;
+  customerName: string;
+  customerPhone: string;
+  items: { productId: string; productName: string; quantity: number }[];
+}) {
+  if (input.customerName.trim().length < 2) throw new Error("Name is required");
+  if (input.customerPhone.trim().length < 10) throw new Error("Phone is required");
+  if (input.items.length === 0) throw new Error("Add a product first");
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase.from("orders").insert({
-    business_id: businessId,
-    product_id: productId,
-    product_name: productName,
-    quantity,
-    customer_name: customerName,
-    customer_phone: customerPhone,
-  });
+  const rows = input.items.map((item) => ({
+    business_id: input.businessId,
+    product_id: item.productId,
+    product_name: item.productName,
+    quantity: item.quantity,
+    customer_name: input.customerName.trim(),
+    customer_phone: input.customerPhone.trim(),
+  }));
+
+  const { error } = await supabase.from("orders").insert(rows);
   if (error) throw new Error(error.message);
-  revalidatePath(`/store/${slug}`);
+  revalidatePath(`/store/${input.slug}`);
   revalidatePath("/storefront");
 }
 

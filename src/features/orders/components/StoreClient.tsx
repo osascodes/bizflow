@@ -83,7 +83,7 @@ export default function StoreClient({
   return (
     <main className="min-h-screen bg-zinc-950 text-white">
       <section className="border-b border-zinc-800/80 px-5 py-12">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-6xl">
           <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300">{business.category}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{business.name}</h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">
@@ -97,7 +97,7 @@ export default function StoreClient({
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-4xl gap-4 px-5 py-10 pb-28 sm:grid-cols-2">
+      <section className="mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 py-8 pb-28 lg:grid-cols-3 lg:gap-4 lg:px-5">
         {products.length === 0 ? (
           <p className="text-sm text-zinc-500">Nothing in stock right now.</p>
         ) : (
@@ -112,20 +112,20 @@ export default function StoreClient({
                     No photo yet
                   </div>
                 )}
-                <div className="p-5">
-                  <h2 className="text-lg font-medium">{product.name}</h2>
-                  <p className="mt-1 text-sm text-zinc-500">{product.stock} in stock</p>
-                  <div className="mt-5 flex items-center justify-between">
-                    <p className="text-base font-semibold">₦{Number(product.price).toLocaleString()}</p>
+                <div className="p-4 lg:p-5">
+                  <h2 className="truncate text-base font-medium lg:text-lg">{product.name}</h2>
+                  {product.stock <= 5 ? <p className="mt-1 text-xs text-amber-300">Few left</p> : <p className="mt-1 text-xs text-transparent">.</p>}
+                  <div className="mt-4 flex items-center justify-between gap-+2">
+                    <p className="text-sm font-semibold lg:text-base">₦{Number(product.price).toLocaleString()}</p>
                     {qty === 0 ? (
-                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-semibold">
+                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-semibold">
                         Add
                       </button>
                     ) : (
                       <div className="flex items-center gap-1 rounded-full border border-zinc-700 bg-zinc-950 p-1">
-                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 rounded-full text-lg text-zinc-300">−</button>
-                        <span className="w-6 text-center text-sm">{qty}</span>
-                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-8 w-8 rounded-full text-lg text-zinc-300">+</button>
+                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-7 w-7 rounded-full text-lg text-zinc-300">−</button>
+                        <span className="w-5 text-center text-sm">{qty}</span>
+                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-7 w-7 rounded-full text-lg text-zinc-300">+</button>
                       </div>
                     )}
                   </div>
@@ -138,7 +138,7 @@ export default function StoreClient({
 
       {count > 0 ? (
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-800 bg-zinc-950/95 p-4 backdrop-blur">
-          <div className="mx-auto flex max-w-4xl items-center justify-between gap-3">
+          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
               <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
               <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>

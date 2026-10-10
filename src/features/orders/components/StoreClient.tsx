@@ -114,8 +114,8 @@ export default function StoreClient({
                 )}
                 <div className="p-4 lg:p-5">
                   <h2 className="truncate text-base font-medium lg:text-lg">{product.name}</h2>
-                  {product.stock <= 5 ? <p className="mt-1 text-xs text-amber-300">Few left</p> : <p className="mt-1 text-xs text-transparent">.</p>}
-                  <div className="mt-4 flex items-center justify-between gap-+2">
+                  {product.stock <= 5 ? <p className="mt-1 text-xs text-amber-300">Few left</p> : null}
+                  <div className="mt-4 flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold lg:text-base">₦{Number(product.price).toLocaleString()}</p>
                     {qty === 0 ? (
                       <button type="button" onClick={() => setQty(product.id, 1)} className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-semibold">

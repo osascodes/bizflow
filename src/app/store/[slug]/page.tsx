@@ -20,7 +20,7 @@ export default async function PublicStorePage({
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, stock")
+    .select("id, name, price, stock, image_url")
     .eq("business_id", business.id)
     .gt("stock", 0)
     .order("name");

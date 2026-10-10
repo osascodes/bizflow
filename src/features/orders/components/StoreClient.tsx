@@ -5,7 +5,7 @@ import { placeCartAction } from "@/features/orders/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-type Product = { id: string; name: string; price: number; stock: number };
+type Product = { id: string; name: string; price: number; stock: number; image_url?: string | null };
 
 function whatsappNumber(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -91,7 +91,11 @@ export default function StoreClient({
       <section className="mx-auto grid max-w-3xl gap-3 px-4 py-8 sm:grid-cols-2">
         {products.length === 0 ? <p className="text-sm text-zinc-500">Nothing in stock right now.</p> : products.map((product) => (
           <article key={product.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-            <div className="flex h-28 items-center justify-center rounded-xl bg-zinc-950 text-xs uppercase tracking-wide text-zinc-600">No photo yet</div>
+            {product.image_url ? (
+              <img src={product.image_url} alt={product.name} className="h-40 w-full rounded-xl object-cover" />
+            ) : (
+              <div className="flex h-40 items-center justify-center rounded-xl bg-zinc-950 text-xs uppercase tracking-wide text-zinc-600">No photo yet</div>
+            )}
             <h2 className="mt-4 text-lg font-semibold">{product.name}</h2>
             <p className="mt-1 text-sm text-zinc-500">{product.stock} in stock</p>
             <div className="mt-4 flex items-center justify-between">

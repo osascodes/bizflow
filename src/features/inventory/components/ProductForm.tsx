@@ -15,6 +15,7 @@ type FormData = z.infer<typeof productSchema>;
 export default function ProductForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
 
   const form = useForm<FormData>({
     resolver: zodResolver(productSchema),
@@ -29,8 +30,10 @@ export default function ProductForm() {
       formData.append("name", data.name);
       formData.append("price", String(data.price));
       formData.append("stock", String(data.stock));
+      if (image) formData.append("image", image);
       await createProductAction(formData);
       form.reset({ name: "", price: 0, stock: 0 });
+      setImage(null);
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Could not save product.");
     } finally {
@@ -61,6 +64,10 @@ export default function ProductForm() {
           <Label className="text-zinc-300">Stock</Label>
           <Input {...form.register("stock")} type="number" min="0" step="1" />
         </div>
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Photo</Label>
+        <Input type="file" accept="image/*" onChange={(event) => setImage(event.target.files?.[0] || null)} />
       </div>
       <Button type="submit" className="w-full" disabled={pending}>
         {pending ? "Saving..." : "Add product"}

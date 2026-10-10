@@ -8,7 +8,7 @@ export async function getProducts() {
   const supabase = await createServerSupabase();
   const { data } = await supabase
     .from("products")
-    .select("id, name, price, stock, low_stock_at")
+    .select("id, name, price, stock, low_stock_at, image_url")
     .eq("business_id", business.id)
     .order("created_at", { ascending: false });
 

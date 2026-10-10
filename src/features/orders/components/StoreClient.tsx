@@ -13,10 +13,6 @@ function whatsappNumber(phone: string) {
   return digits;
 }
 
-function initial(value: string) {
-  return value.trim().charAt(0).toUpperCase() || "S";
-}
-
 export default function StoreClient({
   business,
   products,
@@ -85,64 +81,51 @@ export default function StoreClient({
   };
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-white">
-      <header className="border-b border-white/10">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
-              {initial(business.name)}
-            </span>
-            <div>
-              <p className="text-sm font-medium">{business.name}</p>
-              <p className="text-xs text-zinc-500">{business.category}</p>
-            </div>
-          </div>
+    <main className="min-h-screen bg-zinc-950 text-white">
+      <section className="border-b border-zinc-800/80 px-5 py-12">
+        <div className="mx-auto max-w-7xl">
+          <p className="text-xs font-medium uppercase tracking-[0.18em] text-violet-300">{business.category}</p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-tight sm:text-5xl">{business.name}</h1>
+          <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">
+            Browse what is in stock, choose a quantity, then send the order on WhatsApp.
+          </p>
           {shopWhatsapp ? (
-            <a href={shopWhatsapp} target="_blank" className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">
-              WhatsApp
+            <a href={shopWhatsapp} target="_blank" className="mt-6 inline-flex h-11 items-center rounded-full border border-zinc-700 px-5 text-sm font-medium text-zinc-200">
+              Chat on WhatsApp
             </a>
           ) : null}
         </div>
-      </header>
-
-      <section className="mx-auto max-w-6xl px-4 py-10">
-        <p className="text-sm text-zinc-400">Shop the latest in stock</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">{business.name}</h1>
       </section>
 
-      <section className="mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-28 lg:grid-cols-3 lg:gap-5">
+      <section className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 py-8 pb-28 lg:grid-cols-4 lg:gap-4 lg:px-5">
         {products.length === 0 ? (
           <p className="text-sm text-zinc-500">Nothing in stock right now.</p>
         ) : (
           products.map((product) => {
             const qty = cart[product.id] || 0;
             return (
-              <article key={product.id} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900">
-                <div className="relative aspect-square bg-zinc-950">
-                  {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
-                      <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
-                    </div>
-                  )}
-                  {product.stock <= 5 ? (
-                    <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-amber-200">Few left</span>
-                  ) : null}
-                </div>
-                <div className="p-3 sm:p-4">
-                  <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
-                  <div className="mt-3 flex items-center justify-between gap-2">
+              <article key={product.id} className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-900/80">
+                {product.image_url ? (
+                  <img src={product.image_url} alt={product.name} className="aspect-[4/3] w-full object-cover" />
+                ) : (
+                  <div className="flex aspect-[4/3] items-center justify-center bg-zinc-950 text-[11px] uppercase tracking-[0.16em] text-zinc-600">
+                    No photo yet
+                  </div>
+                )}
+                <div className="p-4">
+                  <h2 className="truncate text-base font-medium">{product.name}</h2>
+                  {product.stock <= 5 ? <p className="mt-1 text-xs text-amber-300">Few left</p> : null}
+                  <div className="mt-4 flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold">₦{Number(product.price).toLocaleString()}</p>
                     {qty === 0 ? (
-                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-9 rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">
+                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-9 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 text-sm font-semibold">
                         Add
                       </button>
                     ) : (
-                      <div className="flex items-center rounded-full bg-white p-1 text-zinc-950">
-                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-7 w-7 text-lg">−</button>
+                      <div className="flex items-center gap-1 rounded-full border border-zinc-700 bg-zinc-950 p-1">
+                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-7 w-7 rounded-full text-lg text-zinc-300">−</button>
                         <span className="w-5 text-center text-sm">{qty}</span>
-                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-7 w-7 text-lg">+</button>
+                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-7 w-7 rounded-full text-lg text-zinc-300">+</button>
                       </div>
                     )}
                   </div>
@@ -154,8 +137,8 @@ export default function StoreClient({
       </section>
 
       {count > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-zinc-950/95 p-4 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-800 bg-zinc-950/95 p-4 backdrop-blur">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
             <div>
               <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
               <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>
@@ -184,10 +167,10 @@ export default function StoreClient({
                       <p className="truncate text-sm font-medium">{line.name}</p>
                       <p className="text-xs text-zinc-500">₦{(Number(line.price) * line.quantity).toLocaleString()}</p>
                     </div>
-                    <div className="flex items-center rounded-full bg-white p-1 text-zinc-950">
-                      <button type="button" onClick={() => setQty(line.id, line.quantity - 1)} className="h-7 w-7">−</button>
+                    <div className="flex items-center gap-1 rounded-full border border-zinc-700 p-1">
+                      <button type="button" onClick={() => setQty(line.id, line.quantity - 1)} className="h-7 w-7 text-zinc-300">−</button>
                       <span className="w-5 text-center text-sm">{line.quantity}</span>
-                      <button type="button" onClick={() => setQty(line.id, Math.min(line.stock, line.quantity + 1))} className="h-7 w-7">+</button>
+                      <button type="button" onClick={() => setQty(line.id, Math.min(line.stock, line.quantity + 1))} className="h-7 w-7 text-zinc-300">+</button>
                     </div>
                     <button type="button" onClick={() => setQty(line.id, 0)} className="h-8 w-8 text-sm text-zinc-500">×</button>
                   </div>

@@ -5,6 +5,16 @@ import { getCurrentBusiness } from "@/features/business/queries";
 import { productSchema } from "./schema";
 import { revalidatePath } from "next/cache";
 
+async function uploadProductImage(supabase: Awaited<ReturnType<typeof createServerSupabase>>, businessId: string, file: File) {
+  const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
+  const path = `${businessId}/${Date.now()}-${safeName}`;
+  const { error } = await supabase.storage
+    .from("product-images")
+    .upload(path, file, { contentType: file.type || "image/jpeg" });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+}
+
 export async function createProductAction(formData: FormData) {
   const parsed = productSchema.safeParse({
     name: formData.get("name"),
@@ -21,17 +31,9 @@ export async function createProductAction(formData: FormData) {
 
   const supabase = await createServerSupabase();
   const file = formData.get("image");
-  let imageUrl: string | null = null;
-
-  if (file instanceof File && file.size > 0) {
-    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
-    const path = `${business.id}/${Date.now()}-${safeName}`;
-    const { error: uploadError } = await supabase.storage
-      .from("product-images")
-      .upload(path, file, { contentType: file.type || "image/jpeg" });
-    if (uploadError) throw new Error(uploadError.message);
-    imageUrl = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
-  }
+  const imageUrl = file instanceof File && file.size > 0
+    ? await uploadProductImage(supabase, business.id, file)
+    : null;
 
   const { error } = await supabase.from("products").insert({
     business_id: business.id,
@@ -61,13 +63,20 @@ export async function updateProductAction(formData: FormData) {
   if (!business) throw new Error("Create your business first");
 
   const supabase = await createServerSupabase();
+  const file = formData.get("image");
+  const updates: { name: string; price: number; stock: number; image_url?: string } = {
+    name: parsed.data.name,
+    price: parsed.data.price,
+    stock: parsed.data.stock,
+  };
+
+  if (file instanceof File && file.size > 0) {
+    updates.image_url = await uploadProductImage(supabase, business.id, file);
+  }
+
   const { error } = await supabase
     .from("products")
-    .update({
-      name: parsed.data.name,
-      price: parsed.data.price,
-      stock: parsed.data.stock,
-    })
+    .update(updates)
     .eq("id", id)
     .eq("business_id", business.id);
 

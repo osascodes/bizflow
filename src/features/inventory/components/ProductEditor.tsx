@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateProductAction } from "@/features/inventory/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 type Product = {
   id: string;
@@ -49,6 +50,10 @@ export default function ProductEditor({ product }: { product: Product }) {
           <div className="grid grid-cols-2 gap-2">
             <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
             <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs text-zinc-400">Replace photo</Label>
+            <Input name="image" type="file" accept="image/*" />
           </div>
           <Button type="submit" className="h-9 w-full">Save</Button>
         </form>

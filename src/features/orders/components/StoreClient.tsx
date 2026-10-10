@@ -127,7 +127,7 @@ export default function StoreClient({
                     </div>
                   )}
                   {product.stock <= 5 ? (
-                    <span className="absolute left-3 top-3 rounded-full bg-black/70 px-+2 py-1 text-[11px] text-amber-200">Few left</span>
+                    <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-amber-200">Few left</span>
                   ) : null}
                 </div>
                 <div className="p-3 sm:p-4">

@@ -46,3 +46,32 @@ export async function createProductAction(formData: FormData) {
   revalidatePath("/inventory");
   revalidatePath("/dashboard");
 }
+
+export async function updateProductAction(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  const parsed = productSchema.safeParse({
+    name: formData.get("name"),
+    price: formData.get("price"),
+    stock: formData.get("stock"),
+  });
+  if (!id) throw new Error("Missing product");
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Invalid product");
+
+  const business = await getCurrentBusiness();
+  if (!business) throw new Error("Create your business first");
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase
+    .from("products")
+    .update({
+      name: parsed.data.name,
+      price: parsed.data.price,
+      stock: parsed.data.stock,
+    })
+    .eq("id", id)
+    .eq("business_id", business.id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+}

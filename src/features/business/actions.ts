@@ -2,6 +2,7 @@
 
 import { createServerSupabase } from "@/lib/supabase/server";
 import { onboardingSchema } from "./schema";
+import { getCurrentBusiness } from "./queries";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 
@@ -44,4 +45,30 @@ export async function createBusinessAction(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirect("/dashboard");
+}
+
+export async function updateBusinessAction(formData: FormData) {
+  const parsed = onboardingSchema.safeParse({
+    name: formData.get("name"),
+    phone: formData.get("phone"),
+    category: formData.get("category"),
+  });
+  if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Invalid business details");
+
+  const business = await getCurrentBusiness();
+  if (!business) throw new Error("Create your business first");
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase
+    .from("businesses")
+    .update({
+      name: parsed.data.name,
+      phone: parsed.data.phone,
+      category: parsed.data.category,
+    })
+    .eq("id", business.id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/dashboard");
+  revalidatePath("/storefront");
 }

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { updateOrderStatusAction } from "@/features/orders/actions";
+import BusinessEditor from "@/features/business/components/BusinessEditor";
 import { Button } from "@/components/ui/button";
 
 export default async function StorefrontPage() {
@@ -25,6 +26,7 @@ export default async function StorefrontPage() {
         <Link href={`/store/${business.slug}`} className="mt-3 inline-flex text-sm text-violet-300">
           /store/{business.slug}
         </Link>
+        <BusinessEditor business={business} />
         <div className="mt-8 space-y-3">
           {(orders ?? []).length === 0 ? (
             <p className="text-sm text-zinc-500">No orders yet.</p>

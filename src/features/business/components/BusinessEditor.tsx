@@ -29,7 +29,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
     >
       <h2 className="font-semibold text-white">Shop details</h2>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
-      {saved ? <p className="text-sm text-emerald-300">Saved. The store link stays the same.</p> : null}
+      {saved ? <p className="text-sm text-emerald-300">Saved. The store link now uses the new name.</p> : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Business name</Label>
         <Input name="name" defaultValue={business.name} required />

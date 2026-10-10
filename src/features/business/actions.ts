@@ -58,6 +58,9 @@ export async function updateBusinessAction(formData: FormData) {
   const business = await getCurrentBusiness();
   if (!business) throw new Error("Create your business first");
 
+  const nameChanged = parsed.data.name.trim() !== business.name.trim();
+  const nextSlug = nameChanged ? slugify(parsed.data.name) : business.slug;
+
   const supabase = await createServerSupabase();
   const { error } = await supabase
     .from("businesses")
@@ -65,10 +68,13 @@ export async function updateBusinessAction(formData: FormData) {
       name: parsed.data.name,
       phone: parsed.data.phone,
       category: parsed.data.category,
+      slug: nextSlug,
     })
     .eq("id", business.id);
 
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard");
   revalidatePath("/storefront");
+  revalidatePath(`/store/${business.slug}`);
+  revalidatePath(`/store/${nextSlug}`);
 }

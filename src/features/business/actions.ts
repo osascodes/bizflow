@@ -77,4 +77,5 @@ export async function updateBusinessAction(formData: FormData) {
   revalidatePath("/storefront");
   revalidatePath(`/store/${business.slug}`);
   revalidatePath(`/store/${nextSlug}`);
+  return { slug: nextSlug };
 }

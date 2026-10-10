@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
@@ -22,10 +21,7 @@ export default async function StorefrontPage() {
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-white">Store</h1>
-        <p className="mt-2 text-sm text-zinc-400">Customer link</p>
-        <Link href={`/store/${business.slug}`} className="mt-3 inline-flex text-sm text-violet-300">
-          /store/{business.slug}
-        </Link>
+        <p className="mt-2 text-sm text-zinc-400">Change the name, then save. The link updates after save.</p>
         <BusinessEditor business={business} />
         <div className="mt-8 space-y-3">
           {(orders ?? []).length === 0 ? (

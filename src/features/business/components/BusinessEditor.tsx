@@ -1,35 +1,45 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { updateBusinessAction } from "@/features/business/actions";
 import { businessCategories } from "@/features/business/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-type Business = { name: string; phone: string; category: string };
+type Business = { name: string; phone: string; category: string; slug: string };
 
 export default function BusinessEditor({ business }: { business: Business }) {
+  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState("");
-  const [saved, setSaved] = useState(false);
+  const [slug, setSlug] = useState(business.slug);
+  const [pending, setPending] = useState(false);
 
   return (
     <form
       className="mt-6 space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
-        setSaved(false);
+        setPending(true);
         try {
-          await updateBusinessAction(formData);
-          setSaved(true);
+          const result = await updateBusinessAction(formData);
+          setSlug(result.slug);
+          router.refresh();
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save business.");
+        } finally {
+          setPending(false);
         }
       }}
     >
       <h2 className="font-semibold text-white">Shop details</h2>
+      <p className="text-sm text-zinc-400">Current link</p>
+      <Link href={`/store/${slug}`} className="inline-flex text-sm text-violet-300">
+        /store/{slug}
+      </Link>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
-      {saved ? <p className="text-sm text-emerald-300">Saved. The store link now uses the new name.</p> : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Business name</Label>
         <Input name="name" defaultValue={business.name} required />
@@ -46,7 +56,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
           ))}
         </select>
       </div>
-      <Button type="submit" className="w-full">Save shop details</Button>
+      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Save shop details"}</Button>
     </form>
   );
 }

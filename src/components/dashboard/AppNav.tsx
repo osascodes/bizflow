@@ -10,6 +10,7 @@ const items = [
   { href: "/debts", label: "Debts" },
   { href: "/expenses", label: "Costs" },
   { href: "/storefront", label: "Store" },
+  { href: "/analytics", label: "Stats" },
 ];
 
 export default function AppNav() {

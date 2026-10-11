@@ -18,6 +18,7 @@ export const config = {
     "/debts/:path*",
     "/expenses/:path*",
     "/storefront/:path*",
+    "/analytics/:path*",
     "/login",
     "/register",
     "/forgot-password",

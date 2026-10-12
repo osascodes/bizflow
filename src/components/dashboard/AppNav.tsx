@@ -13,6 +13,7 @@ const items = [
   { href: "/storefront", label: "Store" },
   { href: "/analytics", label: "Stats" },
   { href: "/staff", label: "Staff" },
+  { href: "/notifications", label: "Alerts" },
   { href: "/settings", label: "Settings" },
 ];
 

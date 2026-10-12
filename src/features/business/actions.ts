@@ -33,6 +33,17 @@ export async function createBusinessAction(formData: FormData) {
 
   if (!user) throw new Error("You must be signed in");
 
+  const { data: existing } = await supabase
+    .from("businesses")
+    .select("id")
+    .eq("owner_id", user.id)
+    .maybeSingle();
+
+  if (existing) {
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
+  }
+
   const { error } = await supabase.from("businesses").insert({
     owner_id: user.id,
     name: parsed.data.name,
@@ -41,6 +52,10 @@ export async function createBusinessAction(formData: FormData) {
     slug: slugify(parsed.data.name),
   });
 
+  if (error?.code === "23505") {
+    revalidatePath("/", "layout");
+    redirect("/dashboard");
+  }
   if (error) throw new Error(error.message);
 
   revalidatePath("/", "layout");

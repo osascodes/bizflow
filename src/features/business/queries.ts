@@ -8,12 +8,13 @@ export async function getCurrentBusiness() {
 
   if (!user) return null;
 
-  const { data: owned } = await supabase
+  const { data: owned, error: ownedError } = await supabase
     .from("businesses")
     .select("id, name, phone, category, slug")
     .eq("owner_id", user.id)
     .maybeSingle();
 
+  if (ownedError) throw new Error(ownedError.message);
   if (owned) return { ...owned, role: "owner" as const };
 
   const { data: staff } = await supabase

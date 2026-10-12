@@ -60,28 +60,18 @@ export async function joinStaffAction(formData: FormData) {
   if (password.length < 6) throw new Error("Password must be at least 6 characters");
 
   const supabase = await createServerSupabase();
-  const { data: invite } = await supabase
-    .from("staff_members")
-    .select("id, email, user_id")
-    .eq("invite_code", code)
-    .maybeSingle();
+  const { data: invitedEmail, error: previewError } = await supabase.rpc("preview_staff_invite", { p_code: code });
+  if (previewError) throw new Error(previewError.message);
+  if (!invitedEmail) throw new Error("Invite code not found or already used");
+  if (String(invitedEmail).toLowerCase() !== email) throw new Error("Use the email the owner invited");
 
-  if (!invite) throw new Error("Invite code not found");
-  if (invite.email && invite.email !== email) throw new Error("Use the email the owner invited");
-  if (invite.user_id) throw new Error("This invite has already been used");
-
-  const { data: created, error: signUpError } = await supabase.auth.signUp({
-    email,
-    password,
-  });
+  const { data: created, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError) throw new Error(signUpError.message);
-  if (!created.user) throw new Error("Could not create the staff login");
+  if (!created.session) throw new Error("Confirm the email in Supabase Auth settings, or turn off email confirmation, then try again.");
 
-  const { error } = await supabase
-    .from("staff_members")
-    .update({ user_id: created.user.id })
-    .eq("id", invite.id);
+  const { data: joined, error } = await supabase.rpc("accept_staff_invite", { p_code: code, p_email: email });
   if (error) throw new Error(error.message);
+  if (!joined) throw new Error("Could not link this login to the shop");
 
   revalidatePath("/", "layout");
   redirect("/dashboard");

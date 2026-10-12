@@ -1,4 +1,5 @@
 import { getCurrentUser } from "@/lib/auth/utils";
+import { getCurrentBusiness } from "@/features/business/queries";
 import { logoutAction } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
 import AppNav from "@/components/dashboard/AppNav";
@@ -10,6 +11,7 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
+  const business = await getCurrentBusiness();
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -27,7 +29,7 @@ export default async function DashboardLayout({
         </form>
       </header>
       <div className="md:flex">
-        <AppNav />
+        <AppNav role={business?.role || "owner"} />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>

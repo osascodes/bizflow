@@ -25,6 +25,41 @@ as $$
     );
 $$;
 
+create or replace function public.preview_staff_invite(p_code text)
+returns text
+language sql
+security definer
+set search_path = public
+as $$
+  select email
+  from public.staff_members
+  where invite_code = upper(p_code)
+    and user_id is null
+  limit 1;
+$$;
+
+create or replace function public.accept_staff_invite(p_code text, p_email text)
+returns uuid
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_id uuid;
+begin
+  update public.staff_members
+  set user_id = auth.uid()
+  where invite_code = upper(p_code)
+    and lower(email) = lower(p_email)
+    and user_id is null
+  returning id into v_id;
+  return v_id;
+end;
+$$;
+
+grant execute on function public.preview_staff_invite(text) to anon, authenticated;
+grant execute on function public.accept_staff_invite(text, text) to authenticated;
+
 drop policy if exists "staff can view their shop" on public.businesses;
 create policy "staff can view their shop"
   on public.businesses for select

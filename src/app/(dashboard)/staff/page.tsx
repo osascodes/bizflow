@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function StaffPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
   const staff = await getStaff();
 
   return (
@@ -15,7 +16,7 @@ export default async function StaffPage() {
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
         <div>
           <h1 className="text-2xl font-semibold text-white">Staff</h1>
-          <p className="mt-2 text-sm text-zinc-400">People who help run the shop.</p>
+          <p className="mt-2 text-sm text-zinc-400">Invite a helper. They join with the code at /join.</p>
           <div className="mt-6">
             <StaffForm />
           </div>
@@ -29,8 +30,8 @@ export default async function StaffPage() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="font-semibold text-white">{member.name}</h2>
-                    <p className="mt-1 text-sm text-zinc-400">{member.role} · {member.phone}</p>
-                    <p className="mt-1 text-xs text-zinc-500">{member.active ? "Active" : "Paused"}</p>
+                    <p className="mt-1 text-sm text-zinc-400">{member.role} · {member.email}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{member.user_id ? "Joined" : `Invite code: ${member.invite_code}`}</p>
                   </div>
                   <form action={toggleStaffAction}>
                     <input type="hidden" name="id" value={member.id} />

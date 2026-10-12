@@ -13,6 +13,7 @@ export default function StaffForm() {
 
   return (
     <form
+      id="staff-form"
       className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
@@ -26,7 +27,6 @@ export default function StaffForm() {
           setPending(false);
         }
       }}
-      id="staff-form"
     >
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
@@ -38,12 +38,16 @@ export default function StaffForm() {
         <Input name="phone" placeholder="08012345678" required />
       </div>
       <div className="space-y-1.5">
+        <Label className="text-zinc-300">Email</Label>
+        <Input name="email" type="email" placeholder="ada@shop.com" required />
+      </div>
+      <div className="space-y-1.5">
         <Label className="text-zinc-300">Role</Label>
         <select name="role" defaultValue="Sales" className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
           {staffRoles.map((role) => <option key={role} value={role}>{role}</option>)}
         </select>
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Add staff"}</Button>
+      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Invite staff"}</Button>
     </form>
   );
 }

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const items = [
+const ownerItems = [
   { href: "/dashboard", label: "Home" },
   { href: "/inventory", label: "Stock" },
   { href: "/sales", label: "Sales" },
@@ -18,9 +18,19 @@ const items = [
   { href: "/settings", label: "Settings" },
 ];
 
-export default function AppNav() {
+const staffItems = [
+  { href: "/dashboard", label: "Home" },
+  { href: "/inventory", label: "Stock" },
+  { href: "/sales", label: "Sales" },
+  { href: "/customers", label: "Customers" },
+  { href: "/debts", label: "Debts" },
+  { href: "/storefront", label: "Store" },
+];
+
+export default function AppNav({ role = "owner" }: { role?: string }) {
   const pathname = usePathname();
   if (pathname.startsWith("/onboarding")) return null;
+  const items = role === "owner" ? ownerItems : staffItems;
 
   return (
     <>

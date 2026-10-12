@@ -11,6 +11,7 @@ const items = [
   { href: "/expenses", label: "Costs" },
   { href: "/storefront", label: "Store" },
   { href: "/analytics", label: "Stats" },
+  { href: "/staff", label: "Staff" },
 ];
 
 export default function AppNav() {

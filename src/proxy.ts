@@ -19,6 +19,7 @@ export const config = {
     "/expenses/:path*",
     "/storefront/:path*",
     "/analytics/:path*",
+    "/staff/:path*",
     "/login",
     "/register",
     "/forgot-password",

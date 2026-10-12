@@ -84,3 +84,20 @@ export async function updateProductAction(formData: FormData) {
   revalidatePath("/inventory");
   revalidatePath("/dashboard");
 }
+
+export async function deleteProductAction(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  const business = await getCurrentBusiness();
+  if (!business || !id) throw new Error("Missing product");
+
+  const supabase = await createServerSupabase();
+  const { error } = await supabase
+    .from("products")
+    .delete()
+    .eq("id", id)
+    .eq("business_id", business.id);
+
+  if (error) throw new Error(error.message);
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateProductAction } from "@/features/inventory/actions";
+import { updateProductAction, deleteProductAction } from "@/features/inventory/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,31 +32,37 @@ export default function ProductEditor({ product }: { product: Product }) {
         {product.stock} in stock
       </p>
       {open ? (
-        <form
-          className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-700 bg-zinc-950 p-3"
-          action={async (formData) => {
-            setErrorMessage("");
-            try {
-              await updateProductAction(formData);
-              setOpen(false);
-            } catch (error: unknown) {
-              setErrorMessage(error instanceof Error ? error.message : "Could not update product.");
-            }
-          }}
-        >
-          <input type="hidden" name="id" value={product.id} />
-          {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
-          <Input name="name" defaultValue={product.name} />
-          <div className="grid grid-cols-2 gap-2">
-            <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
-            <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
-          </div>
-          <div className="space-y-1">
-            <Label className="text-xs text-zinc-400">Replace photo</Label>
-            <Input name="image" type="file" accept="image/*" />
-          </div>
-          <Button type="submit" className="h-9 w-full">Save</Button>
-        </form>
+        <div className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-700 bg-zinc-950 p-3">
+          <form
+            className="space-y-2"
+            action={async (formData) => {
+              setErrorMessage("");
+              try {
+                await updateProductAction(formData);
+                setOpen(false);
+              } catch (error: unknown) {
+                setErrorMessage(error instanceof Error ? error.message : "Could not update product.");
+              }
+            }}
+          >
+            <input type="hidden" name="id" value={product.id} />
+            {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
+            <Input name="name" defaultValue={product.name} />
+            <div className="grid grid-cols-2 gap-2">
+              <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
+              <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-xs text-zinc-400">Replace photo</Label>
+              <Input name="image" type="file" accept="image/*" />
+            </div>
+            <Button type="submit" className="h-9 w-full">Save</Button>
+          </form>
+          <form action={deleteProductAction}>
+            <input type="hidden" name="id" value={product.id} />
+            <Button type="submit" variant="outline" className="h-9 w-full text-red-300">Delete product</Button>
+          </form>
+        </div>
       ) : null}
     </div>
   );

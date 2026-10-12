@@ -12,6 +12,7 @@ const items = [
   { href: "/expenses", label: "Costs" },
   { href: "/storefront", label: "Store" },
   { href: "/analytics", label: "Stats" },
+  { href: "/activity", label: "Activity" },
   { href: "/staff", label: "Staff" },
   { href: "/notifications", label: "Alerts" },
   { href: "/settings", label: "Settings" },

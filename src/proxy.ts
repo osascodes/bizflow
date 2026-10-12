@@ -20,6 +20,7 @@ export const config = {
     "/expenses/:path*",
     "/storefront/:path*",
     "/analytics/:path*",
+    "/activity/:path*",
     "/staff/:path*",
     "/notifications/:path*",
     "/settings/:path*",

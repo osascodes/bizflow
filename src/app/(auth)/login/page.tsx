@@ -39,7 +39,8 @@ export default function LoginPage() {
   };
 
   return (
-    <AuthCard title="Welcome back">
+    <AuthCard title="Log in">
+      <p className="mb-4 text-sm text-zinc-400">Owners and staff use this same page.</p>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {errorMessage ? (
           <div className="rounded-md border border-red-500 bg-red-500/10 p-2 text-sm text-red-400">
@@ -64,13 +65,17 @@ export default function LoginPage() {
         </div>
 
         <Button type="submit" className="w-full" disabled={isPending}>
-          {isPending ? 'Signing in...' : 'Sign In'}
+          {isPending ? 'Signing in...' : 'Log in'}
         </Button>
       </form>
 
       <div className="mt-4 text-center text-sm text-zinc-400">
-        Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-violet-400 hover:underline">Create one</Link>
+        New shop owner?{' '}
+        <Link href="/register" className="text-violet-400 hover:underline">Create a shop</Link>
+      </div>
+      <div className="mt-2 text-center text-sm text-zinc-400">
+        New staff?{' '}
+        <Link href="/join" className="text-violet-400 hover:underline">Join with a code</Link>
       </div>
       <div className="mt-2 text-center">
         <Link href="/forgot-password" className="text-sm text-zinc-500 hover:text-white">

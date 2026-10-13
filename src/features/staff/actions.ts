@@ -62,12 +62,14 @@ export async function joinStaffAction(formData: FormData) {
   const supabase = await createServerSupabase();
   const { data: invitedEmail, error: previewError } = await supabase.rpc("preview_staff_invite", { p_code: code });
   if (previewError) throw new Error(previewError.message);
-  if (!invitedEmail) throw new Error("Invite code not found or already used");
+  if (!invitedEmail) {
+    throw new Error("This code was already used. Do not join again. Log in with that email and password.");
+  }
   if (String(invitedEmail).toLowerCase() !== email) throw new Error("Use the email the owner invited");
 
   const { data: created, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError) throw new Error(signUpError.message);
-  if (!created.session) throw new Error("Confirm the email in Supabase Auth settings, or turn off email confirmation, then try again.");
+  if (!created.session) throw new Error("Turn off Confirm email in Supabase Auth, then try again.");
 
   const { data: joined, error } = await supabase.rpc("accept_staff_invite", { p_code: code, p_email: email });
   if (error) throw new Error(error.message);

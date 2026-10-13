@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { joinStaffAction } from "@/features/staff/actions";
+import PasswordInput from "@/features/auth/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -27,7 +28,7 @@ export default function JoinPage() {
         }}
       >
         <h1 className="text-2xl font-semibold">Join a shop</h1>
-        <p className="text-sm text-zinc-400">Use the invite code from the shop owner.</p>
+        <p className="text-sm text-zinc-400">Staff only. Use the invite code from the owner. Do not create a shop.</p>
         {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
         <div className="space-y-1.5">
           <Label>Invite code</Label>
@@ -39,10 +40,10 @@ export default function JoinPage() {
         </div>
         <div className="space-y-1.5">
           <Label>Password</Label>
-          <Input name="password" type="password" required />
+          <PasswordInput name="password" required />
         </div>
         <Button type="submit" className="w-full" disabled={pending}>{pending ? "Joining..." : "Join shop"}</Button>
-        <Link href="/login" className="block text-center text-sm text-zinc-400">Already joined? Log in</Link>
+        <Link href="/login" className="block text-center text-sm text-violet-300">Already joined? Log in</Link>
       </form>
     </main>
   );

@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 export default async function DashboardPage() {
   const user = await getCurrentUser();
   const business = await getCurrentBusiness();
-  if (!business) redirect("/onboarding");
+  if (!business) redirect("/start");
 
   let lowStock = 0;
   let salesToday = 0;

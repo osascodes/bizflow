@@ -72,6 +72,7 @@ export async function updateBusinessAction(formData: FormData) {
 
   const business = await getCurrentBusiness();
   if (!business) throw new Error("Create your business first");
+  if (business.role !== "owner") throw new Error("Only the owner can edit shop details");
 
   const nextSlug = slugify(parsed.data.name);
   const supabase = await createServerSupabase();

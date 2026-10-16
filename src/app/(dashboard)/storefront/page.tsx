@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function StorefrontPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  const isOwner = business.role === "owner";
 
   const supabase = await createServerSupabase();
   const { data: orders } = await supabase
@@ -21,8 +22,19 @@ export default async function StorefrontPage() {
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-white">Store</h1>
-        <p className="mt-2 text-sm text-zinc-400">Change the name, then save. The link updates after save.</p>
-        <BusinessEditor business={business} />
+        <p className="mt-2 text-sm text-zinc-400">
+          {isOwner ? "Change the name, then save. The link updates after save." : "Store orders for this shop."}
+        </p>
+        {isOwner ? (
+          <BusinessEditor business={business} />
+        ) : (
+          <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+            <p className="text-sm text-zinc-400">Shop</p>
+            <p className="mt-1 font-semibold text-white">{business.name}</p>
+            <p className="mt-1 text-sm text-zinc-400">{business.phone} · {business.category}</p>
+            <p className="mt-3 text-sm text-violet-300">/store/{business.slug}</p>
+          </div>
+        )}
         <div className="mt-8 space-y-3">
           {(orders ?? []).length === 0 ? (
             <p className="text-sm text-zinc-500">No orders yet.</p>

@@ -5,6 +5,7 @@ import { getActivity } from "@/features/activity/queries";
 export default async function ActivityPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
   const items = await getActivity();
 
   return (

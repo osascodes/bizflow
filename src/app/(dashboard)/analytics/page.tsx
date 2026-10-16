@@ -5,6 +5,7 @@ import { getAnalytics } from "@/features/analytics/queries";
 export default async function AnalyticsPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
 
   const analytics = await getAnalytics();
   const max = Math.max(...analytics.days.map((day) => day.total), 1);

@@ -6,6 +6,7 @@ import ExpenseForm from "@/features/expenses/components/ExpenseForm";
 export default async function ExpensesPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
   const expenses = await getExpenses();
 
   return (

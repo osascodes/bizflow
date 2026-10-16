@@ -6,6 +6,7 @@ import { getNotifications } from "@/features/notifications/queries";
 export default async function NotificationsPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
   const items = await getNotifications();
 
   return (

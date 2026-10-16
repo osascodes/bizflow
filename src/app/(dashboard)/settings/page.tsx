@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 export default async function SettingsPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
+  if (business.role !== "owner") redirect("/dashboard");
   const user = await getCurrentUser();
 
   return (

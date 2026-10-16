@@ -35,7 +35,7 @@ export default async function DashboardLayout({
         </form>
       </header>
       <div className="md:flex">
-        <AppNav role={business?.role || "owner"} />
+        <AppNav role={business?.role === "owner" ? "owner" : "staff"} />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>

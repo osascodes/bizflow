@@ -8,14 +8,17 @@ export async function getCurrentBusiness() {
 
   if (!user) return null;
 
-  const { data: owned, error: ownedError } = await supabase
+  const { data: membership } = await supabase.rpc("current_membership");
+  const row = Array.isArray(membership) ? membership[0] : membership;
+  if (row?.id) return row;
+
+  const { data: owned } = await supabase
     .from("businesses")
     .select("id, name, phone, category, slug")
     .eq("owner_id", user.id)
     .maybeSingle();
 
-  if (ownedError) throw new Error(ownedError.message);
-  if (owned) return { ...owned, role: "owner" as const };
+  if (owned) return { ...owned, role: "owner" };
 
   const { data: staff } = await supabase
     .from("staff_members")

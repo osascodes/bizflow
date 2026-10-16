@@ -10,6 +10,7 @@ export default async function AnalyticsPage() {
   const analytics = await getAnalytics();
   const max = Math.max(...analytics.days.map((day) => day.total), 1);
   const left = analytics.weekSales - analytics.weekCosts;
+  const hasWeekSales = analytics.weekSales > 0;
 
   const cards = [
     ["This week", analytics.weekSales],
@@ -38,24 +39,31 @@ export default async function AnalyticsPage() {
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-semibold text-white">Last 7 days</h2>
-              <p className="mt-1 text-sm text-zinc-500">Sales only. Costs are in the cards above.</p>
+              <p className="mt-1 text-sm text-zinc-500">This month can be higher if the sales were before these 7 days.</p>
             </div>
             <p className="text-sm text-zinc-400">₦{analytics.weekSales.toLocaleString()}</p>
           </div>
-          <div className="mt-8 flex h-48 items-end gap-3">
-            {analytics.days.map((day) => (
-              <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                <p className="text-[11px] text-zinc-500">₦{day.total.toLocaleString()}</p>
-                <div className="flex h-32 w-full items-end">
-                  <div
-                    className="w-full rounded-t-xl bg-gradient-to-t from-violet-600 to-fuchsia-400"
-                    style={{ height: `${Math.max(8, (day.total / max) * 100)}%` }}
-                  />
+          {hasWeekSales ? (
+            <div className="mt-8 flex h-48 items-end gap-3">
+              {analytics.days.map((day) => (
+                <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
+                  <p className="text-[11px] text-zinc-500">₦{day.total.toLocaleString()}</p>
+                  <div className="flex h-32 w-full items-end">
+                    <div
+                      className="w-full rounded-t-xl bg-gradient-to-t from-violet-600 to-fuchsia-400"
+                      style={{ height: `${Math.max(8, (day.total / max) * 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-zinc-400">{day.label}</p>
                 </div>
-                <p className="text-xs text-zinc-400">{day.label}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mt-8 rounded-2xl border border-dashed border-zinc-800 px-4 py-10 text-center">
+              <p className="text-sm text-zinc-300">No sales in the last 7 days.</p>
+              <p className="mt-2 text-sm text-zinc-500">This month is ₦{analytics.monthSales.toLocaleString()}. Those sales were earlier than this week.</p>
+            </div>
+          )}
         </section>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-2">

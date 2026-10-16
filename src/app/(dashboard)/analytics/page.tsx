@@ -13,10 +13,10 @@ export default async function AnalyticsPage() {
   const hasWeekSales = analytics.weekSales > 0;
 
   const cards = [
-    ["This week", analytics.weekSales],
-    ["This month", analytics.monthSales],
-    ["Costs this week", analytics.weekCosts],
-    ["Left this week", left],
+    { label: "This week", value: analytics.weekSales, tone: "from-violet-500/20 to-violet-500/5", accent: "text-violet-300" },
+    { label: "This month", value: analytics.monthSales, tone: "from-fuchsia-500/20 to-fuchsia-500/5", accent: "text-fuchsia-300" },
+    { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-300" },
+    { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-300" : "text-rose-300" },
   ];
 
   return (
@@ -27,31 +27,31 @@ export default async function AnalyticsPage() {
         <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">Sales, costs, what is selling, and what is running low.</p>
 
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {cards.map(([label, value]) => (
-            <div key={String(label)} className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
-              <p className="text-sm text-zinc-400">{label}</p>
-              <p className="mt-3 text-2xl font-semibold text-white">₦{Number(value).toLocaleString()}</p>
+          {cards.map((card) => (
+            <div key={card.label} className={`rounded-3xl border border-white/10 bg-gradient-to-br ${card.tone} p-5 transition duration-300 hover:-translate-y-0.5`}>
+              <p className={`text-sm ${card.accent}`}>{card.label}</p>
+              <p className="mt-3 text-2xl font-semibold text-white">₦{Number(card.value).toLocaleString()}</p>
             </div>
           ))}
         </div>
 
-        <section className="mt-6 rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+        <section className="mt-6 overflow-hidden rounded-3xl border border-white/10 bg-zinc-900 p-5">
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-semibold text-white">Last 7 days</h2>
               <p className="mt-1 text-sm text-zinc-500">This month can be higher if the sales were before these 7 days.</p>
             </div>
-            <p className="text-sm text-zinc-400">₦{analytics.weekSales.toLocaleString()}</p>
+            <p className="text-sm text-fuchsia-300">₦{analytics.weekSales.toLocaleString()}</p>
           </div>
           {hasWeekSales ? (
             <div className="mt-8 flex h-48 items-end gap-3">
-              {analytics.days.map((day) => (
+              {analytics.days.map((day, index) => (
                 <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
                   <p className="text-[11px] text-zinc-500">₦{day.total.toLocaleString()}</p>
                   <div className="flex h-32 w-full items-end">
                     <div
-                      className="w-full rounded-t-xl bg-gradient-to-t from-violet-600 to-fuchsia-400"
-                      style={{ height: `${Math.max(8, (day.total / max) * 100)}%` }}
+                      className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-violet-600 via-fuchsia-500 to-amber-300"
+                      style={{ height: `${Math.max(8, (day.total / max) * 100)}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
                     />
                   </div>
                   <p className="text-xs text-zinc-400">{day.label}</p>
@@ -59,7 +59,7 @@ export default async function AnalyticsPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-zinc-800 px-4 py-10 text-center">
+            <div className="mt-8 rounded-2xl border border-dashed border-zinc-700 px-4 py-10 text-center">
               <p className="text-sm text-zinc-300">No sales in the last 7 days.</p>
               <p className="mt-2 text-sm text-zinc-500">This month is ₦{analytics.monthSales.toLocaleString()}. Those sales were earlier than this week.</p>
             </div>
@@ -67,7 +67,7 @@ export default async function AnalyticsPage() {
         </section>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+          <section className="rounded-3xl border border-white/10 bg-zinc-900 p-5">
             <h2 className="font-semibold text-white">Top products this month</h2>
             <div className="mt-4 space-y-4">
               {analytics.topProducts.length === 0 ? (
@@ -75,19 +75,19 @@ export default async function AnalyticsPage() {
               ) : (
                 analytics.topProducts.map((product, index) => (
                   <div key={product.name} className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-zinc-800 text-xs text-zinc-300">{index + 1}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-semibold text-white">{index + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-white">{product.name}</p>
                       <p className="text-xs text-zinc-500">{product.quantity} sold</p>
                     </div>
-                    <p className="text-sm text-zinc-200">₦{product.amount.toLocaleString()}</p>
+                    <p className="text-sm text-emerald-300">₦{product.amount.toLocaleString()}</p>
                   </div>
                 ))
               )}
             </div>
           </section>
 
-          <section className="rounded-3xl border border-zinc-800 bg-zinc-900 p-5">
+          <section className="rounded-3xl border border-white/10 bg-zinc-900 p-5">
             <h2 className="font-semibold text-white">Low stock</h2>
             <div className="mt-4 space-y-4">
               {analytics.lowStock.length === 0 ? (
@@ -104,6 +104,7 @@ export default async function AnalyticsPage() {
           </section>
         </div>
       </div>
+      <style>{`@keyframes barRise { from { transform: scaleY(0.2); opacity: 0.4; } to { transform: scaleY(1); opacity: 1; } }`}</style>
     </main>
   );
 }

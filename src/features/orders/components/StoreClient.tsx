@@ -85,16 +85,17 @@ export default function StoreClient({
   };
 
   return (
-    <main className="min-h-screen bg-[#09090b] text-white">
-      <header className="border-b border-white/10">
+    <main className="min-h-screen bg-[#07070a] text-white">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.16),transparent_32%),radial-gradient(circle_at_top_right,rgba(217,70,239,0.12),transparent_28%)]" />
+      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
+            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
               {initial(business.name)}
             </span>
             <div>
-              <p className="text-sm font-medium">{business.name}</p>
-              <p className="text-xs text-zinc-500">{business.category}</p>
+              <p className="font-semibold">{business.name}</p>
+              <p className="text-xs text-zinc-400">{business.category}</p>
             </div>
           </div>
           {shopWhatsapp ? (
@@ -105,19 +106,20 @@ export default function StoreClient({
         </div>
       </header>
 
-      <section className="mx-auto max-w-6xl px-4 py-10">
-        <p className="text-sm text-zinc-400">Shop the latest in stock</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight sm:text-5xl">{business.name}</h1>
+      <section className="relative mx-auto max-w-6xl px-4 py-12">
+        <p className="text-sm text-violet-300">In stock now</p>
+        <h1 className="mt-2 max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl">Shop {business.name}</h1>
+        <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">Add what you want, then send the order on WhatsApp. The shop gets it instantly.</p>
       </section>
 
-      <section className="mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-28 lg:grid-cols-3 lg:gap-5">
+      <section className="relative mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-32 lg:grid-cols-3 lg:gap-5">
         {products.length === 0 ? (
-          <p className="text-sm text-zinc-500">Nothing in stock right now.</p>
+          <div className="col-span-2 rounded-3xl border border-dashed border-white/10 p-8 text-sm text-zinc-500 lg:col-span-3">Nothing in stock right now.</div>
         ) : (
           products.map((product) => {
             const qty = cart[product.id] || 0;
             return (
-              <article key={product.id} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900">
+              <article key={product.id} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900/80">
                 <div className="relative aspect-square bg-zinc-950">
                   {product.image_url ? (
                     <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
@@ -130,19 +132,19 @@ export default function StoreClient({
                     <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-amber-200">Few left</span>
                   ) : null}
                 </div>
-                <div className="p-3 sm:p-4">
+                <div className="p-4">
                   <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
-                  <div className="mt-3 flex items-center justify-between gap-2">
-                    <p className="text-sm font-semibold">₦{Number(product.price).toLocaleString()}</p>
+                  <p className="mt-1 text-sm font-semibold text-zinc-100">₦{Number(product.price).toLocaleString()}</p>
+                  <div className="mt-4">
                     {qty === 0 ? (
-                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-9 rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">
-                        Add
+                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 w-full rounded-full bg-white text-sm font-semibold text-zinc-950">
+                        Add to cart
                       </button>
                     ) : (
-                      <div className="flex items-center rounded-full bg-white p-1 text-zinc-950">
-                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-7 w-7 text-lg">−</button>
-                        <span className="w-5 text-center text-sm">{qty}</span>
-                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-7 w-7 text-lg">+</button>
+                      <div className="flex h-10 items-center justify-between rounded-full bg-white px-2 text-zinc-950">
+                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 text-lg">−</button>
+                        <span className="text-sm font-semibold">{qty}</span>
+                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-8 w-8 text-lg">+</button>
                       </div>
                     )}
                   </div>
@@ -154,7 +156,7 @@ export default function StoreClient({
       </section>
 
       {count > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-zinc-950/95 p-4 backdrop-blur">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07070a]/95 p-4 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
               <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
@@ -168,18 +170,31 @@ export default function StoreClient({
       ) : null}
 
       {open ? (
-        <div className="fixed inset-0 z-30 flex items-end bg-black/70 sm:items-center sm:justify-center">
-          <div className="max-h-[88vh] w-full overflow-y-auto rounded-t-3xl bg-zinc-900 p-5 sm:max-w-md sm:rounded-3xl">
+        <div className="fixed inset-0 z-30 bg-black/70" onClick={() => setOpen(false)}>
+          <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-3xl bg-zinc-900 p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[420px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Cart</h2>
+              <h2 className="text-lg font-semibold">Your cart</h2>
               <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400">Close</button>
             </div>
             {done ? (
-              <p className="mt-4 text-sm text-zinc-300">Order sent. WhatsApp should open with the message.</p>
+              <div className="mt-10 text-center">
+                <p className="text-2xl font-semibold">Order sent</p>
+                <p className="mt-2 text-sm text-zinc-400">WhatsApp should open with the order. The shop has it too.</p>
+                <button type="button" onClick={() => { setDone(false); setOpen(false); }} className="mt-6 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">
+                  Back to shop
+                </button>
+              </div>
             ) : (
-              <div className="mt-5 space-y-4">
+              <div className="mt-6 space-y-5">
                 {lines.map((line) => (
                   <div key={line.id} className="flex items-center gap-3">
+                    <div className="h-14 w-14 overflow-hidden rounded-2xl bg-zinc-800">
+                      {line.image_url ? (
+                        <img src={line.image_url} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center text-sm font-semibold">{initial(line.name)}</div>
+                      )}
+                    </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{line.name}</p>
                       <p className="text-xs text-zinc-500">₦{(Number(line.price) * line.quantity).toLocaleString()}</p>
@@ -192,12 +207,18 @@ export default function StoreClient({
                     <button type="button" onClick={() => setQty(line.id, 0)} className="h-8 w-8 text-sm text-zinc-500">×</button>
                   </div>
                 ))}
-                {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
-                <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
-                <Input value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone" />
-                <Button type="button" className="w-full" disabled={pending || lines.length === 0} onClick={submit}>
-                  {pending ? "Sending..." : `Send order · ₦${total.toLocaleString()}`}
-                </Button>
+                <div className="border-t border-white/10 pt-4">
+                  <div className="mb-4 flex items-center justify-between">
+                    <p className="text-sm text-zinc-400">Total</p>
+                    <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>
+                  </div>
+                  {errorMessage ? <p className="mb-3 text-sm text-red-400">{errorMessage}</p> : null}
+                  <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
+                  <Input className="mt-3" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone" />
+                  <Button type="button" className="mt-4 w-full" disabled={pending || lines.length === 0} onClick={submit}>
+                    {pending ? "Sending..." : `Send order · ₦${total.toLocaleString()}`}
+                  </Button>
+                </div>
               </div>
             )}
           </div>

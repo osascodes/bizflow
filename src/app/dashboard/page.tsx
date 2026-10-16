@@ -11,6 +11,7 @@ export default async function DashboardPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/start");
 
+  const isOwner = business.role === "owner";
   let lowStock = 0;
   let salesToday = 0;
   let debtsDue = 0;
@@ -20,7 +21,7 @@ export default async function DashboardPage() {
       getLowStockCount(),
       getTodaySalesTotal(),
       getDebtsDue(),
-      getTodayExpenses(),
+      isOwner ? getTodayExpenses() : Promise.resolve(0),
     ]);
   } catch {
     lowStock = 0;
@@ -35,13 +36,19 @@ export default async function DashboardPage() {
     user?.email ||
     "there";
 
-  const stats = [
-    ["Sales today", `₦${salesToday.toLocaleString()}`],
-    ["Costs today", `₦${costsToday.toLocaleString()}`],
-    ["Left today", `₦${leftToday.toLocaleString()}`],
-    ["Debts due", `₦${debtsDue.toLocaleString()}`],
-    ["Low stock", String(lowStock)],
-  ];
+  const stats = isOwner
+    ? [
+        ["Sales today", `₦${salesToday.toLocaleString()}`],
+        ["Costs today", `₦${costsToday.toLocaleString()}`],
+        ["Left today", `₦${leftToday.toLocaleString()}`],
+        ["Debts due", `₦${debtsDue.toLocaleString()}`],
+        ["Low stock", String(lowStock)],
+      ]
+    : [
+        ["Sales today", `₦${salesToday.toLocaleString()}`],
+        ["Debts due", `₦${debtsDue.toLocaleString()}`],
+        ["Low stock", String(lowStock)],
+      ];
 
   return (
     <main className="px-4 py-8 md:px-8">
@@ -49,6 +56,7 @@ export default async function DashboardPage() {
         <p className="text-sm text-violet-300">{business.category}</p>
         <h1 className="mt-2 text-3xl font-semibold text-white">{business.name}</h1>
         <p className="mt-2 text-sm text-zinc-400">Welcome, {name}</p>
+        <p className="mt-1 text-sm text-violet-300">Role: {business.role || "unknown"}</p>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {stats.map(([label, value]) => (
             <div key={label} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
@@ -57,9 +65,6 @@ export default async function DashboardPage() {
             </div>
           ))}
         </div>
-        <p className="mt-6 text-sm text-zinc-500">
-          Left today is sales today minus costs today. Debts are money customers still owe, so they stay separate.
-        </p>
       </div>
     </main>
   );

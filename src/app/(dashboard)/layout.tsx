@@ -11,7 +11,13 @@ export default async function DashboardLayout({
 }) {
   const user = await getCurrentUser();
   if (!user) redirect("/login");
-  const business = await getCurrentBusiness();
+
+  let business = null;
+  try {
+    business = await getCurrentBusiness();
+  } catch {
+    business = null;
+  }
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">

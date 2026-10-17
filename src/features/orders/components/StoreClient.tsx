@@ -6,6 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 type Product = { id: string; name: string; price: number; stock: number; image_url?: string | null };
+type Business = {
+  id: string;
+  name: string;
+  phone: string | null;
+  category: string;
+  slug: string;
+  logo_url?: string | null;
+  instagram?: string | null;
+  tiktok?: string | null;
+  website?: string | null;
+};
 
 function whatsappNumber(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -17,11 +28,16 @@ function initial(value: string) {
   return value.trim().charAt(0).toUpperCase() || "S";
 }
 
+function href(value?: string | null) {
+  if (!value) return null;
+  return value.startsWith("http") ? value : `https://${value}`;
+}
+
 export default function StoreClient({
   business,
   products,
 }: {
-  business: { id: string; name: string; phone: string | null; category: string; slug: string };
+  business: Business;
   products: Product[];
 }) {
   const [cart, setCart] = useState<Record<string, number>>({});
@@ -44,6 +60,12 @@ export default function StoreClient({
   const shopWhatsapp = business.phone
     ? `https://wa.me/${whatsappNumber(business.phone)}?text=${encodeURIComponent(`Hi ${business.name}, I want to order from your store.`)}`
     : null;
+  const links = [
+    shopWhatsapp ? ["WhatsApp", shopWhatsapp] : null,
+    href(business.instagram) ? ["Instagram", href(business.instagram)] : null,
+    href(business.tiktok) ? ["TikTok", href(business.tiktok)] : null,
+    href(business.website) ? ["Website", href(business.website)] : null,
+  ].filter(Boolean) as [string, string][];
 
   const setQty = (id: string, next: number) => {
     setCart((current) => {
@@ -90,9 +112,13 @@ export default function StoreClient({
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
-            <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
-              {initial(business.name)}
-            </span>
+            {business.logo_url ? (
+              <img src={business.logo_url} alt="" className="h-11 w-11 rounded-2xl object-cover" />
+            ) : (
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
+                {initial(business.name)}
+              </span>
+            )}
             <div>
               <p className="font-semibold">{business.name}</p>
               <p className="text-xs text-zinc-400">{business.category}</p>
@@ -112,7 +138,7 @@ export default function StoreClient({
         <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">Add what you want, then send the order on WhatsApp. The shop gets it instantly.</p>
       </section>
 
-      <section className="relative mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-32 lg:grid-cols-3 lg:gap-5">
+      <section className="relative mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-10 lg:grid-cols-3 lg:gap-5">
         {products.length === 0 ? (
           <div className="col-span-2 rounded-3xl border border-dashed border-white/10 p-8 text-sm text-zinc-500 lg:col-span-3">Nothing in stock right now.</div>
         ) : (
@@ -154,6 +180,21 @@ export default function StoreClient({
           })
         )}
       </section>
+
+      {links.length > 0 ? (
+        <footer className="relative mx-auto max-w-6xl px-4 pb-32">
+          <div className="rounded-3xl border border-white/10 p-5">
+            <p className="text-sm text-zinc-400">Find {business.name}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {links.map(([label, link]) => (
+                <a key={label} href={link} target="_blank" className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
+                  {label}
+                </a>
+              ))}
+            </div>
+          </div>
+        </footer>
+      ) : null}
 
       {count > 0 ? (
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07070a]/95 p-4 backdrop-blur">

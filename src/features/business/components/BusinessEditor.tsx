@@ -9,7 +9,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-type Business = { name: string; phone: string; category: string; slug: string };
+type Business = {
+  name: string;
+  phone: string;
+  category: string;
+  slug: string;
+  logo_url?: string | null;
+  instagram?: string | null;
+  tiktok?: string | null;
+  website?: string | null;
+};
 
 export default function BusinessEditor({ business }: { business: Business }) {
   const router = useRouter();
@@ -39,7 +48,14 @@ export default function BusinessEditor({ business }: { business: Business }) {
       <Link href={`/store/${slug}`} className="inline-flex text-sm text-violet-300">
         /store/{slug}
       </Link>
+      {business.logo_url ? (
+        <img src={business.logo_url} alt="" className="h-16 w-16 rounded-2xl object-cover" />
+      ) : null}
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Logo</Label>
+        <Input name="logo" type="file" accept="image/*" />
+      </div>
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Business name</Label>
         <Input name="name" defaultValue={business.name} required />
@@ -55,6 +71,18 @@ export default function BusinessEditor({ business }: { business: Business }) {
             <option key={category} value={category}>{category}</option>
           ))}
         </select>
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Instagram</Label>
+        <Input name="instagram" defaultValue={business.instagram || ""} placeholder="https://instagram.com/yourshop" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">TikTok</Label>
+        <Input name="tiktok" defaultValue={business.tiktok || ""} placeholder="https://tiktok.com/@yourshop" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Website</Label>
+        <Input name="website" defaultValue={business.website || ""} placeholder="https://yourshop.com" />
       </div>
       <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Save shop details"}</Button>
     </form>

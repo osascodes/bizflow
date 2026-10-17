@@ -1,5 +1,7 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 
+const businessFields = "id, name, phone, category, slug, logo_url, instagram, tiktok, website";
+
 export async function getCurrentBusiness() {
   const supabase = await createServerSupabase();
   const {
@@ -14,7 +16,7 @@ export async function getCurrentBusiness() {
 
   const { data: owned } = await supabase
     .from("businesses")
-    .select("id, name, phone, category, slug")
+    .select(businessFields)
     .eq("owner_id", user.id)
     .maybeSingle();
 
@@ -22,7 +24,7 @@ export async function getCurrentBusiness() {
 
   const { data: staff } = await supabase
     .from("staff_members")
-    .select("role, businesses(id, name, phone, category, slug)")
+    .select(`role, businesses(${businessFields})`)
     .eq("user_id", user.id)
     .eq("active", true)
     .maybeSingle();

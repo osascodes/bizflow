@@ -15,6 +15,11 @@ function slugify(value: string) {
   return `${base || "shop"}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
+function cleanLink(value: FormDataEntryValue | null) {
+  const text = String(value || "").trim();
+  return text || null;
+}
+
 export async function createBusinessAction(formData: FormData) {
   const parsed = onboardingSchema.safeParse({
     name: formData.get("name"),
@@ -76,6 +81,19 @@ export async function updateBusinessAction(formData: FormData) {
 
   const nextSlug = slugify(parsed.data.name);
   const supabase = await createServerSupabase();
+  const file = formData.get("logo");
+  let logoUrl = business.logo_url || null;
+
+  if (file instanceof File && file.size > 0) {
+    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
+    const path = `${business.id}/logo-${Date.now()}-${safeName}`;
+    const { error: uploadError } = await supabase.storage
+      .from("product-images")
+      .upload(path, file, { contentType: file.type || "image/jpeg" });
+    if (uploadError) throw new Error(uploadError.message);
+    logoUrl = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  }
+
   const { data, error } = await supabase
     .from("businesses")
     .update({
@@ -83,6 +101,10 @@ export async function updateBusinessAction(formData: FormData) {
       phone: parsed.data.phone,
       category: parsed.data.category,
       slug: nextSlug,
+      logo_url: logoUrl,
+      instagram: cleanLink(formData.get("instagram")),
+      tiktok: cleanLink(formData.get("tiktok")),
+      website: cleanLink(formData.get("website")),
     })
     .eq("id", business.id)
     .select("slug")
@@ -91,6 +113,7 @@ export async function updateBusinessAction(formData: FormData) {
   if (error) throw new Error(error.message);
   revalidatePath("/dashboard");
   revalidatePath("/storefront");
+  revalidatePath("/settings");
   revalidatePath(`/store/${business.slug}`);
   revalidatePath(`/store/${nextSlug}`);
   return { slug: data.slug };

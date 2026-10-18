@@ -226,12 +226,14 @@ export default function StoreClient({
       {business.hero_url ? (
         <section className="relative mx-auto max-w-6xl px-4 pt-6">
           <div className="relative overflow-hidden rounded-[32px]">
-            <img src={business.hero_url} alt="" className="h-[420px] w-full object-cover sm:h-[520px]" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
-            <div className="absolute inset-x-0 bottom-0 p-6">
-              <h1 className="text-3xl font-semibold sm:text-5xl">{headline}</h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-200">{description}</p>
-              <button type="button" onClick={shopNow} className="mt-5 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
+            <img src={business.hero_url} alt="" className="h-[420px] w-full object-cover sm:h-[480px]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
+            <div className="absolute inset-0 flex items-center p-6 sm:p-10">
+              <div className="max-w-xl">
+                <h1 className="text-3xl font-semibold sm:text-5xl">{headline}</h1>
+                <p className="mt-3 text-sm leading-6 text-zinc-200">{description}</p>
+                <button type="button" onClick={shopNow} className="mt-5 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
+              </div>
             </div>
           </div>
         </section>

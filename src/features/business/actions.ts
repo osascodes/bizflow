@@ -15,9 +15,17 @@ function slugify(value: string) {
   return `${base || "shop"}-${Math.random().toString(36).slice(2, 7)}`;
 }
 
-function cleanLink(value: FormDataEntryValue | null) {
+function clean(value: FormDataEntryValue | null) {
   const text = String(value || "").trim();
   return text || null;
+}
+
+async function upload(supabase: Awaited<ReturnType<typeof createServerSupabase>>, businessId: string, file: File, prefix: string) {
+  const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
+  const path = `${businessId}/${prefix}-${Date.now()}-${safeName}`;
+  const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type || "image/jpeg" });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
 }
 
 export async function createBusinessAction(formData: FormData) {
@@ -81,18 +89,13 @@ export async function updateBusinessAction(formData: FormData) {
 
   const nextSlug = slugify(parsed.data.name);
   const supabase = await createServerSupabase();
-  const file = formData.get("logo");
+  const logo = formData.get("logo");
+  const hero = formData.get("hero");
   let logoUrl = business.logo_url || null;
+  let heroUrl = business.hero_url || null;
 
-  if (file instanceof File && file.size > 0) {
-    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
-    const path = `${business.id}/logo-${Date.now()}-${safeName}`;
-    const { error: uploadError } = await supabase.storage
-      .from("product-images")
-      .upload(path, file, { contentType: file.type || "image/jpeg" });
-    if (uploadError) throw new Error(uploadError.message);
-    logoUrl = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
-  }
+  if (logo instanceof File && logo.size > 0) logoUrl = await upload(supabase, business.id, logo, "logo");
+  if (hero instanceof File && hero.size > 0) heroUrl = await upload(supabase, business.id, hero, "hero");
 
   const { data, error } = await supabase
     .from("businesses")
@@ -102,9 +105,12 @@ export async function updateBusinessAction(formData: FormData) {
       category: parsed.data.category,
       slug: nextSlug,
       logo_url: logoUrl,
-      instagram: cleanLink(formData.get("instagram")),
-      tiktok: cleanLink(formData.get("tiktok")),
-      website: cleanLink(formData.get("website")),
+      hero_url: heroUrl,
+      store_headline: clean(formData.get("store_headline")),
+      store_description: clean(formData.get("store_description")),
+      instagram: clean(formData.get("instagram")),
+      tiktok: clean(formData.get("tiktok")),
+      website: clean(formData.get("website")),
     })
     .eq("id", business.id)
     .select("slug")

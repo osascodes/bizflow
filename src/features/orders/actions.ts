@@ -4,6 +4,10 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { revalidatePath } from "next/cache";
 
+function orderNumber() {
+  return `BF-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+}
+
 export async function placeCartAction(input: {
   businessId: string;
   slug: string;
@@ -16,6 +20,7 @@ export async function placeCartAction(input: {
   if (input.items.length === 0) throw new Error("Add a product first");
 
   const supabase = await createServerSupabase();
+  const number = orderNumber();
   const rows = input.items.map((item) => ({
     business_id: input.businessId,
     product_id: item.productId,
@@ -23,12 +28,14 @@ export async function placeCartAction(input: {
     quantity: item.quantity,
     customer_name: input.customerName.trim(),
     customer_phone: input.customerPhone.trim(),
+    order_number: number,
   }));
 
   const { error } = await supabase.from("orders").insert(rows);
   if (error) throw new Error(error.message);
   revalidatePath(`/store/${input.slug}`);
   revalidatePath("/storefront");
+  return { orderNumber: number };
 }
 
 export async function updateOrderStatusAction(formData: FormData) {

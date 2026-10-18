@@ -7,6 +7,7 @@ type Product = {
   price: number;
   stock: number;
   image_url?: string | null;
+  description?: string | null;
   created_at?: string | null;
 };
 
@@ -20,7 +21,7 @@ export default async function PublicStorePage({
 
   const { data: business, error } = await supabase
     .from("businesses")
-    .select("id, name, phone, category, slug, logo_url, instagram, tiktok, website")
+    .select("id, name, phone, category, slug, logo_url, instagram, tiktok, website, hero_url, store_headline, store_description")
     .eq("slug", slug)
     .maybeSingle();
 
@@ -38,21 +39,21 @@ export default async function PublicStorePage({
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, stock, image_url, created_at")
+    .select("id, name, price, stock, image_url, description, created_at")
     .eq("business_id", business.id)
-    .gt("stock", 0)
     .order("name");
 
   const list = (products ?? []) as Product[];
+  const inStock = list.filter((product) => product.stock > 0);
   const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
-  const fresh = list
+  const fresh = inStock
     .filter((product) => product.created_at && new Date(product.created_at).getTime() >= cutoff)
     .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
     .slice(0, 6);
 
   const { data: sold } = await supabase.rpc("store_best_sellers", { shop_id: business.id });
   const soldRows = Array.isArray(sold) ? sold : [];
-  const byId = new Map(list.map((product) => [product.id, product]));
+  const byId = new Map(inStock.map((product) => [product.id, product]));
   const best = soldRows
     .map((row: { product_id: string }) => byId.get(row.product_id))
     .filter(Boolean) as Product[];

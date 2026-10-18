@@ -2,6 +2,11 @@ import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getAnalytics } from "@/features/analytics/queries";
 
+function barHeight(total: number, max: number) {
+  if (total <= 0) return 0;
+  return Math.max(22, (total / max) * 100);
+}
+
 export default async function AnalyticsPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
@@ -30,7 +35,7 @@ export default async function AnalyticsPage() {
           {cards.map((card) => (
             <div key={card.label} className={`rounded-3xl border border-white/10 bg-gradient-to-br ${card.tone} p-5 transition duration-300 hover:-translate-y-0.5`}>
               <p className={`text-sm ${card.accent}`}>{card.label}</p>
-              <p className="mt-3 text-2xl font-semibold text-white">₦{Number(card.value).toLocaleString()}</p>
+              <p className="mt-3 text-2xl font-semibold text-white">NGN {Number(card.value).toLocaleString()}</p>
             </div>
           ))}
         </div>
@@ -39,29 +44,34 @@ export default async function AnalyticsPage() {
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-semibold text-white">Last 7 days</h2>
-              <p className="mt-1 text-sm text-zinc-500">Sales only. Every bar is the same metric.</p>
+              <p className="mt-1 text-sm text-zinc-500">A day with no sales has no bar.</p>
             </div>
-            <p className="text-sm text-violet-300">₦{analytics.weekSales.toLocaleString()}</p>
+            <p className="text-sm text-violet-300">NGN {analytics.weekSales.toLocaleString()}</p>
           </div>
           {hasWeekSales ? (
             <div className="mt-8 flex h-48 items-end gap-3">
-              {analytics.days.map((day, index) => (
-                <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                  <p className="text-[11px] text-zinc-500">₦{day.total.toLocaleString()}</p>
-                  <div className="flex h-32 w-full items-end">
-                    <div
-                      className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-violet-600/20 to-violet-300"
-                      style={{ height: `${Math.max(8, (day.total / max) * 100)}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
-                    />
+              {analytics.days.map((day, index) => {
+                const height = barHeight(day.total, max);
+                return (
+                  <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
+                    <p className="text-[11px] text-zinc-500">{day.total > 0 ? `NGN ${day.total.toLocaleString()}` : "0"}</p>
+                    <div className="flex h-32 w-full items-end">
+                      {height > 0 ? (
+                        <div
+                          className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-violet-700 to-violet-300"
+                          style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
+                        />
+                      ) : null}
+                    </div>
+                    <p className="text-xs text-zinc-400">{day.label}</p>
                   </div>
-                  <p className="text-xs text-zinc-400">{day.label}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="mt-8 rounded-2xl border border-dashed border-zinc-700 px-4 py-10 text-center">
               <p className="text-sm text-zinc-300">No sales in the last 7 days.</p>
-              <p className="mt-2 text-sm text-zinc-500">This month is ₦{analytics.monthSales.toLocaleString()}. Those sales were earlier than this week.</p>
+              <p className="mt-2 text-sm text-zinc-500">This month is NGN {analytics.monthSales.toLocaleString()}. Those sales were earlier than this week.</p>
             </div>
           )}
         </section>
@@ -80,7 +90,7 @@ export default async function AnalyticsPage() {
                       <p className="truncate text-sm font-medium text-white">{product.name}</p>
                       <p className="text-xs text-zinc-500">{product.quantity} sold</p>
                     </div>
-                    <p className="text-sm text-zinc-200">₦{product.amount.toLocaleString()}</p>
+                    <p className="text-sm text-zinc-200">NGN {product.amount.toLocaleString()}</p>
                   </div>
                 ))
               )}

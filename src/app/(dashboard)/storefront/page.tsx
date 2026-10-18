@@ -13,7 +13,7 @@ export default async function StorefrontPage() {
   const supabase = await createServerSupabase();
   const { data: orders } = await supabase
     .from("orders")
-    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at")
+    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number")
     .eq("business_id", business.id)
     .order("created_at", { ascending: false })
     .limit(20);
@@ -45,7 +45,7 @@ export default async function StorefrontPage() {
                   <div>
                     <h2 className="font-semibold text-white">{order.quantity} x {order.product_name}</h2>
                     <p className="mt-1 text-sm text-zinc-400">{order.customer_name} · {order.customer_phone}</p>
-                    <p className="mt-1 text-xs text-zinc-500">{order.status}</p>
+                    <p className="mt-1 text-xs text-zinc-500">{order.order_number || order.status} · {order.status}</p>
                   </div>
                   <a className="text-sm text-violet-300" href={`https://wa.me/${order.customer_phone.replace(/\D/g, "")}`} target="_blank">
                     WhatsApp

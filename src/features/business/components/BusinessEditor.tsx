@@ -15,6 +15,9 @@ type Business = {
   category: string;
   slug: string;
   logo_url?: string | null;
+  hero_url?: string | null;
+  store_headline?: string | null;
+  store_description?: string | null;
   instagram?: string | null;
   tiktok?: string | null;
   website?: string | null;
@@ -45,16 +48,27 @@ export default function BusinessEditor({ business }: { business: Business }) {
     >
       <h2 className="font-semibold text-white">Shop details</h2>
       <p className="text-sm text-zinc-400">Current link</p>
-      <Link href={`/store/${slug}`} className="inline-flex text-sm text-violet-300">
-        /store/{slug}
-      </Link>
-      {business.logo_url ? (
-        <img src={business.logo_url} alt="" className="h-16 w-16 rounded-2xl object-cover" />
-      ) : null}
+      <Link href={`/store/${slug}`} className="inline-flex text-sm text-violet-300">/store/{slug}</Link>
+      <div className="flex gap-3">
+        {business.logo_url ? <img src={business.logo_url} alt="" className="h-16 w-16 rounded-2xl object-cover" /> : null}
+        {business.hero_url ? <img src={business.hero_url} alt="" className="h-16 w-28 rounded-2xl object-cover" /> : null}
+      </div>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Logo</Label>
         <Input name="logo" type="file" accept="image/*" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Hero image, optional</Label>
+        <Input name="hero" type="file" accept="image/*" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Store headline</Label>
+        <Input name="store_headline" defaultValue={business.store_headline || ""} placeholder="Shop Solo Gadgets" />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Store description</Label>
+        <Input name="store_description" defaultValue={business.store_description || ""} placeholder="Gadgets and accessories, ready to order." />
       </div>
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Business name</Label>

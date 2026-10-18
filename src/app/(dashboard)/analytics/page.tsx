@@ -39,22 +39,24 @@ export default async function AnalyticsPage() {
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-semibold text-white">Last 7 days</h2>
-              <p className="mt-1 text-sm text-zinc-500">Sales only. Empty days stay visible.</p>
+              <p className="mt-1 text-sm text-zinc-500">Days stay. Bars only show when there is a sale.</p>
             </div>
             <p className="text-sm text-violet-300">N{analytics.weekSales.toLocaleString()}</p>
           </div>
           {hasWeekSales ? (
             <div className="mt-8 flex h-56 items-end gap-3">
               {analytics.days.map((day, index) => {
-                const height = day.total === 0 ? 6 : Math.max(22, (day.total / max) * 100);
+                const height = day.total === 0 ? 0 : Math.max(22, (day.total / max) * 100);
                 return (
                   <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
                     <p className="text-[11px] text-zinc-500">{day.total === 0 ? "0" : `N${day.total.toLocaleString()}`}</p>
-                    <div className="flex h-40 w-full items-end">
-                      <div
-                        className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-[#6d28d9] to-[#a78bfa]"
-                        style={{ height: `${height}%`, opacity: day.total === 0 ? 0.35 : 1, animation: `barRise 700ms ease ${index * 70}ms both` }}
-                      />
+                    <div className="flex h-40 w-full items-end border-b border-white/10">
+                      {height > 0 ? (
+                        <div
+                          className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-[#7e22ce] to-[#d946ef]"
+                          style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
+                        />
+                      ) : null}
                     </div>
                     <p className="text-xs text-zinc-400">{day.label}</p>
                   </div>

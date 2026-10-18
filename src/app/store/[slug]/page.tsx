@@ -1,6 +1,15 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 import StoreClient from "@/features/orders/components/StoreClient";
 
+type Product = {
+  id: string;
+  name: string;
+  price: number;
+  stock: number;
+  image_url?: string | null;
+  created_at?: string | null;
+};
+
 export default async function PublicStorePage({
   params,
 }: {
@@ -29,10 +38,24 @@ export default async function PublicStorePage({
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, stock, image_url")
+    .select("id, name, price, stock, image_url, created_at")
     .eq("business_id", business.id)
     .gt("stock", 0)
     .order("name");
 
-  return <StoreClient business={business} products={products ?? []} />;
+  const list = (products ?? []) as Product[];
+  const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+  const fresh = list
+    .filter((product) => product.created_at && new Date(product.created_at).getTime() >= cutoff)
+    .sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime())
+    .slice(0, 6);
+
+  const { data: sold } = await supabase.rpc("store_best_sellers", { shop_id: business.id });
+  const soldRows = Array.isArray(sold) ? sold : [];
+  const byId = new Map(list.map((product) => [product.id, product]));
+  const best = soldRows
+    .map((row: { product_id: string }) => byId.get(row.product_id))
+    .filter(Boolean) as Product[];
+
+  return <StoreClient business={business} products={list} fresh={fresh} best={best} />;
 }

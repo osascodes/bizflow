@@ -39,9 +39,9 @@ export default async function AnalyticsPage() {
           <div className="flex items-end justify-between gap-3">
             <div>
               <h2 className="font-semibold text-white">Last 7 days</h2>
-              <p className="mt-1 text-sm text-zinc-500">This month can be higher if the sales were before these 7 days.</p>
+              <p className="mt-1 text-sm text-zinc-500">Sales only. Every bar is the same metric.</p>
             </div>
-            <p className="text-sm text-fuchsia-300">₦{analytics.weekSales.toLocaleString()}</p>
+            <p className="text-sm text-violet-300">₦{analytics.weekSales.toLocaleString()}</p>
           </div>
           {hasWeekSales ? (
             <div className="mt-8 flex h-48 items-end gap-3">
@@ -50,7 +50,7 @@ export default async function AnalyticsPage() {
                   <p className="text-[11px] text-zinc-500">₦{day.total.toLocaleString()}</p>
                   <div className="flex h-32 w-full items-end">
                     <div
-                      className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-violet-600 via-fuchsia-500 to-amber-300"
+                      className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-violet-600/20 to-violet-300"
                       style={{ height: `${Math.max(8, (day.total / max) * 100)}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
                     />
                   </div>
@@ -75,12 +75,12 @@ export default async function AnalyticsPage() {
               ) : (
                 analytics.topProducts.map((product, index) => (
                   <div key={product.name} className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-violet-500 to-fuchsia-500 text-xs font-semibold text-white">{index + 1}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/20 text-xs font-semibold text-violet-200">{index + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-white">{product.name}</p>
                       <p className="text-xs text-zinc-500">{product.quantity} sold</p>
                     </div>
-                    <p className="text-sm text-emerald-300">₦{product.amount.toLocaleString()}</p>
+                    <p className="text-sm text-zinc-200">₦{product.amount.toLocaleString()}</p>
                   </div>
                 ))
               )}

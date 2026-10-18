@@ -36,9 +36,13 @@ function href(value?: string | null) {
 export default function StoreClient({
   business,
   products,
+  fresh = [],
+  best = [],
 }: {
   business: Business;
   products: Product[];
+  fresh?: Product[];
+  best?: Product[];
 }) {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [name, setName] = useState("");
@@ -106,6 +110,50 @@ export default function StoreClient({
     }
   };
 
+  const card = (product: Product, badge?: string) => {
+    const qty = cart[product.id] || 0;
+    return (
+      <article key={`${badge || "all"}-${product.id}`} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900/80">
+        <div className="relative aspect-square bg-zinc-950">
+          {product.image_url ? (
+            <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
+              <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
+            </div>
+          )}
+          {badge ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-white">{badge}</span> : null}
+          {!badge && product.stock <= 5 ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-amber-200">Few left</span> : null}
+        </div>
+        <div className="p-4">
+          <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
+          <p className="mt-1 text-sm font-semibold text-zinc-100">₦{Number(product.price).toLocaleString()}</p>
+          <div className="mt-4">
+            {qty === 0 ? (
+              <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 w-full rounded-full bg-white text-sm font-semibold text-zinc-950">Add to cart</button>
+            ) : (
+              <div className="flex h-10 items-center justify-between rounded-full bg-white px-2 text-zinc-950">
+                <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 text-lg">−</button>
+                <span className="text-sm font-semibold">{qty}</span>
+                <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-8 w-8 text-lg">+</button>
+              </div>
+            )}
+          </div>
+        </div>
+      </article>
+    );
+  };
+
+  const row = (title: string, items: Product[], badge: string) => {
+    if (items.length === 0) return null;
+    return (
+      <section className="relative mx-auto max-w-6xl px-4 pb-8">
+        <h2 className="mb-4 text-lg font-semibold">{title}</h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">{items.map((product) => card(product, badge))}</div>
+      </section>
+    );
+  };
+
   return (
     <main className="min-h-screen bg-[#07070a] text-white">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.16),transparent_32%),radial-gradient(circle_at_top_right,rgba(217,70,239,0.12),transparent_28%)]" />
@@ -115,9 +163,7 @@ export default function StoreClient({
             {business.logo_url ? (
               <img src={business.logo_url} alt="" className="h-11 w-11 rounded-2xl object-cover" />
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">
-                {initial(business.name)}
-              </span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">{initial(business.name)}</span>
             )}
             <div>
               <p className="font-semibold">{business.name}</p>
@@ -125,9 +171,7 @@ export default function StoreClient({
             </div>
           </div>
           {shopWhatsapp ? (
-            <a href={shopWhatsapp} target="_blank" className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">
-              WhatsApp
-            </a>
+            <a href={shopWhatsapp} target="_blank" className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">WhatsApp</a>
           ) : null}
         </div>
       </header>
@@ -138,47 +182,18 @@ export default function StoreClient({
         <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">Add what you want, then send the order on WhatsApp. The shop gets it instantly.</p>
       </section>
 
-      <section className="relative mx-auto grid max-w-6xl grid-cols-2 gap-3 px-4 pb-10 lg:grid-cols-3 lg:gap-5">
-        {products.length === 0 ? (
-          <div className="col-span-2 rounded-3xl border border-dashed border-white/10 p-8 text-sm text-zinc-500 lg:col-span-3">Nothing in stock right now.</div>
-        ) : (
-          products.map((product) => {
-            const qty = cart[product.id] || 0;
-            return (
-              <article key={product.id} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900/80">
-                <div className="relative aspect-square bg-zinc-950">
-                  {product.image_url ? (
-                    <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
-                      <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
-                    </div>
-                  )}
-                  {product.stock <= 5 ? (
-                    <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-amber-200">Few left</span>
-                  ) : null}
-                </div>
-                <div className="p-4">
-                  <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
-                  <p className="mt-1 text-sm font-semibold text-zinc-100">₦{Number(product.price).toLocaleString()}</p>
-                  <div className="mt-4">
-                    {qty === 0 ? (
-                      <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 w-full rounded-full bg-white text-sm font-semibold text-zinc-950">
-                        Add to cart
-                      </button>
-                    ) : (
-                      <div className="flex h-10 items-center justify-between rounded-full bg-white px-2 text-zinc-950">
-                        <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 text-lg">−</button>
-                        <span className="text-sm font-semibold">{qty}</span>
-                        <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-8 w-8 text-lg">+</button>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </article>
-            );
-          })
-        )}
+      {row("New", fresh, "New")}
+      {row("Best sellers", best, "Best")}
+
+      <section className="relative mx-auto max-w-6xl px-4 pb-10">
+        <h2 className="mb-4 text-lg font-semibold">All products</h2>
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">
+          {products.length === 0 ? (
+            <div className="col-span-2 rounded-3xl border border-dashed border-white/10 p-8 text-sm text-zinc-500 lg:col-span-3">Nothing in stock right now.</div>
+          ) : (
+            products.map((product) => card(product))
+          )}
+        </div>
       </section>
 
       {links.length > 0 ? (
@@ -187,9 +202,7 @@ export default function StoreClient({
             <p className="text-sm text-zinc-400">Find {business.name}</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {links.map(([label, link]) => (
-                <a key={label} href={link} target="_blank" className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">
-                  {label}
-                </a>
+                <a key={label} href={link} target="_blank" className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">{label}</a>
               ))}
             </div>
           </div>
@@ -203,9 +216,7 @@ export default function StoreClient({
               <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
               <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>
             </div>
-            <button type="button" onClick={() => setOpen(true)} className="h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">
-              View cart
-            </button>
+            <button type="button" onClick={() => setOpen(true)} className="h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">View cart</button>
           </div>
         </div>
       ) : null}
@@ -221,20 +232,14 @@ export default function StoreClient({
               <div className="mt-10 text-center">
                 <p className="text-2xl font-semibold">Order sent</p>
                 <p className="mt-2 text-sm text-zinc-400">WhatsApp should open with the order. The shop has it too.</p>
-                <button type="button" onClick={() => { setDone(false); setOpen(false); }} className="mt-6 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">
-                  Back to shop
-                </button>
+                <button type="button" onClick={() => { setDone(false); setOpen(false); }} className="mt-6 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Back to shop</button>
               </div>
             ) : (
               <div className="mt-6 space-y-5">
                 {lines.map((line) => (
                   <div key={line.id} className="flex items-center gap-3">
                     <div className="h-14 w-14 overflow-hidden rounded-2xl bg-zinc-800">
-                      {line.image_url ? (
-                        <img src={line.image_url} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        <div className="flex h-full w-full items-center justify-center text-sm font-semibold">{initial(line.name)}</div>
-                      )}
+                      {line.image_url ? <img src={line.image_url} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-sm font-semibold">{initial(line.name)}</div>}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{line.name}</p>

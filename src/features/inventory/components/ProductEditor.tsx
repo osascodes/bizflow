@@ -12,6 +12,7 @@ type Product = {
   price: number;
   stock: number;
   image_url?: string | null;
+  description?: string | null;
   low_stock_at: number;
 };
 
@@ -48,6 +49,7 @@ export default function ProductEditor({ product }: { product: Product }) {
             <input type="hidden" name="id" value={product.id} />
             {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
             <Input name="name" defaultValue={product.name} />
+            <Input name="description" defaultValue={product.description || ""} placeholder="Description" />
             <div className="grid grid-cols-2 gap-2">
               <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
               <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />

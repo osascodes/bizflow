@@ -19,7 +19,7 @@ export default function ProductForm() {
 
   const form = useForm<FormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: { name: "", price: 0, stock: 0 },
+    defaultValues: { name: "", price: 0, stock: 0, description: "" },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -30,9 +30,10 @@ export default function ProductForm() {
       formData.append("name", data.name);
       formData.append("price", String(data.price));
       formData.append("stock", String(data.stock));
+      formData.append("description", data.description || "");
       if (image) formData.append("image", image);
       await createProductAction(formData);
-      form.reset({ name: "", price: 0, stock: 0 });
+      form.reset({ name: "", price: 0, stock: 0, description: "" });
       setImage(null);
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Could not save product.");
@@ -44,16 +45,16 @@ export default function ProductForm() {
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
       {errorMessage ? (
-        <div className="rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400">
-          {errorMessage}
-        </div>
+        <div className="rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400">{errorMessage}</div>
       ) : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Product</Label>
         <Input {...form.register("name")} placeholder="Ankara gown" />
-        {form.formState.errors.name ? (
-          <p className="text-xs text-red-400">{form.formState.errors.name.message}</p>
-        ) : null}
+        {form.formState.errors.name ? <p className="text-xs text-red-400">{form.formState.errors.name.message}</p> : null}
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Description</Label>
+        <Input {...form.register("description")} placeholder="Size, color, or short details" />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
@@ -69,9 +70,7 @@ export default function ProductForm() {
         <Label className="text-zinc-300">Photo</Label>
         <Input type="file" accept="image/*" onChange={(event) => setImage(event.target.files?.[0] || null)} />
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>
-        {pending ? "Saving..." : "Add product"}
-      </Button>
+      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Add product"}</Button>
     </form>
   );
 }

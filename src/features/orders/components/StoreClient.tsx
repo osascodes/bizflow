@@ -106,6 +106,10 @@ export default function StoreClient({
     });
   };
 
+  const shopNow = () => {
+    document.getElementById("products")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   const openProduct = (product: Product) => {
     setSelected(product);
     setDetailQty(product.stock > 0 ? 1 : 0);
@@ -222,11 +226,12 @@ export default function StoreClient({
       {business.hero_url ? (
         <section className="relative mx-auto max-w-6xl px-4 pt-6">
           <div className="relative overflow-hidden rounded-[32px]">
-            <img src={business.hero_url} alt="" className="h-64 w-full object-cover sm:h-80" />
+            <img src={business.hero_url} alt="" className="h-72 w-full object-cover sm:h-96" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-black/10" />
             <div className="absolute inset-x-0 bottom-0 p-6">
               <h1 className="text-3xl font-semibold sm:text-5xl">{headline}</h1>
               <p className="mt-3 max-w-xl text-sm leading-6 text-zinc-200">{description}</p>
+              <button type="button" onClick={shopNow} className="mt-5 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
             </div>
           </div>
         </section>
@@ -235,10 +240,11 @@ export default function StoreClient({
           <p className="text-sm text-violet-300">In stock now</p>
           <h1 className="mt-2 max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl">{headline}</h1>
           <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">{description}</p>
+          <button type="button" onClick={shopNow} className="mt-6 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
         </section>
       )}
 
-      <section className="relative mx-auto max-w-6xl px-4 py-6">
+      <section id="products" className="relative mx-auto max-w-6xl px-4 py-6">
         <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-12 rounded-full bg-zinc-900" />
       </section>
 

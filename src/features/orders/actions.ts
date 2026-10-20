@@ -47,11 +47,22 @@ export async function updateOrderStatusAction(formData: FormData) {
   if (!business) throw new Error("Create your business first");
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase
-    .from("orders")
-    .update({ status })
-    .eq("id", orderId)
-    .eq("business_id", business.id);
-  if (error) throw new Error(error.message);
+
+  if (status === "done") {
+    const { error } = await supabase.rpc("complete_store_order", { p_order_id: orderId });
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await supabase
+      .from("orders")
+      .update({ status })
+      .eq("id", orderId)
+      .eq("business_id", business.id);
+    if (error) throw new Error(error.message);
+  }
+
   revalidatePath("/storefront");
+  revalidatePath("/sales");
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
 }

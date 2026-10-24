@@ -18,6 +18,7 @@ type Business = {
   hero_url?: string | null;
   store_headline?: string | null;
   store_description?: string | null;
+  address?: string | null;
   instagram?: string | null;
   tiktok?: string | null;
   website?: string | null;
@@ -77,6 +78,10 @@ export default function BusinessEditor({ business }: { business: Business }) {
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Phone</Label>
         <Input name="phone" defaultValue={business.phone} required />
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Address, optional</Label>
+        <Input name="address" defaultValue={business.address || ""} placeholder="12 Allen Avenue, Ikeja" />
       </div>
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Category</Label>

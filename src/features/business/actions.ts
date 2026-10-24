@@ -108,6 +108,7 @@ export async function updateBusinessAction(formData: FormData) {
       hero_url: heroUrl,
       store_headline: clean(formData.get("store_headline")),
       store_description: clean(formData.get("store_description")),
+      address: clean(formData.get("address")),
       instagram: clean(formData.get("instagram")),
       tiktok: clean(formData.get("tiktok")),
       website: clean(formData.get("website")),

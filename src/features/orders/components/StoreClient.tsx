@@ -276,7 +276,7 @@ export default function StoreClient({
             ) : null}
             {links.length > 0 ? (
               <div className={business.address ? "mt-5" : ""}>
-                <p className="text-sm text-zinc-400">Find {business.name}</p>
+                <p className="text-sm text-zinc-400">Connect with {business.name}</p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {links.map(([label, link]) => (
                     <a key={label} href={link} target="_blank" className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">{label}</a>

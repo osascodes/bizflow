@@ -21,7 +21,7 @@ export default async function PublicStorePage({
 
   const { data: business, error } = await supabase
     .from("businesses")
-    .select("id, name, phone, category, slug, logo_url, instagram, tiktok, website, hero_url, store_headline, store_description")
+    .select("id, name, phone, category, slug, logo_url, instagram, tiktok, website, hero_url, store_headline, store_description, address")
     .eq("slug", slug)
     .maybeSingle();
 

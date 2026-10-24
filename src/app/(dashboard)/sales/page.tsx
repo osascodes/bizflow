@@ -29,7 +29,12 @@ export default async function SalesPage() {
             </div>
           ) : (
             sales.map((sale) => {
-              const item = sale.sale_items?.[0];
+              const items = sale.sale_items ?? [];
+              const title = items.length > 1
+                ? `${items.length} items`
+                : items[0]
+                  ? `${items[0].quantity} x ${items[0].name}`
+                  : "Sale";
               return (
                 <Link
                   key={sale.id}
@@ -38,8 +43,9 @@ export default async function SalesPage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <h2 className="font-semibold text-white">{item ? `${item.quantity} x ${item.name}` : "Sale"}</h2>
-                      <p className="mt-1 text-sm text-zinc-500">{new Date(sale.created_at).toLocaleString()}</p>
+                      <h2 className="font-semibold text-white">{title}</h2>
+                      <p className="mt-1 text-sm text-zinc-500">{items.length > 1 ? items.map((item) => item.name).join(", ") : new Date(sale.created_at).toLocaleString()}</p>
+                      {items.length > 1 ? <p className="mt-1 text-xs text-zinc-600">{new Date(sale.created_at).toLocaleString()}</p> : null}
                     </div>
                     <p className="text-sm text-white">₦{Number(sale.total).toLocaleString()}</p>
                   </div>

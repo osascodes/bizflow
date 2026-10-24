@@ -44,6 +44,15 @@ function href(value?: string | null) {
   return value.startsWith("http") ? value : `https://${value}`;
 }
 
+function titleCase(value?: string | null) {
+  if (!value) return "";
+  return value
+    .trim()
+    .split(/\s+/)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
 function stockState(stock: number) {
   if (stock <= 0) return { label: "Out of stock", className: "bg-rose-500/15 text-rose-200" };
   if (stock <= 5) return { label: "Low stock", className: "bg-amber-500/15 text-amber-200" };
@@ -215,7 +224,7 @@ export default function StoreClient({
             )}
             <div>
               <p className="font-semibold">{business.name}</p>
-              <p className="text-xs text-zinc-400">{business.address || business.category}</p>
+              <p className="text-xs text-zinc-400">{business.address ? titleCase(business.address) : business.category}</p>
             </div>
           </div>
           {shopWhatsapp ? (
@@ -271,7 +280,7 @@ export default function StoreClient({
             {business.address ? (
               <div>
                 <p className="text-sm text-zinc-400">Visit</p>
-                <p className="mt-1 text-sm text-white">{business.address}</p>
+                <p className="mt-1 text-sm text-white">{titleCase(business.address)}</p>
               </div>
             ) : null}
             {links.length > 0 ? (

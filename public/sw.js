@@ -1,4 +1,4 @@
-const CACHE = "bizflow-v1";
+const CACHE = "bizflow-v2";
 const PRECACHE = ["/", "/dashboard", "/icon-192.png", "/icon-512.png"];
 
 self.addEventListener("install", (event) => {
@@ -15,6 +15,10 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+function isLoginPath(url) {
+  return url.pathname.startsWith("/login") || url.pathname.startsWith("/register");
+}
+
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
@@ -26,8 +30,10 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(
       fetch(request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE).then((cache) => cache.put(request, copy));
+          if (response.ok && !isLoginPath(url) && !response.redirected) {
+            const copy = response.clone();
+            caches.open(CACHE).then((cache) => cache.put(request, copy));
+          }
           return response;
         })
         .catch(async () => {
@@ -47,8 +53,10 @@ self.addEventListener("fetch", (event) => {
   event.respondWith(
     fetch(request)
       .then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE).then((cache) => cache.put(request, copy));
+        if (response.ok) {
+          const copy = response.clone();
+          caches.open(CACHE).then((cache) => cache.put(request, copy));
+        }
         return response;
       })
       .catch(() => caches.match(request))

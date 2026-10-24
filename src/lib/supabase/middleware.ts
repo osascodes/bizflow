@@ -46,10 +46,17 @@ export async function updateSession(request: NextRequest) {
     },
   });
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let user = null;
+  let authFailed = false;
+  try {
+    const result = await supabase.auth.getUser();
+    user = result.data.user;
+    authFailed = Boolean(result.error);
+  } catch {
+    authFailed = true;
+  }
 
+  const hasSession = request.cookies.getAll().some((cookie) => cookie.name.includes("auth-token"));
   const path = request.nextUrl.pathname;
   const isAuthRoute =
     path.startsWith("/login") ||
@@ -58,7 +65,8 @@ export async function updateSession(request: NextRequest) {
     path.startsWith("/reset-password");
   const isAppRoute = appPrefixes.some((prefix) => path.startsWith(prefix));
 
-  if (!user && isAppRoute) {
+  // Offline or Supabase unreachable should not kick out a signed-in user.
+  if (!user && isAppRoute && !(authFailed && hasSession)) {
     const redirectUrl = request.nextUrl.clone();
     redirectUrl.pathname = "/login";
     return NextResponse.redirect(redirectUrl);

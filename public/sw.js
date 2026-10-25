@@ -1,10 +1,7 @@
-const CACHE = "bizflow-v2";
-const PRECACHE = ["/", "/dashboard", "/icon-192.png", "/icon-512.png"];
+const CACHE = "bizflow-v3";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)).then(() => self.skipWaiting())
-  );
+  event.waitUntil(self.skipWaiting());
 });
 
 self.addEventListener("activate", (event) => {
@@ -15,8 +12,21 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-function isLoginPath(url) {
-  return url.pathname.startsWith("/login") || url.pathname.startsWith("/register");
+function isAppPath(url) {
+  return [
+    "/dashboard",
+    "/inventory",
+    "/sales",
+    "/customers",
+    "/debts",
+    "/expenses",
+    "/storefront",
+    "/analytics",
+    "/activity",
+    "/staff",
+    "/notifications",
+    "/settings",
+  ].some((path) => url.pathname === path || url.pathname.startsWith(path + "/"));
 }
 
 self.addEventListener("fetch", (event) => {
@@ -26,26 +36,21 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  if (request.mode === "navigate") {
+  if (request.mode === "navigate" && isAppPath(url)) {
     event.respondWith(
-      fetch(request)
-        .then((response) => {
-          if (response.ok && !isLoginPath(url) && !response.redirected) {
-            const copy = response.clone();
-            caches.open(CACHE).then((cache) => cache.put(request, copy));
-          }
-          return response;
-        })
-        .catch(async () => {
-          const cached = await caches.match(request);
-          if (cached) return cached;
-          const home = await caches.match("/dashboard");
-          if (home) return home;
-          return new Response("You are offline. Open BizFlow once while online to save this page.", {
-            status: 503,
-            headers: { "Content-Type": "text/plain" },
-          });
-        })
+      caches.match(request).then((cached) => {
+        const network = fetch(request)
+          .then((response) => {
+            if (response.ok && !response.redirected) {
+              const copy = response.clone();
+              caches.open(CACHE).then((cache) => cache.put(request, copy));
+            }
+            return response;
+          })
+          .catch(() => cached);
+
+        return cached || network;
+      })
     );
     return;
   }

@@ -4,10 +4,9 @@ export async function getCurrentUser() {
   try {
     const supabase = await createServerSupabase();
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error && !user) return null;
-    return user;
+    return { user, offline: Boolean(error && !user) };
   } catch {
-    return null;
+    return { user: null, offline: true };
   }
 }
 

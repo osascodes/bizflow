@@ -9,13 +9,9 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  let user = null;
-  let offline = false;
-  try {
-    user = await getCurrentUser();
-  } catch {
-    offline = true;
-  }
+  const auth = await getCurrentUser();
+  const user = auth.user;
+  const offline = auth.offline;
   if (!user && !offline) redirect("/login");
 
   let business = null;

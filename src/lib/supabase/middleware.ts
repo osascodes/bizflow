@@ -56,7 +56,9 @@ export async function updateSession(request: NextRequest) {
     authFailed = true;
   }
 
-  const hasSession = request.cookies.getAll().some((cookie) => cookie.name.includes("auth-token"));
+  const hasSession = request.cookies.getAll().some((cookie) =>
+    cookie.name.includes("auth-token") || cookie.name.startsWith("sb-")
+  );
   const path = request.nextUrl.pathname;
   const isAuthRoute =
     path.startsWith("/login") ||

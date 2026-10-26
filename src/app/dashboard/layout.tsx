@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/lib/auth/utils";
+import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { logoutAction } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
@@ -9,8 +9,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await getCurrentUser();
-  if (!user) redirect("/login");
+  const { user, offline } = await getAuthState();
+  if (!user && !offline) redirect("/login");
 
   let business = null;
   try {

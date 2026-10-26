@@ -12,10 +12,26 @@ function money(value: number) {
 }
 
 export default async function DashboardPage() {
-  const authUser = await getCurrentUser();
-  const user = authUser && "user" in authUser ? authUser.user : authUser;
-  const business = await getCurrentBusiness();
-  if (!business) redirect("/start");
+  const user = await getCurrentUser();
+  let business = null;
+  try {
+    business = await getCurrentBusiness();
+  } catch {
+    business = null;
+  }
+  if (!business) {
+    if (!user) {
+      return (
+        <main className="px-4 py-8 md:px-8">
+          <div className="mx-auto max-w-xl rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+            <h1 className="text-xl font-semibold text-white">You are offline</h1>
+            <p className="mt-2 text-sm text-zinc-400">The last saved page will show when this page has been opened online once.</p>
+          </div>
+        </main>
+      );
+    }
+    redirect("/start");
+  }
 
   const isOwner = business.role === "owner";
   let lowStock = 0;
@@ -37,11 +53,7 @@ export default async function DashboardPage() {
   }
 
   const leftToday = salesToday - costsToday;
-  const name =
-    (user?.user_metadata?.full_name as string | undefined) ||
-    user?.email ||
-    "there";
-
+  const name = (user?.user_metadata?.full_name as string | undefined) || user?.email || "there";
   const stats = isOwner
     ? [
         ["Sales today", money(salesToday)],

@@ -6,8 +6,14 @@ import { getDebtsDue } from "@/features/debts/queries";
 import { getTodayExpenses } from "@/features/expenses/queries";
 import { redirect } from "next/navigation";
 
+function money(value: number) {
+  const amount = Number(value) || 0;
+  return `NGN ${amount.toLocaleString()}`;
+}
+
 export default async function DashboardPage() {
-  const user = await getCurrentUser();
+  const authUser = await getCurrentUser();
+  const user = authUser && "user" in authUser ? authUser.user : authUser;
   const business = await getCurrentBusiness();
   if (!business) redirect("/start");
 
@@ -38,15 +44,15 @@ export default async function DashboardPage() {
 
   const stats = isOwner
     ? [
-        ["Sales today", `₦${salesToday.toLocaleString()}`],
-        ["Costs today", `₦${costsToday.toLocaleString()}`],
-        ["Left today", `₦${leftToday.toLocaleString()}`],
-        ["Debts due", `₦${debtsDue.toLocaleString()}`],
+        ["Sales today", money(salesToday)],
+        ["Costs today", money(costsToday)],
+        ["Left today", money(leftToday)],
+        ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
       ]
     : [
-        ["Sales today", `₦${salesToday.toLocaleString()}`],
-        ["Debts due", `₦${debtsDue.toLocaleString()}`],
+        ["Sales today", money(salesToday)],
+        ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
       ];
 

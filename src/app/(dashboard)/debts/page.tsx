@@ -40,7 +40,20 @@ export default async function DebtsPage() {
                   <p className="mt-2 text-xs text-zinc-500">
                     Owes ₦{Number(debt.amount).toLocaleString()} · paid ₦{Number(debt.paid).toLocaleString()}
                   </p>
-                  {balance > 0 ? <PaymentForm debtId={debt.id} balance={balance} /> : null}
+                  {balance > 0 ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <PaymentForm debtId={debt.id} balance={balance} />
+                      {customer?.phone ? (
+                        <a
+                          href={`https://wa.me/${customer.phone.replace(/\D/g, "").replace(/^0/, "234")}?text=${encodeURIComponent(`Hi ${customer.name}, this is a reminder from ${business.name}. You still owe NGN ${balance.toLocaleString()}.`)}`}
+                          target="_blank"
+                          className="inline-flex h-10 items-center rounded-full border border-zinc-700 px-4 text-sm font-semibold text-white"
+                        >
+                          Remind on WhatsApp
+                        </a>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               );
             })

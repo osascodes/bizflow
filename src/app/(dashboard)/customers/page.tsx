@@ -37,7 +37,7 @@ export default async function CustomersPage() {
                     </a>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))
           )}
         </div>

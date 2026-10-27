@@ -29,6 +29,14 @@ export async function recordSaleAction(formData: FormData) {
   });
   if (error) throw new Error(error.message);
 
+  if (customerId) {
+    const { error: linkError } = await supabase.rpc("set_sale_customer", {
+      p_sale_id: saleId,
+      p_customer_id: customerId,
+    });
+    if (linkError) throw new Error(linkError.message);
+  }
+
   if (onCredit) {
     const { data: sale, error: saleError } = await supabase
       .from("sales")
@@ -50,4 +58,5 @@ export async function recordSaleAction(formData: FormData) {
   revalidatePath("/inventory");
   revalidatePath("/dashboard");
   revalidatePath("/debts");
+  revalidatePath("/customers");
 }

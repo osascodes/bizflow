@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getCustomers } from "@/features/customers/queries";
@@ -23,7 +24,7 @@ export default async function CustomersPage() {
             <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No customers yet.</div>
           ) : (
             customers.map((customer) => (
-              <div key={customer.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+              <Link key={customer.id} href={`/customers/${customer.id}`} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="font-semibold text-white">{customer.name}</h2>

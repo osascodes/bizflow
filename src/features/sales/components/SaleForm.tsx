@@ -101,18 +101,19 @@ export default function SaleForm({ products, customers = [] }: { products: Produ
           <p className="text-sm font-semibold text-white">Total ₦{total.toLocaleString()}</p>
         </div>
       ) : null}
-      <label className="flex items-center gap-2 text-sm text-zinc-300">
-        <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
-        Customer will pay later
-      </label>
-      {onCredit ? (
-        <select name="customer_id" required className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
-          <option value="">Select a customer</option>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Customer</Label>
+        <select name="customer_id" required={onCredit} className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+          <option value="">No customer</option>
           {customers.map((customer) => (
             <option key={customer.id} value={customer.id}>{customer.name}</option>
           ))}
         </select>
-      ) : null}
+      </div>
+      <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
+        Customer will pay later
+      </label>
       <Button type="submit" className="w-full" disabled={pending || lines.length === 0}>
         {pending ? "Saving..." : onCredit ? "Record credit sale" : "Record sale"}
       </Button>

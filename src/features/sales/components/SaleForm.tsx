@@ -7,14 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 type Product = { id: string; name: string; price: number; stock: number };
+type Customer = { id: string; name: string };
 type Line = { productId: string; quantity: number };
 
-export default function SaleForm({ products }: { products: Product[] }) {
+export default function SaleForm({ products, customers = [] }: { products: Product[]; customers?: Customer[] }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [lines, setLines] = useState<Line[]>([]);
+  const [onCredit, setOnCredit] = useState(false);
 
   const total = useMemo(
     () =>
@@ -99,8 +101,20 @@ export default function SaleForm({ products }: { products: Product[] }) {
           <p className="text-sm font-semibold text-white">Total ₦{total.toLocaleString()}</p>
         </div>
       ) : null}
+      <label className="flex items-center gap-2 text-sm text-zinc-300">
+        <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
+        Customer will pay later
+      </label>
+      {onCredit ? (
+        <select name="customer_id" required className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+          <option value="">Select a customer</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>{customer.name}</option>
+          ))}
+        </select>
+      ) : null}
       <Button type="submit" className="w-full" disabled={pending || lines.length === 0}>
-        {pending ? "Saving..." : "Record sale"}
+        {pending ? "Saving..." : onCredit ? "Record credit sale" : "Record sale"}
       </Button>
     </form>
   );

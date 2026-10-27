@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getProducts } from "@/features/inventory/queries";
 import { getRecentSales } from "@/features/sales/queries";
+import { getCustomers } from "@/features/debts/queries";
 import SaleForm from "@/features/sales/components/SaleForm";
 import { redirect } from "next/navigation";
 
@@ -11,6 +12,7 @@ export default async function SalesPage() {
 
   const products = await getProducts();
   const sales = await getRecentSales();
+  const customers = await getCustomers();
 
   return (
     <main className="px-4 py-8 md:px-8">
@@ -19,7 +21,7 @@ export default async function SalesPage() {
           <h1 className="text-2xl font-semibold text-white">Sales</h1>
           <p className="mt-2 text-sm text-zinc-400">Record a sale. Stock goes down immediately.</p>
           <div className="mt-6">
-            <SaleForm products={products} />
+            <SaleForm products={products} customers={customers} />
           </div>
         </div>
         <div className="space-y-3">

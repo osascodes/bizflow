@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import OfflineReady from "@/components/OfflineReady";
@@ -14,7 +14,6 @@ export const metadata: Metadata = {
     "Inventory, sales, receipts, customers, debt tracking, and WhatsApp checkout for small businesses.",
   applicationName: "BizFlow",
   manifest: "/manifest.webmanifest",
-  themeColor: "#09090b",
   appleWebApp: {
     capable: true,
     title: "BizFlow",
@@ -24,6 +23,10 @@ export const metadata: Metadata = {
     icon: "/icon-192.png",
     apple: "/icon-192.png",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#09090b",
 };
 
 export default function RootLayout({

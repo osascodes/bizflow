@@ -20,7 +20,7 @@ export default async function CustomerHistoryPage({ params }: { params: Promise<
         <p className="mt-1 text-sm text-zinc-400">{history.customer.phone || "No phone"}</p>
         <div className="mt-4 flex items-center gap-3">
           <p className={history.owed > 0 ? "text-sm text-amber-300" : "text-sm text-emerald-300"}>
-            {history.owed > 0 ? `Owes NGN ${history.owed.toLocaleString()}` : "Nothing owed"}
+            {history.owed > 0 ? `Owes ₦${history.owed.toLocaleString()}` : "Nothing owed"}
           </p>
           {phone ? (
             <a href={`https://wa.me/${phone}`} target="_blank" className="text-sm text-violet-300">WhatsApp</a>
@@ -39,7 +39,7 @@ export default async function CustomerHistoryPage({ params }: { params: Promise<
                     <p className="font-semibold text-white">{(sale.sale_items ?? []).map((item) => `${item.quantity} x ${item.name}`).join(", ") || "Sale"}</p>
                     <p className="mt-1 text-xs text-zinc-500">{new Date(sale.created_at).toLocaleString()}</p>
                   </div>
-                  <p className="text-sm text-white">NGN {Number(sale.total).toLocaleString()}</p>
+                  <p className="text-sm text-white">₦{Number(sale.total).toLocaleString()}</p>
                 </div>
               </Link>
             ))
@@ -61,7 +61,7 @@ export default async function CustomerHistoryPage({ params }: { params: Promise<
                       <p className="mt-1 text-xs text-zinc-500">{new Date(debt.created_at).toLocaleString()}</p>
                     </div>
                     <p className={left > 0 ? "text-sm text-amber-300" : "text-sm text-emerald-300"}>
-                      {left > 0 ? `NGN ${left.toLocaleString()} left` : "Paid"}
+                      {left > 0 ? `₦${left.toLocaleString()} left` : "Paid"}
                     </p>
                   </div>
                 </div>

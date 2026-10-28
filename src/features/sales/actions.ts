@@ -50,6 +50,7 @@ export async function recordSaleAction(formData: FormData) {
       p_customer_id: customerId,
       p_amount: sale.total,
       p_note: "Shop sale on credit",
+      p_sale_id: saleId,
     });
     if (debtError) throw new Error(debtError.message);
   }

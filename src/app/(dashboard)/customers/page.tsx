@@ -32,9 +32,7 @@ export default async function CustomersPage() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-zinc-300">₦{customer.owed.toLocaleString()}</p>
-                    <a className="mt-1 inline-flex text-xs text-violet-300" href={`https://wa.me/${customer.phone?.replace(/\D/g, "")}`} target="_blank">
-                      WhatsApp
-                    </a>
+                    <span className="mt-1 inline-flex text-xs text-violet-300">Open</span>
                   </div>
                 </div>
               </Link>

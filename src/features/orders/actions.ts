@@ -41,7 +41,7 @@ export async function placeCartAction(input: {
 export async function updateOrderStatusAction(formData: FormData) {
   const orderId = String(formData.get("order_id") || "");
   const status = String(formData.get("status") || "");
-  if (!orderId || !["pending", "done", "cancelled"].includes(status)) throw new Error("Invalid order");
+  if (!orderId || !["pending", "packed", "out", "done", "cancelled"].includes(status)) throw new Error("Invalid order");
 
   const business = await getCurrentBusiness();
   if (!business) throw new Error("Create your business first");
@@ -52,11 +52,19 @@ export async function updateOrderStatusAction(formData: FormData) {
     const { error } = await supabase.rpc("complete_store_order", { p_order_id: orderId });
     if (error) throw new Error(error.message);
   } else {
-    const { error } = await supabase
+    const { data: order, error: readError } = await supabase
       .from("orders")
-      .update({ status })
+      .select("order_number")
       .eq("id", orderId)
-      .eq("business_id", business.id);
+      .eq("business_id", business.id)
+      .single();
+    if (readError) throw new Error(readError.message);
+
+    let query = supabase.from("orders").update({ status }).eq("business_id", business.id);
+    query = order.order_number
+      ? query.eq("order_number", order.order_number)
+      : query.eq("id", orderId);
+    const { error } = await query;
     if (error) throw new Error(error.message);
   }
 

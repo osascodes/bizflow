@@ -51,13 +51,17 @@ export default async function StorefrontPage() {
                     WhatsApp
                   </a>
                 </div>
-                {order.status === "pending" ? (
+                {order.status === "pending" || order.status === "packed" || order.status === "out" ? (
                   <form action={updateOrderStatusAction} className="mt-3 flex gap-2">
                     <input type="hidden" name="order_id" value={order.id} />
-                    <Button name="status" value="done" type="submit" className="h-9">Done</Button>
-                    <Button name="status" value="cancelled" type="submit" variant="outline" className="h-9">Cancel</Button>
+                    {order.status === "pending" ? <Button name="status" value="packed" type="submit" className="h-9">Pack</Button> : null}
+                    {order.status === "packed" ? <Button name="status" value="out" type="submit" className="h-9">Out</Button> : null}
+                    {order.status === "out" ? <Button name="status" value="done" type="submit" className="h-9">Delivered</Button> : null}
+                    {order.status === "pending" ? <Button name="status" value="cancelled" type="submit" variant="outline" className="h-9">Cancel</Button> : null}
                   </form>
-                ) : null}
+                ) : (
+                  <p className="mt-3 text-xs capitalize text-zinc-500">{order.status === "done" ? "Delivered" : order.status}</p>
+                )}
               </div>
             ))
           )}

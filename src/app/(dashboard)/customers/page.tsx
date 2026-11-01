@@ -1,9 +1,8 @@
-import Link from "next/link";
 import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getCustomers } from "@/features/customers/queries";
 import CustomerForm from "@/features/customers/components/CustomerForm";
-import SearchableList from "@/components/SearchableList";
+import CustomerList from "@/features/customers/components/CustomerList";
 import SavedList from "@/components/SavedList";
 import { redirect } from "next/navigation";
 
@@ -44,23 +43,7 @@ export default async function CustomersPage() {
               <CustomerForm />
             </div>
           </div>
-          <SearchableList
-            items={customers}
-            placeholder="Search customers"
-            search={(customer) => `${customer.name} ${customer.phone || ""}`}
-            empty="No matching customer."
-            render={(customer) => (
-              <Link href={`/customers/${customer.id}`} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h2 className="font-semibold text-white">{customer.name}</h2>
-                    <p className="mt-1 text-sm text-zinc-400">{customer.phone}</p>
-                  </div>
-                  <p className="text-sm text-zinc-300">₦{customer.owed.toLocaleString()}</p>
-                </div>
-              </Link>
-            )}
-          />
+          <CustomerList customers={customers} />
         </div>
       </main>
     </>

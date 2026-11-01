@@ -2,8 +2,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getProducts } from "@/features/inventory/queries";
 import ProductForm from "@/features/inventory/components/ProductForm";
-import ProductEditor from "@/features/inventory/components/ProductEditor";
-import SearchableList from "@/components/SearchableList";
+import StockList from "@/features/inventory/components/StockList";
 import SavedList from "@/components/SavedList";
 import { redirect } from "next/navigation";
 
@@ -44,22 +43,7 @@ export default async function InventoryPage() {
               <ProductForm />
             </div>
           </div>
-          <SearchableList
-            items={products}
-            placeholder="Search stock"
-            search={(product) => product.name}
-            empty="No matching product."
-            render={(product) => (
-              <div className="relative flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                {product.image_url ? (
-                  <img src={product.image_url} alt={product.name} className="h-16 w-16 rounded-xl object-cover" />
-                ) : (
-                  <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-zinc-950 text-[10px] text-zinc-600">No photo</div>
-                )}
-                <ProductEditor product={product} />
-              </div>
-            )}
-          />
+          <StockList products={products} />
         </div>
       </main>
     </>

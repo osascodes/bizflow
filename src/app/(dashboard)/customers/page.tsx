@@ -3,6 +3,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getCustomers } from "@/features/customers/queries";
 import CustomerForm from "@/features/customers/components/CustomerForm";
+import SearchableList from "@/components/SearchableList";
 import SavedList from "@/components/SavedList";
 import { redirect } from "next/navigation";
 
@@ -43,23 +44,23 @@ export default async function CustomersPage() {
               <CustomerForm />
             </div>
           </div>
-          <div className="space-y-3">
-            {customers.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No customers yet.</div>
-            ) : (
-              customers.map((customer) => (
-                <Link key={customer.id} href={`/customers/${customer.id}`} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-semibold text-white">{customer.name}</h2>
-                      <p className="mt-1 text-sm text-zinc-400">{customer.phone}</p>
-                    </div>
-                    <p className="text-sm text-zinc-300">₦{customer.owed.toLocaleString()}</p>
+          <SearchableList
+            items={customers}
+            placeholder="Search customers"
+            search={(customer) => `${customer.name} ${customer.phone || ""}`}
+            empty="No matching customer."
+            render={(customer) => (
+              <Link href={`/customers/${customer.id}`} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="font-semibold text-white">{customer.name}</h2>
+                    <p className="mt-1 text-sm text-zinc-400">{customer.phone}</p>
                   </div>
-                </Link>
-              ))
+                  <p className="text-sm text-zinc-300">₦{customer.owed.toLocaleString()}</p>
+                </div>
+              </Link>
             )}
-          </div>
+          />
         </div>
       </main>
     </>

@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { recordSaleAction } from "@/features/sales/actions";
+import { SALE_CUSTOMERS, SALE_PRODUCTS, readQueue, writeQueue } from "@/features/sales/offline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,7 +11,7 @@ type Product = { id: string; name: string; price: number; stock: number };
 type Customer = { id: string; name: string };
 type Line = { productId: string; quantity: number };
 
-export default function SaleForm({ products, customers = [] }: { products: Product[]; customers?: Customer[] }) {
+export default function SaleForm({ products, customers = [], offlineMode = false }: { products: Product[]; customers?: Customer[]; offlineMode?: boolean }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [productId, setProductId] = useState("");
@@ -26,6 +27,11 @@ export default function SaleForm({ products, customers = [] }: { products: Produ
       }, 0),
     [lines, products],
   );
+
+  useEffect(() => {
+    if (products.length > 0) localStorage.setItem(SALE_PRODUCTS, JSON.stringify(products));
+    if (customers.length > 0) localStorage.setItem(SALE_CUSTOMERS, JSON.stringify(customers));
+  }, [products, customers]);
 
   const addLine = () => {
     if (!productId) {
@@ -54,6 +60,24 @@ export default function SaleForm({ products, customers = [] }: { products: Produ
     setErrorMessage("");
     setPending(true);
     try {
+      const payload = {
+        id: crypto.randomUUID(),
+        items: lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })),
+        customer_id: String(formData.get("customer_id") || ""),
+        on_credit: formData.get("on_credit") === "on",
+        label: lines.map((line) => {
+          const product = products.find((item) => item.id === line.productId);
+          return `${line.quantity} x ${product?.name || "Item"}`;
+        }).join(", "),
+        total,
+      };
+      if (offlineMode || !navigator.onLine) {
+        if (payload.on_credit && !payload.customer_id) throw new Error("Pick a customer for a credit sale");
+        writeQueue([...readQueue(), payload]);
+        setLines([]);
+        setErrorMessage("Saved on this phone. It will send when the network returns.");
+        return;
+      }
       await recordSaleAction(formData);
       setLines([]);
     } catch (error: unknown) {
@@ -115,7 +139,7 @@ export default function SaleForm({ products, customers = [] }: { products: Produ
         Customer will pay later
       </label>
       <Button type="submit" className="w-full" disabled={pending || lines.length === 0}>
-        {pending ? "Saving..." : onCredit ? "Record credit sale" : "Record sale"}
+        {pending ? "Saving..." : offlineMode ? "Save offline" : onCredit ? "Record credit sale" : "Record sale"}
       </Button>
     </form>
   );

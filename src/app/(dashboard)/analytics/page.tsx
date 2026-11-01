@@ -1,10 +1,25 @@
 import { redirect } from "next/navigation";
+import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getAnalytics } from "@/features/analytics/queries";
+import SavedStats from "@/features/analytics/components/SavedStats";
 
 export default async function AnalyticsPage() {
-  const business = await getCurrentBusiness();
-  if (!business) redirect("/onboarding");
+  const { offline } = await getAuthState();
+  let business = null;
+  try {
+    business = await getCurrentBusiness();
+  } catch {
+    business = null;
+  }
+  if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
+    return <SavedStats offline />;
+  }
   if (business.role !== "owner") redirect("/dashboard");
 
   const analytics = await getAnalytics();
@@ -20,6 +35,18 @@ export default async function AnalyticsPage() {
   ];
 
   return (
+    <>
+      <SavedStats
+        snapshot={{
+          name: business.name,
+          weekSales: analytics.weekSales,
+          monthSales: analytics.monthSales,
+          weekCosts: analytics.weekCosts,
+          days: analytics.days,
+          topProducts: analytics.topProducts,
+          lowStock: analytics.lowStock,
+        }}
+      />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-5xl">
         <p className="text-sm text-violet-300">{business.name}</p>
@@ -111,5 +138,6 @@ export default async function AnalyticsPage() {
       </div>
       <style>{`@keyframes barRise { from { transform: scaleY(0.2); opacity: 0.4; } to { transform: scaleY(1); opacity: 1; } }`}</style>
     </main>
+    </>
   );
 }

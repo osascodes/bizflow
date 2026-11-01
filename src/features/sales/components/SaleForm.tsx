@@ -18,6 +18,7 @@ export default function SaleForm({ products, customers = [], offlineMode = false
   const [quantity, setQuantity] = useState(1);
   const [lines, setLines] = useState<Line[]>([]);
   const [onCredit, setOnCredit] = useState(false);
+  const [discount, setDiscount] = useState(0);
 
   const total = useMemo(
     () =>
@@ -65,6 +66,7 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         items: lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })),
         customer_id: String(formData.get("customer_id") || ""),
         on_credit: formData.get("on_credit") === "on",
+        discount: Number(formData.get("discount") || 0),
         label: lines.map((line) => {
           const product = products.find((item) => item.id === line.productId);
           return `${line.quantity} x ${product?.name || "Item"}`;
@@ -122,9 +124,13 @@ export default function SaleForm({ products, customers = [], offlineMode = false
               </div>
             );
           })}
-          <p className="text-sm font-semibold text-white">Total ₦{total.toLocaleString()}</p>
+          <p className="text-sm font-semibold text-white">Total ₦{Math.max(total - discount, 0).toLocaleString()}</p>
         </div>
       ) : null}
+      <div className="space-y-1.5">
+        <Label className="text-zinc-300">Discount</Label>
+        <Input name="discount" type="number" min="0" step="0.01" value={discount || ""} onChange={(event) => setDiscount(Number(event.target.value) || 0)} placeholder="0" />
+      </div>
       <div className="space-y-1.5">
         <Label className="text-zinc-300">Customer</Label>
         <select name="customer_id" required={onCredit} className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">

@@ -17,7 +17,9 @@ export async function recordSaleAction(formData: FormData) {
 
   const onCredit = formData.get("on_credit") === "on";
   const customerId = String(formData.get("customer_id") || "");
+  const discount = Number(formData.get("discount") || 0);
   if (onCredit && !customerId) throw new Error("Pick a customer for a credit sale");
+  if (discount < 0) throw new Error("Discount cannot be negative");
 
   const business = await getCurrentBusiness();
   if (!business) throw new Error("Create your business first");
@@ -28,6 +30,14 @@ export async function recordSaleAction(formData: FormData) {
     p_items: items,
   });
   if (error) throw new Error(error.message);
+
+  if (discount > 0) {
+    const { error: discountError } = await supabase.rpc("apply_sale_discount", {
+      p_sale_id: saleId,
+      p_discount: discount,
+    });
+    if (discountError) throw new Error(discountError.message);
+  }
 
   if (customerId) {
     const { error: linkError } = await supabase.rpc("set_sale_customer", {

@@ -20,6 +20,7 @@ export default function SyncSales() {
         formData.set("items", JSON.stringify(sale.items));
         if (sale.customer_id) formData.set("customer_id", sale.customer_id);
         if (sale.on_credit) formData.set("on_credit", "on");
+        if (sale.discount) formData.set("discount", String(sale.discount));
         try {
           await recordSaleAction(formData);
         } catch {

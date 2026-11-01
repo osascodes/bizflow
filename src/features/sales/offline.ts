@@ -7,6 +7,7 @@ export type QueuedSale = {
   items: { product_id: string; quantity: number }[];
   customer_id: string;
   on_credit: boolean;
+  discount?: number;
   label: string;
   total: number;
 };

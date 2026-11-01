@@ -17,7 +17,7 @@ export default async function ReceiptPage({
   const supabase = await createServerSupabase();
   const { data: sale } = await supabase
     .from("sales")
-    .select("id, total, created_at, sale_items(name, quantity, price)")
+    .select("id, total, discount, created_at, sale_items(name, quantity, price)")
     .eq("id", id)
     .eq("business_id", business.id)
     .maybeSingle();
@@ -74,6 +74,9 @@ export default async function ReceiptPage({
               </div>
             ))}
           </div>
+          {Number(sale.discount) > 0 ? (
+            <p className="mt-4 text-sm text-zinc-500">Discount ₦{Number(sale.discount).toLocaleString()}</p>
+          ) : null}
           <div className="mt-6 flex items-center justify-between border-t border-dashed border-zinc-200 pt-4 text-lg font-semibold">
             <span>Total</span>
             <span>₦{Number(sale.total).toLocaleString()}</span>

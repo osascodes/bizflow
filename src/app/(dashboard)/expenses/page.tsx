@@ -3,6 +3,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getExpenses } from "@/features/expenses/queries";
 import ExpenseForm from "@/features/expenses/components/ExpenseForm";
+import CostList from "@/features/expenses/components/CostList";
 import SavedList from "@/components/SavedList";
 
 export default async function ExpensesPage() {
@@ -41,23 +42,14 @@ export default async function ExpensesPage() {
               <ExpenseForm />
             </div>
           </div>
-          <div className="space-y-3">
-            {expenses.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No costs yet.</div>
-            ) : (
-              expenses.map((expense) => (
-                <div key={expense.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-semibold text-white">{expense.title}</h2>
-                      <p className="mt-1 text-sm text-zinc-500">{expense.category} · {new Date(expense.created_at).toLocaleString()}</p>
-                    </div>
-                    <p className="text-sm text-white">₦{Number(expense.amount).toLocaleString()}</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+          <CostList
+            costs={expenses.map((expense) => ({
+              id: expense.id,
+              title: expense.title,
+              detail: `${expense.category} · ${new Date(expense.created_at).toLocaleString()}`,
+              amount: Number(expense.amount),
+            }))}
+          />
         </div>
       </main>
     </>

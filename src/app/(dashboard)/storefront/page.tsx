@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { getAuthState } from "@/lib/auth/utils";
+import SavedList from "@/components/SavedList";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { updateOrderStatusAction } from "@/features/orders/actions";
@@ -6,8 +8,17 @@ import BusinessEditor from "@/features/business/components/BusinessEditor";
 import { Button } from "@/components/ui/button";
 
 export default async function StorefrontPage() {
-  const business = await getCurrentBusiness();
-  if (!business) redirect("/onboarding");
+  const { offline } = await getAuthState();
+  let business = null;
+  try {
+    business = await getCurrentBusiness();
+  } catch {
+    business = null;
+  }
+  if (!business) {
+    if (offline) return <SavedList storageKey="bizflow-store" title="Store" subtitle="Last saved orders." offline />;
+    redirect("/onboarding");
+  }
   const isOwner = business.role === "owner";
 
   const supabase = await createServerSupabase();
@@ -18,7 +29,15 @@ export default async function StorefrontPage() {
     .order("created_at", { ascending: false })
     .limit(20);
 
+  const saved = (orders ?? []).map((order) => ({
+    id: order.id,
+    title: `${order.quantity} x ${order.product_name}`,
+    detail: `${order.customer_name} · ${order.status}`,
+  }));
+
   return (
+    <>
+    <SavedList storageKey="bizflow-store" title="Store" subtitle="Saved for offline." items={saved} />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-white">Store</h1>
@@ -68,5 +87,6 @@ export default async function StorefrontPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

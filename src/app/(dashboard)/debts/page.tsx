@@ -1,16 +1,38 @@
 import { redirect } from "next/navigation";
+import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
+import SavedList from "@/components/SavedList";
 import { getCustomers, getDebts } from "@/features/debts/queries";
 import { CustomerForm, DebtForm, PaymentForm } from "@/features/debts/components/DebtForms";
 
 export default async function DebtsPage() {
-  const business = await getCurrentBusiness();
-  if (!business) redirect("/onboarding");
+  const { offline } = await getAuthState();
+  let business = null;
+  try {
+    business = await getCurrentBusiness();
+  } catch {
+    business = null;
+  }
+  if (!business) {
+    if (offline) return <SavedList storageKey="bizflow-debts" title="Debts" subtitle="Last saved debts." offline />;
+    redirect("/onboarding");
+  }
 
   const customers = await getCustomers();
   const debts = await getDebts();
+  const saved = debts.map((debt) => {
+    const balance = Math.max(0, Number(debt.amount) - Number(debt.paid));
+    const customer = Array.isArray(debt.customers) ? debt.customers[0] : debt.customers;
+    return {
+      id: debt.id,
+      title: customer?.name || "Customer",
+      detail: balance > 0 ? `NGN ${balance.toLocaleString()} left` : "Paid",
+    };
+  });
 
   return (
+    <>
+    <SavedList storageKey="bizflow-debts" title="Debts" subtitle="Saved for offline." items={saved} />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
         <div className="space-y-4">
@@ -61,5 +83,6 @@ export default async function DebtsPage() {
         </div>
       </div>
     </main>
+    </>
   );
 }

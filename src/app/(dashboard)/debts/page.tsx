@@ -3,7 +3,8 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import SavedList from "@/components/SavedList";
 import { getCustomers, getDebts } from "@/features/debts/queries";
-import { CustomerForm, DebtForm, PaymentForm } from "@/features/debts/components/DebtForms";
+import { CustomerForm, DebtForm } from "@/features/debts/components/DebtForms";
+import DebtList from "@/features/debts/components/DebtList";
 
 export default async function DebtsPage() {
   const { offline } = await getAuthState();
@@ -46,46 +47,22 @@ export default async function DebtsPage() {
           <CustomerForm />
           <DebtForm customers={customers} />
         </div>
-        <div className="space-y-3">
-          {debts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No debts yet.</div>
-          ) : (
-            debts.map((debt) => {
-              const balance = Math.max(0, Number(debt.amount) - Number(debt.paid));
-              const customer = Array.isArray(debt.customers) ? debt.customers[0] : debt.customers;
-              return (
-                <div key={debt.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-semibold text-white">{customer?.name || "Customer"}</h2>
-                      <p className="mt-1 text-sm text-zinc-500">{debt.note || "No note"}</p>
-                    </div>
-                    <p className={balance > 0 ? "text-sm text-amber-300" : "text-sm text-emerald-300"}>
-                      {balance > 0 ? `₦${balance.toLocaleString()} left` : "Paid"}
-                    </p>
-                  </div>
-                  <p className="mt-2 text-xs text-zinc-500">
-                    Owes ₦{Number(debt.amount).toLocaleString()} · paid ₦{Number(debt.paid).toLocaleString()}
-                  </p>
-                  {balance > 0 ? (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <PaymentForm debtId={debt.id} balance={balance} />
-                      {customer?.phone ? (
-                        <a
-                          href={`https://wa.me/${customer.phone.replace(/\D/g, "").replace(/^0/, "234")}?text=${encodeURIComponent(`Hi ${customer.name}, this is a reminder from ${business.name}. You still owe NGN ${balance.toLocaleString()}.`)}`}
-                          target="_blank"
-                          className="inline-flex h-10 items-center rounded-full border border-zinc-700 px-4 text-sm font-semibold text-white"
-                        >
-                          Remind on WhatsApp
-                        </a>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              );
-            })
-          )}
-        </div>
+        <DebtList
+          debts={debts.map((debt) => {
+            const balance = Math.max(0, Number(debt.amount) - Number(debt.paid));
+            const customer = Array.isArray(debt.customers) ? debt.customers[0] : debt.customers;
+            return {
+              id: debt.id,
+              name: customer?.name || "Customer",
+              note: debt.note || "",
+              balance,
+              amount: Number(debt.amount),
+              paid: Number(debt.paid),
+              phone: customer?.phone || null,
+              shop: business.name,
+            };
+          })}
+        />
       </div>
     </main>
     </>

@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getProducts } from "@/features/inventory/queries";
 import { getRecentSales } from "@/features/sales/queries";
 import { getCustomers } from "@/features/debts/queries";
 import SaleForm from "@/features/sales/components/SaleForm";
+import SaleList from "@/features/sales/components/SaleList";
 import SavedList from "@/components/SavedList";
 import OfflineSales from "@/features/sales/components/OfflineSales";
 import { redirect } from "next/navigation";
@@ -61,27 +61,17 @@ export default async function SalesPage() {
               <SaleForm products={products} customers={customers} />
             </div>
           </div>
-          <div className="space-y-3">
-            {sales.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No sales yet.</div>
-            ) : (
-              sales.map((sale) => {
-                const items = sale.sale_items ?? [];
-                const title = items.length > 1 ? `${items.length} items` : items[0] ? `${items[0].quantity} x ${items[0].name}` : "Sale";
-                return (
-                  <Link key={sale.id} href={`/sales/${sale.id}`} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4 hover:border-zinc-600">
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <h2 className="font-semibold text-white">{title}</h2>
-                        <p className="mt-1 text-sm text-zinc-500">{new Date(sale.created_at).toLocaleString()}</p>
-                      </div>
-                      <p className="text-sm text-white">₦{Number(sale.total).toLocaleString()}</p>
-                    </div>
-                  </Link>
-                );
-              })
-            )}
-          </div>
+          <SaleList
+            sales={sales.map((sale) => {
+              const items = sale.sale_items ?? [];
+              return {
+                id: sale.id,
+                title: items.length > 1 ? `${items.length} items` : items[0] ? `${items[0].quantity} x ${items[0].name}` : "Sale",
+                when: new Date(sale.created_at).toLocaleString(),
+                total: Number(sale.total),
+              };
+            })}
+          />
         </div>
       </main>
     </>

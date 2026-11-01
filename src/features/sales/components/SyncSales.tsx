@@ -28,7 +28,12 @@ export default function SyncSales() {
       }
       writeQueue(remaining);
       setLeft(remaining.length);
-      setMessage(remaining.length === 0 ? "Offline sales sent." : `${remaining.length} sale(s) still waiting.`);
+      if (remaining.length === 0) {
+        setMessage("Offline sales sent.");
+        window.setTimeout(() => setMessage(""), 2500);
+      } else {
+        setMessage(`${remaining.length} sale(s) still waiting.`);
+      }
     };
     send();
     window.addEventListener("online", send);

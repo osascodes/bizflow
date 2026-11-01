@@ -15,6 +15,11 @@ export default async function CustomersPage() {
     business = null;
   }
   if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
     if (offline) return <SavedList storageKey="bizflow-customers" title="Customers" subtitle="Last saved customers." offline />;
     redirect("/onboarding");
   }

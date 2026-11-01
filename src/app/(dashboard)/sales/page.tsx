@@ -18,6 +18,11 @@ export default async function SalesPage() {
     business = null;
   }
   if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
     if (offline) {
       return (
         <main className="px-4 py-8 md:px-8">

@@ -4,7 +4,10 @@ export async function getAuthState() {
   try {
     const supabase = await createServerSupabase();
     const { data: { user }, error } = await supabase.auth.getUser();
-    return { user, offline: Boolean(error && !user) };
+    if (user && !error) return { user, offline: false };
+
+    const { data: { session } } = await supabase.auth.getSession();
+    return { user: user ?? null, offline: Boolean(error || session) };
   } catch {
     return { user: null, offline: true };
   }

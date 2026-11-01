@@ -16,6 +16,11 @@ export default async function StorefrontPage() {
     business = null;
   }
   if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
     if (offline) return <SavedList storageKey="bizflow-store" title="Store" subtitle="Last saved orders." offline />;
     redirect("/onboarding");
   }

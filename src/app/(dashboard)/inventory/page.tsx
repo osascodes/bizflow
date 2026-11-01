@@ -15,6 +15,11 @@ export default async function InventoryPage() {
     business = null;
   }
   if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
     if (offline) return <SavedList storageKey="bizflow-stock" title="Stock" subtitle="Last saved products." offline />;
     redirect("/onboarding");
   }

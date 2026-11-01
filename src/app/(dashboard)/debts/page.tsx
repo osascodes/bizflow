@@ -14,6 +14,11 @@ export default async function DebtsPage() {
     business = null;
   }
   if (!business) {
+    if (!offline) {
+      const { user } = await getAuthState();
+      if (user) redirect("/onboarding");
+      redirect("/login");
+    }
     if (offline) return <SavedList storageKey="bizflow-debts" title="Debts" subtitle="Last saved debts." offline />;
     redirect("/onboarding");
   }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createCustomerAction, createDebtAction, recordPaymentAction } from "@/features/debts/actions";
+import { readDebtQueue, writeDebtQueue } from "@/features/debts/offline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -85,12 +86,37 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
   );
 }
 
-export function PaymentForm({ debtId, balance }: { debtId: string; balance: number }) {
+export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: string; name?: string; balance: number }) {
+  const [notice, setNotice] = useState("");
+  const [pending, setPending] = useState(false);
+
   return (
-    <form action={recordPaymentAction} className="mt-3 flex gap-2">
+    <form
+      className="mt-3 flex flex-wrap items-center gap-2"
+      action={async (formData) => {
+        setNotice("");
+        setPending(true);
+        try {
+          const payment = Number(formData.get("payment") || 0);
+          if (payment <= 0) throw new Error("Payment must be more than 0");
+          if (payment > balance) throw new Error("Payment is more than what is left");
+          if (!navigator.onLine) {
+            writeDebtQueue([...readDebtQueue(), { id: crypto.randomUUID(), debtId, name, payment }]);
+            setNotice("Saved on this phone.");
+            return;
+          }
+          await recordPaymentAction(formData);
+        } catch (error: unknown) {
+          setNotice(error instanceof Error ? error.message : "Could not save payment.");
+        } finally {
+          setPending(false);
+        }
+      }}
+    >
       <input type="hidden" name="debt_id" value={debtId} />
       <Input name="payment" type="number" min="1" step="0.01" placeholder="Payment" className="h-9" />
-      <Button type="submit" className="h-9" disabled={balance <= 0}>Pay</Button>
+      <Button type="submit" className="h-9" disabled={balance <= 0 || pending}>{pending ? "..." : "Pay"}</Button>
+      {notice ? <span className="text-xs text-amber-300">{notice}</span> : null}
     </form>
   );
 }

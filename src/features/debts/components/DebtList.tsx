@@ -49,7 +49,7 @@ export default function DebtList({ debts }: { debts: Debt[] }) {
               <p className="mt-2 text-xs text-zinc-500">Owes ₦{debt.amount.toLocaleString()} · paid ₦{debt.paid.toLocaleString()}</p>
               {debt.balance > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <PaymentForm debtId={debt.id} balance={debt.balance} />
+                  <PaymentForm debtId={debt.id} name={debt.name} balance={debt.balance} />
                   {phone ? (
                     <a
                       href={`https://wa.me/${phone}?text=${encodeURIComponent(`Hi ${debt.name}, this is a reminder from ${debt.shop}. You still owe NGN ${debt.balance.toLocaleString()}.`)}`}

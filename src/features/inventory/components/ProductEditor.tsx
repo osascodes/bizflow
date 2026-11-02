@@ -21,6 +21,7 @@ export default function ProductEditor({ product }: { product: Product }) {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notice, setNotice] = useState("");
+  const [shownStock, setShownStock] = useState(product.stock);
 
   return (
     <div className="flex flex-1 items-start justify-between gap-3">
@@ -30,9 +31,10 @@ export default function ProductEditor({ product }: { product: Product }) {
         <button type="button" onClick={() => setOpen((value) => !value)} className="mt-2 text-xs text-violet-300">
           {open ? "Close" : "Edit"}
         </button>
+        {notice ? <p className="mt-1 text-xs text-amber-300">{notice}</p> : null}
       </div>
-      <p className={product.stock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-300"}>
-        {product.stock} in stock
+      <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-300"}>
+        {shownStock} in stock
       </p>
       {open ? (
         <div className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-700 bg-zinc-950 p-3">
@@ -41,27 +43,37 @@ export default function ProductEditor({ product }: { product: Product }) {
             action={async (formData) => {
               setErrorMessage("");
               setNotice("");
+              const stock = Number(formData.get("stock") || 0);
+              const saveLocally = () => {
+                if (stock < 0 || !Number.isInteger(stock)) throw new Error("Stock must be a whole number");
+                const queue = readStockQueue().filter((item) => item.productId !== product.id);
+                writeStockQueue([...queue, {
+                  id: crypto.randomUUID(),
+                  productId: product.id,
+                  name: String(formData.get("name") || product.name),
+                  price: Number(formData.get("price") || product.price),
+                  stock,
+                  description: String(formData.get("description") || ""),
+                }]);
+                setShownStock(stock);
+                setNotice("Saved on this phone. It will send when the network returns.");
+                setOpen(false);
+              };
               try {
                 if (!navigator.onLine) {
-                  const stock = Number(formData.get("stock") || 0);
-                  if (stock < 0 || !Number.isInteger(stock)) throw new Error("Stock must be a whole number");
-                  const queue = readStockQueue().filter((item) => item.productId !== product.id);
-                  writeStockQueue([...queue, {
-                    id: crypto.randomUUID(),
-                    productId: product.id,
-                    name: String(formData.get("name") || product.name),
-                    price: Number(formData.get("price") || product.price),
-                    stock,
-                    description: String(formData.get("description") || ""),
-                  }]);
-                  setNotice("Saved on this phone.");
-                  setOpen(false);
+                  saveLocally();
                   return;
                 }
                 await updateProductAction(formData);
+                setShownStock(stock);
                 setOpen(false);
               } catch (error: unknown) {
-                setErrorMessage(error instanceof Error ? error.message : "Could not update product.");
+                const message = error instanceof Error ? error.message : "Could not update product.";
+                if (!navigator.onLine || /fetch|network|business first|failed/i.test(message)) {
+                  saveLocally();
+                  return;
+                }
+                setErrorMessage(message);
               }
             }}
           >

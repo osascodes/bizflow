@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { updateProductAction, deleteProductAction } from "@/features/inventory/actions";
+import { readStockQueue, writeStockQueue } from "@/features/inventory/offline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +20,7 @@ type Product = {
 export default function ProductEditor({ product }: { product: Product }) {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [notice, setNotice] = useState("");
 
   return (
     <div className="flex flex-1 items-start justify-between gap-3">
@@ -38,7 +40,24 @@ export default function ProductEditor({ product }: { product: Product }) {
             className="space-y-2"
             action={async (formData) => {
               setErrorMessage("");
+              setNotice("");
               try {
+                if (!navigator.onLine) {
+                  const stock = Number(formData.get("stock") || 0);
+                  if (stock < 0 || !Number.isInteger(stock)) throw new Error("Stock must be a whole number");
+                  const queue = readStockQueue().filter((item) => item.productId !== product.id);
+                  writeStockQueue([...queue, {
+                    id: crypto.randomUUID(),
+                    productId: product.id,
+                    name: String(formData.get("name") || product.name),
+                    price: Number(formData.get("price") || product.price),
+                    stock,
+                    description: String(formData.get("description") || ""),
+                  }]);
+                  setNotice("Saved on this phone.");
+                  setOpen(false);
+                  return;
+                }
                 await updateProductAction(formData);
                 setOpen(false);
               } catch (error: unknown) {
@@ -48,6 +67,7 @@ export default function ProductEditor({ product }: { product: Product }) {
           >
             <input type="hidden" name="id" value={product.id} />
             {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
+            {notice ? <p className="text-xs text-amber-300">{notice}</p> : null}
             <Input name="name" defaultValue={product.name} />
             <Input name="description" defaultValue={product.description || ""} placeholder="Description" />
             <div className="grid grid-cols-2 gap-2">

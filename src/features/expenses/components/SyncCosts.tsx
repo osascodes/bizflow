@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { createExpenseAction } from "@/features/expenses/actions";
 import { readCostQueue, writeCostQueue } from "@/features/expenses/offline";
 
 export default function SyncCosts() {
+  const router = useRouter();
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -27,6 +29,8 @@ export default function SyncCosts() {
       writeCostQueue(remaining);
       if (remaining.length === 0) {
         setMessage("Offline costs sent.");
+        window.dispatchEvent(new Event("bizflow-costs-synced"));
+        router.refresh();
         window.setTimeout(() => setMessage(""), 2500);
       } else {
         setMessage(`${remaining.length} cost(s) still waiting.`);

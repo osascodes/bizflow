@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createExpenseAction } from "@/features/expenses/actions";
 import { readCostQueue, writeCostQueue } from "@/features/expenses/offline";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,23 @@ const categories = ["Stock", "Rent", "Transport", "Ads", "Other"];
 
 export default function ExpenseForm({ offlineMode = false, onQueued }: { offlineMode?: boolean; onQueued?: () => void } = {}) {
   const [errorMessage, setErrorMessage] = useState("");
+  const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    const clear = () => {
+      if (readCostQueue().length === 0) setNotice("");
+    };
+    window.addEventListener("bizflow-costs-synced", clear);
+    return () => window.removeEventListener("bizflow-costs-synced", clear);
+  }, []);
 
   return (
     <form
       className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
+        setNotice("");
         setPending(true);
         try {
           if (offlineMode || !navigator.onLine) {
@@ -28,10 +38,15 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
             if (amount <= 0) throw new Error("Amount must be more than 0");
             writeCostQueue([...readCostQueue(), { id: crypto.randomUUID(), title, category, amount }]);
             onQueued?.();
-            setErrorMessage("Saved on this phone. It will send when the network returns.");
+            setNotice("Saved on this phone. It will send when the network returns.");
+            (document.activeElement as HTMLElement | null)?.blur();
+            const form = document.querySelector("form");
+            form?.reset();
             return;
           }
           await createExpenseAction(formData);
+          setNotice("Saved.");
+          window.setTimeout(() => setNotice(""), 2000);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save expense.");
         } finally {
@@ -40,6 +55,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
       }}
     >
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
+      {notice ? <p className="text-sm text-amber-300">{notice}</p> : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-300">What did you spend on?</Label>
         <Input name="title" placeholder="Fabric" required />

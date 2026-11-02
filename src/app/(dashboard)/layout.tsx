@@ -6,6 +6,7 @@ import AppNav from "@/components/dashboard/AppNav";
 import SyncSales from "@/features/sales/components/SyncSales";
 import SyncCosts from "@/features/expenses/components/SyncCosts";
 import SyncPayments from "@/features/debts/components/SyncPayments";
+import SyncStock from "@/features/inventory/components/SyncStock";
 
 export default async function DashboardLayout({
   children,
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
       <SyncSales />
       <SyncCosts />
       <SyncPayments />
+      <SyncStock />
       <header className="flex items-center justify-between border-b border-zinc-800 px-4 py-4 md:px-6">
         <div className="flex items-center gap-3">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 text-sm font-bold">

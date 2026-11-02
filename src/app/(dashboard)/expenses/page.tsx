@@ -3,6 +3,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getExpenses } from "@/features/expenses/queries";
 import ExpenseForm from "@/features/expenses/components/ExpenseForm";
+import OfflineCosts from "@/features/expenses/components/OfflineCosts";
 import CostList from "@/features/expenses/components/CostList";
 import SavedList from "@/components/SavedList";
 
@@ -20,7 +21,18 @@ export default async function ExpensesPage() {
       if (user) redirect("/onboarding");
       redirect("/login");
     }
-    return <SavedList storageKey="bizflow-costs" title="Costs" subtitle="Last saved costs." offline />;
+    return (
+      <main className="px-4 py-8 md:px-8">
+        <div className="mx-auto max-w-5xl">
+          <h1 className="text-2xl font-semibold text-white">Costs</h1>
+          <p className="mt-2 text-sm text-amber-300">Offline. New costs stay on this phone until the network returns.</p>
+          <OfflineCosts />
+          <div className="mt-8">
+            <SavedList storageKey="bizflow-costs" title="Last costs" subtitle="Saved costs." offline />
+          </div>
+        </div>
+      </main>
+    );
   }
   if (business.role !== "owner") redirect("/dashboard");
   const expenses = await getExpenses();

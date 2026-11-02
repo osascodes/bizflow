@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { createExpenseAction } from "@/features/expenses/actions";
+import { readCostQueue, writeCostQueue } from "@/features/expenses/offline";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const categories = ["Stock", "Rent", "Transport", "Ads", "Other"];
 
-export default function ExpenseForm() {
+export default function ExpenseForm({ offlineMode = false, onQueued }: { offlineMode?: boolean; onQueued?: () => void } = {}) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -19,6 +20,17 @@ export default function ExpenseForm() {
         setErrorMessage("");
         setPending(true);
         try {
+          if (offlineMode || !navigator.onLine) {
+            const title = String(formData.get("title") || "").trim();
+            const category = String(formData.get("category") || "Other");
+            const amount = Number(formData.get("amount") || 0);
+            if (!title) throw new Error("Enter what you spent on");
+            if (amount <= 0) throw new Error("Amount must be more than 0");
+            writeCostQueue([...readCostQueue(), { id: crypto.randomUUID(), title, category, amount }]);
+            onQueued?.();
+            setErrorMessage("Saved on this phone. It will send when the network returns.");
+            return;
+          }
           await createExpenseAction(formData);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save expense.");
@@ -44,7 +56,7 @@ export default function ExpenseForm() {
         <Label className="text-zinc-300">Amount</Label>
         <Input name="amount" type="number" min="1" step="0.01" required />
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Save expense"}</Button>
+      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : offlineMode ? "Save offline" : "Save expense"}</Button>
     </form>
   );
 }

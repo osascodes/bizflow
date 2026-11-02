@@ -5,6 +5,7 @@ import SavedList from "@/components/SavedList";
 import { getCustomers, getDebts } from "@/features/debts/queries";
 import { CustomerForm, DebtForm } from "@/features/debts/components/DebtForms";
 import DebtList from "@/features/debts/components/DebtList";
+import OfflineDebts from "@/features/debts/components/OfflineDebts";
 
 export default async function DebtsPage() {
   const { offline } = await getAuthState();
@@ -20,7 +21,17 @@ export default async function DebtsPage() {
       if (user) redirect("/onboarding");
       redirect("/login");
     }
-    if (offline) return <SavedList storageKey="bizflow-debts" title="Debts" subtitle="Last saved debts." offline />;
+    if (offline) {
+      return (
+        <main className="px-4 py-8 md:px-8">
+          <div className="mx-auto max-w-3xl">
+            <h1 className="text-2xl font-semibold text-white">Debts</h1>
+            <p className="mt-2 text-sm text-amber-300">Offline. Payments stay on this phone until the network returns.</p>
+            <OfflineDebts />
+          </div>
+        </main>
+      );
+    }
     redirect("/onboarding");
   }
 
@@ -39,6 +50,20 @@ export default async function DebtsPage() {
   return (
     <>
     <SavedList storageKey="bizflow-debts" title="Debts" subtitle="Saved for offline." items={saved} />
+    <OfflineDebts debts={debts.map((debt) => {
+      const balance = Math.max(0, Number(debt.amount) - Number(debt.paid));
+      const customer = Array.isArray(debt.customers) ? debt.customers[0] : debt.customers;
+      return {
+        id: debt.id,
+        name: customer?.name || "Customer",
+        note: debt.note || "",
+        balance,
+        amount: Number(debt.amount),
+        paid: Number(debt.paid),
+        phone: customer?.phone || null,
+        shop: business.name,
+      };
+    })} />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
         <div className="space-y-4">

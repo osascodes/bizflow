@@ -17,7 +17,7 @@ export default function ProductForm() {
   const [pending, setPending] = useState(false);
   const [image, setImage] = useState<File | null>(null);
 
-  const form = useForm<FormData>({
+  const form = useForm<z.input<typeof productSchema>, unknown, FormData>({
     resolver: zodResolver(productSchema),
     defaultValues: { name: "", price: 0, stock: 0, description: "" },
   });

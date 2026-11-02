@@ -42,7 +42,7 @@ export async function getNotifications() {
       .filter((debt) => Number(debt.amount) > Number(debt.paid))
       .map((debt) => ({
         id: `debt-${debt.id}`,
-        title: `${debt.customers?.name || "A customer"} still owes`,
+        title: `${(Array.isArray(debt.customers) ? debt.customers[0]?.name : "A customer") || "A customer"} still owes`,
         detail: `₦${(Number(debt.amount) - Number(debt.paid)).toLocaleString()}`,
         href: "/debts",
       })),

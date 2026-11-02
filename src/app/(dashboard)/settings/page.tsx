@@ -9,8 +9,7 @@ export default async function SettingsPage() {
   const business = await getCurrentBusiness();
   if (!business) redirect("/onboarding");
   if (business.role !== "owner") redirect("/dashboard");
-  const authUser = await getCurrentUser();
-  const user = authUser && "user" in authUser ? authUser.user : authUser;
+  const user = await getCurrentUser();
 
   return (
     <main className="px-4 py-8 md:px-8">

@@ -87,10 +87,12 @@ export default async function ReceiptPage({
         <ShareReceiptButton
           shop={business.name}
           phone={business.phone}
+          logoUrl={business.logo_url}
           receiptNo={receiptNo}
           when={when}
           items={items.map((item) => ({ name: item.name, quantity: item.quantity, price: Number(item.price) }))}
           total={Number(sale.total)}
+          discount={Number(sale.discount)}
         />
       </div>
     </main>

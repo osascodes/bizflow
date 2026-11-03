@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const ownerItems = [
   { href: "/dashboard", label: "Home" },
@@ -29,8 +30,21 @@ const staffItems = [
 
 export default function AppNav({ role = "owner" }: { role?: string }) {
   const pathname = usePathname();
+  const [pressed, setPressed] = useState("");
   if (pathname.startsWith("/onboarding")) return null;
   const items = role === "owner" ? ownerItems : staffItems;
+
+  const linkClass = (href: string, active: boolean, mobile = false) => {
+    const waiting = pressed === href && !active;
+    if (mobile) {
+      return `shrink-0 rounded-full px-3 py-2 text-sm font-medium touch-manipulation ${
+        active ? "bg-zinc-800 text-white" : waiting ? "bg-zinc-800 text-amber-200" : "text-zinc-400"
+      }`;
+    }
+    return `rounded-xl px-3 py-2 text-sm font-medium touch-manipulation ${
+      active ? "bg-zinc-800 text-white" : waiting ? "bg-zinc-800 text-amber-200" : "text-zinc-400 hover:text-white"
+    }`;
+  };
 
   return (
     <>
@@ -42,9 +56,9 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`rounded-xl px-3 py-2 text-sm font-medium ${
-                  active ? "bg-zinc-800 text-white" : "text-zinc-400 hover:text-white"
-                }`}
+                prefetch
+                onClick={() => setPressed(item.href)}
+                className={linkClass(item.href, active)}
               >
                 {item.label}
               </Link>
@@ -60,9 +74,9 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className={`shrink-0 rounded-full px-3 py-2 text-sm font-medium ${
-                active ? "bg-zinc-800 text-white" : "text-zinc-400"
-              }`}
+              prefetch
+              onClick={() => setPressed(item.href)}
+              className={linkClass(item.href, active, true)}
             >
               {item.label}
             </Link>

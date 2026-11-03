@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ownerItems = [
   { href: "/dashboard", label: "Home" },
@@ -30,21 +30,16 @@ const staffItems = [
 
 export default function AppNav({ role = "owner" }: { role?: string }) {
   const pathname = usePathname();
+  const [open, setOpen] = useState(false);
   const [pressed, setPressed] = useState("");
-  if (pathname.startsWith("/onboarding")) return null;
   const items = role === "owner" ? ownerItems : staffItems;
+  const current = items.find((item) => pathname === item.href || pathname.startsWith(`${item.href}/`));
 
-  const linkClass = (href: string, active: boolean, mobile = false) => {
-    const waiting = pressed === href && !active;
-    if (mobile) {
-      return `shrink-0 rounded-full px-3 py-2 text-sm font-medium touch-manipulation ${
-        active ? "bg-zinc-800 text-white" : waiting ? "bg-zinc-800 text-amber-200" : "text-zinc-400"
-      }`;
-    }
-    return `rounded-xl px-3 py-2 text-sm font-medium touch-manipulation ${
-      active ? "bg-zinc-800 text-white" : waiting ? "bg-zinc-800 text-amber-200" : "text-zinc-400 hover:text-white"
-    }`;
-  };
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  if (pathname.startsWith("/onboarding")) return null;
 
   return (
     <>
@@ -58,7 +53,9 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
                 href={item.href}
                 prefetch
                 onClick={() => setPressed(item.href)}
-                className={linkClass(item.href, active)}
+                className={`rounded-xl px-3 py-2 text-sm font-medium touch-manipulation ${
+                  active ? "bg-zinc-800 text-white" : pressed === item.href ? "bg-zinc-800 text-amber-200" : "text-zinc-400 hover:text-white"
+                }`}
               >
                 {item.label}
               </Link>
@@ -67,22 +64,57 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
         </nav>
       </aside>
 
-      <nav className="sticky top-0 z-20 flex gap-2 overflow-x-auto border-b border-zinc-800 bg-zinc-950 px-3 py-2 md:hidden">
-        {items.map((item) => {
-          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch
-              onClick={() => setPressed(item.href)}
-              className={linkClass(item.href, active, true)}
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-3 md:hidden">
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="inline-flex h-10 items-center gap-2 rounded-full border border-zinc-700 px-4 text-sm font-semibold text-white"
+          aria-label="Open menu"
+        >
+          <span className="flex flex-col gap-1">
+            <span className="h-0.5 w-4 bg-white" />
+            <span className="h-0.5 w-4 bg-white" />
+            <span className="h-0.5 w-4 bg-white" />
+          </span>
+          Menu
+        </button>
+        <p className="text-sm font-medium text-zinc-300">{current?.label || "BizFlow"}</p>
+      </div>
+
+      {open ? (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <button type="button" className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} aria-label="Close menu" />
+          <nav className="absolute inset-y-0 left-0 flex w-72 flex-col bg-zinc-950 p-4 shadow-2xl">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm font-semibold text-white">Menu</p>
+              <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400">
+                Close
+              </button>
+            </div>
+            <div className="flex flex-col gap-1">
+              {items.map((item) => {
+                const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    prefetch
+                    onClick={() => {
+                      setPressed(item.href);
+                      setOpen(false);
+                    }}
+                    className={`rounded-xl px-3 py-3 text-sm font-medium ${
+                      active ? "bg-zinc-800 text-white" : "text-zinc-300"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
+          </nav>
+        </div>
+      ) : null}
     </>
   );
 }

@@ -22,7 +22,7 @@ export default async function SettingsPage() {
         </div>
         <BusinessEditor business={business} />
         <form action={logoutAction} className="mt-6">
-          <Button type="submit" variant="outline" className="w-full">Log out</Button>
+          <Button type="submit" variant="outline" className="w-full border-zinc-700 bg-zinc-950 text-white">Log out</Button>
         </form>
       </div>
     </main>

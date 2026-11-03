@@ -84,7 +84,14 @@ export default async function ReceiptPage({
           <p className="mt-8 text-center text-xs text-zinc-500">Thank you for shopping with us</p>
         </article>
         <PrintButton />
-        <ShareReceiptButton message={message} />
+        <ShareReceiptButton
+          shop={business.name}
+          phone={business.phone}
+          receiptNo={receiptNo}
+          when={when}
+          items={items.map((item) => ({ name: item.name, quantity: item.quantity, price: Number(item.price) }))}
+          total={Number(sale.total)}
+        />
       </div>
     </main>
   );

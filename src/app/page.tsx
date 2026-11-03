@@ -45,8 +45,8 @@ export default function Home() {
             <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
               Run your business from your phone
             </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-400 md:text-lg">
-              Get a beautiful public storefront link for your customers to check out seamlessly, while you manage inventory, sales, receipts, and debts effortlessly in the background.
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
+              Get a beautiful public storefront link for your customers to check out, while you manage inventory, sales, receipts, and debts in the background.
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
@@ -74,10 +74,10 @@ export default function Home() {
               {features.map(([title, body]) => (
                 <div
                   key={title}
-                  className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6"
+                  className="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-8"
                 >
                   <h3 className="text-lg font-semibold text-white">{title}</h3>
-                  <p className="mt-2 text-sm leading-6 text-zinc-400">{body}</p>
+                  <p className="mt-3 text-sm leading-7 text-zinc-300">{body}</p>
                 </div>
               ))}
             </div>
@@ -88,7 +88,7 @@ export default function Home() {
           <h2 className="text-3xl font-semibold text-white">Create your account</h2>
           <Link
             href="/register"
-            className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white"
+            className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white sm:w-44"
           >
             Get Started
           </Link>

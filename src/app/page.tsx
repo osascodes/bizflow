@@ -100,7 +100,55 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="pricing" className="border-t border-zinc-800 px-6 py-24 text-center">
+        <section className="border-t border-zinc-800 px-6 py-20">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-center text-3xl font-semibold text-white">Built for shops like yours</h2>
+            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {["Fashion vendors", "Gadget shops", "Cosmetics businesses", "Food vendors", "Mini supermarkets", "WhatsApp and Instagram sellers"].map((item) => (
+                <div key={item} className="rounded-2xl border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm font-medium text-zinc-200">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section id="pricing" className="border-t border-zinc-800 px-6 py-20">
+          <div className="mx-auto max-w-xl text-center">
+            <h2 className="text-3xl font-semibold text-white">Pricing</h2>
+            <div className="mt-8 rounded-3xl border border-zinc-800 bg-zinc-900 px-6 py-10">
+              <p className="text-sm font-medium text-violet-300">Early access</p>
+              <p className="mt-3 text-4xl font-semibold text-white">Free</p>
+              <p className="mt-3 text-sm leading-6 text-zinc-300">
+                Use the full shop while we finish the product. Paid plans will come later. No fake prices here.
+              </p>
+              <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
+                Get Started
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-zinc-800 px-6 py-20">
+          <div className="mx-auto max-w-3xl">
+            <h2 className="text-center text-3xl font-semibold text-white">Questions</h2>
+            <div className="mt-10 space-y-4">
+              {[
+                ["Does it work when the network is bad?", "Yes. You can record a sale, a cost, a debt payment, and a stock change offline. They send when the network is back."],
+                ["Do customers need an account?", "No. They open your store link, pick items, and order. You manage the shop from your phone."],
+                ["Can I send a real receipt?", "Yes. Open a sale and share the receipt image on WhatsApp."],
+                ["Can staff use it?", "Yes. You invite staff with a code. They can sell and manage stock. They cannot change shop settings."],
+              ].map(([question, answer]) => (
+                <div key={question} className="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-5">
+                  <h3 className="text-base font-semibold text-white">{question}</h3>
+                  <p className="mt-2 text-sm leading-6 text-zinc-300">{answer}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-zinc-800 px-6 py-24 text-center">
           <p className="text-sm font-medium text-violet-300">Start from your phone</p>
           <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">Create your account</h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-zinc-300">
@@ -111,6 +159,17 @@ export default function Home() {
           </Link>
         </section>
       </main>
+
+      <footer className="border-t border-zinc-800 px-6 py-8">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 sm:flex-row">
+          <p>BizFlow</p>
+          <div className="flex gap-5">
+            <a href="#features" className="hover:text-white">Features</a>
+            <a href="#pricing" className="hover:text-white">Pricing</a>
+            <Link href="/login" className="hover:text-white">Sign In</Link>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

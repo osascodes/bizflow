@@ -44,10 +44,10 @@ export default async function ReceiptPage({
         <Link href="/sales" className="text-sm text-zinc-400 hover:text-white print:hidden">
           Back to sales
         </Link>
-        <article className="mt-4 rounded-2xl border border-zinc-200 bg-white px-6 py-7 text-zinc-950 print:border-0">
+        <article id="receipt-card" className="mt-4 rounded-2xl border border-zinc-200 bg-white px-6 py-7 text-zinc-950 print:border-0">
           <div className="flex items-center gap-3">
             {business.logo_url ? (
-              <img src={business.logo_url} alt="" className="h-12 w-12 rounded-xl object-cover" />
+              <img src={business.logo_url} alt="" crossOrigin="anonymous" className="h-12 w-12 rounded-xl object-cover" />
             ) : (
               <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-zinc-200 text-sm font-semibold">
                 {business.name.trim().charAt(0).toUpperCase()}
@@ -84,16 +84,7 @@ export default async function ReceiptPage({
           <p className="mt-8 text-center text-xs text-zinc-500">Thank you for shopping with us</p>
         </article>
         <PrintButton />
-        <ShareReceiptButton
-          shop={business.name}
-          phone={business.phone}
-          logoUrl={business.logo_url}
-          receiptNo={receiptNo}
-          when={when}
-          items={items.map((item) => ({ name: item.name, quantity: item.quantity, price: Number(item.price) }))}
-          total={Number(sale.total)}
-          discount={Number(sale.discount)}
-        />
+        <ShareReceiptButton receiptNo={receiptNo} />
       </div>
     </main>
   );

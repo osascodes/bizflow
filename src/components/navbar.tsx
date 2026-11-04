@@ -18,7 +18,7 @@ export default function Navbar() {
 
         <div className="hidden items-center gap-8 text-sm text-zinc-300 md:flex">
           <a href="#features" className="hover:text-white">Features</a>
-          <a href="#pricing" className="hover:text-white">Pricing</a>
+          <a href="/pricing" className="hover:text-white">Pricing</a>
           <Link href="/login" className="hover:text-white">Sign In</Link>
           <Link href="/register" className="rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 font-medium text-white">
             Get Started
@@ -37,7 +37,7 @@ export default function Navbar() {
       {open ? (
         <div className="space-y-4 border-t border-zinc-800 px-6 py-5 md:hidden">
           <a href="#features" className="block text-sm text-zinc-300" onClick={() => setOpen(false)}>Features</a>
-          <a href="#pricing" className="block text-sm text-zinc-300" onClick={() => setOpen(false)}>Pricing</a>
+          <a href="/pricing" className="block text-sm text-zinc-300" onClick={() => setOpen(false)}>Pricing</a>
           <Link href="/login" className="block text-sm text-zinc-300" onClick={() => setOpen(false)}>Sign In</Link>
           <Link href="/register" className="flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-medium text-white" onClick={() => setOpen(false)}>
             Get Started

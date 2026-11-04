@@ -27,10 +27,15 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-white md:hidden"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-700 md:hidden"
           onClick={() => setOpen((value) => !value)}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
-          {open ? "Close" : "Menu"}
+          <span className="flex flex-col gap-1.5">
+            <span className="h-0.5 w-4 bg-white" />
+            <span className="h-0.5 w-4 bg-white" />
+            <span className="h-0.5 w-4 bg-white" />
+          </span>
         </button>
       </nav>
 

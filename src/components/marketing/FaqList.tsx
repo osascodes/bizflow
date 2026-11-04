@@ -25,7 +25,7 @@ export default function FaqList() {
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
             >
               <span className="text-base font-semibold text-white">{question}</span>
-              <span className="text-lg text-zinc-400">{active ? "−" : "+"}</span>
+              <span className={`text-zinc-400 transition ${active ? "rotate-180" : ""}`}>▾</span>
             </button>
             {active ? <p className="px-6 pb-5 text-sm leading-6 text-zinc-300">{answer}</p> : null}
           </div>

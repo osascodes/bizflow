@@ -68,15 +68,14 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex h-10 items-center gap-2 rounded-full border border-zinc-700 px-4 text-sm font-semibold text-white"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-zinc-700"
           aria-label="Open menu"
         >
-          <span className="flex flex-col gap-1">
+          <span className="flex flex-col gap-1.5">
             <span className="h-0.5 w-4 bg-white" />
             <span className="h-0.5 w-4 bg-white" />
             <span className="h-0.5 w-4 bg-white" />
           </span>
-          Menu
         </button>
         <p className="text-sm font-medium text-zinc-300">{current?.label || "BizFlow"}</p>
       </div>

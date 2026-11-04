@@ -75,7 +75,9 @@ export default function Home() {
         </section>
 
         <section className="border-t border-zinc-800 px-6 py-16">
-          <div className="mx-auto grid max-w-5xl gap-4 md:grid-cols-3">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-center text-3xl font-semibold text-white">Start selling in minutes</h2>
+            <div className="mt-10 grid gap-4 md:grid-cols-3">
             {steps.map(([number, title, body]) => (
               <div key={number} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 px-5 py-6">
                 <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/15 text-sm font-semibold text-violet-300">{number}</span>
@@ -83,6 +85,7 @@ export default function Home() {
                 <p className="mt-2 text-sm leading-6 text-zinc-300">{body}</p>
               </div>
             ))}
+            </div>
           </div>
         </section>
 

@@ -104,16 +104,24 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="border-t border-zinc-800 px-6 py-20">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-center text-3xl font-semibold text-white">Built for shops like yours</h2>
-            <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {["Fashion vendors", "Gadget shops", "Cosmetics businesses", "Food vendors", "Mini supermarkets", "WhatsApp and Instagram sellers"].map((item) => (
-                <div key={item} className="rounded-2xl border border-zinc-800 bg-zinc-900 px-5 py-4 text-sm font-medium text-zinc-200">
-                  {item}
+        <section className="overflow-hidden border-t border-zinc-800 py-16">
+          <h2 className="px-6 text-center text-3xl font-semibold text-white">Built for shops like yours</h2>
+          <div className="mt-10 space-y-3">
+            {[
+              [["👗", "Fashion vendors"], ["📱", "Gadget shops"], ["💄", "Cosmetics businesses"]],
+              [["🍔", "Food vendors"], ["🛒", "Mini supermarkets"], ["💬", "WhatsApp and Instagram sellers"]],
+            ].map((row, index) => (
+              <div key={index} className="overflow-hidden">
+                <div className={`flex w-max gap-3 ${index === 1 ? "animate-[marquee_28s_linear_infinite_reverse]" : "animate-[marquee_32s_linear_infinite]"}`}>
+                  {[...row, ...row, ...row, ...row].map(([icon, label], itemIndex) => (
+                    <div key={`${label}-${itemIndex}`} className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-sm text-zinc-200">
+                      <span>{icon}</span>
+                      {label}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
           </div>
         </section>
 

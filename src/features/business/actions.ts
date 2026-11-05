@@ -57,12 +57,15 @@ export async function createBusinessAction(formData: FormData) {
     redirect("/dashboard");
   }
 
+  const trialEnds = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString();
   const { error } = await supabase.from("businesses").insert({
     owner_id: user.id,
     name: parsed.data.name,
     phone: parsed.data.phone,
     category: parsed.data.category,
     slug: slugify(parsed.data.name),
+    plan: "trial",
+    trial_ends_at: trialEnds,
   });
 
   if (error?.code === "23505") {
@@ -124,4 +127,16 @@ export async function updateBusinessAction(formData: FormData) {
   revalidatePath(`/store/${business.slug}`);
   revalidatePath(`/store/${nextSlug}`);
   return { slug: data.slug };
+}
+
+export async function choosePlanAction(formData: FormData) {
+  const plan = String(formData.get("plan") || "");
+  if (plan !== "starter" && plan !== "pro") throw new Error("Pick a plan");
+  const business = await getCurrentBusiness();
+  if (!business || business.role !== "owner") throw new Error("Only the owner can change the plan");
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.from("businesses").update({ plan }).eq("id", business.id);
+  if (error) throw new Error(error.message);
+  revalidatePath("/settings");
+  revalidatePath("/pricing");
 }

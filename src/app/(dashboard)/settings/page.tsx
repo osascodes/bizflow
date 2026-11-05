@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getCurrentUser } from "@/lib/auth/utils";
 import BusinessEditor from "@/features/business/components/BusinessEditor";
+import PlanCard from "@/features/business/components/PlanCard";
 import { logoutAction } from "@/features/auth/actions";
 import { Button } from "@/components/ui/button";
 
@@ -20,6 +21,7 @@ export default async function SettingsPage() {
           <p className="text-sm text-zinc-400">Signed in as</p>
           <p className="mt-1 text-sm text-white">{user?.email}</p>
         </div>
+        <PlanCard plan={business.plan} trialEnds={business.trial_ends_at} />
         <BusinessEditor business={business} />
         <form action={logoutAction} className="mt-6">
           <Button type="submit" variant="outline" className="w-full border-zinc-700 bg-zinc-950 text-white">Log out</Button>

@@ -1,6 +1,6 @@
 import { createServerSupabase } from "@/lib/supabase/server";
 
-const businessFields = "id, name, phone, category, slug, logo_url, instagram, tiktok, website, hero_url, store_headline, store_description, address";
+const businessFields = "id, name, phone, category, slug, logo_url, instagram, tiktok, website, hero_url, store_headline, store_description, address, plan, trial_ends_at";
 
 export async function getCurrentBusiness() {
   const supabase = await createServerSupabase();

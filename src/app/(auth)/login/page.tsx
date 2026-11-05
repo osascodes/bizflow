@@ -71,7 +71,7 @@ export default function LoginPage() {
           ) : null}
         </div>
 
-        <Button type="submit" className="w-full" disabled={isPending}>
+        <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:opacity-90" disabled={isPending}>
           {isPending ? 'Signing in...' : 'Log in'}
         </Button>
       </form>

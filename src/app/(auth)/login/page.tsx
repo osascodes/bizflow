@@ -12,6 +12,7 @@ import Link from 'next/link';
 import AuthCard from '@/features/auth/components/AuthCard';
 import PasswordInput from '@/features/auth/components/PasswordInput';
 import { useAuthForm } from '@/features/auth/hooks';
+import GoogleButton from '@/features/auth/components/GoogleButton';
 
 type FormData = z.infer<typeof loginSchema>;
 
@@ -41,6 +42,12 @@ export default function LoginPage() {
   return (
     <AuthCard title="Log in">
       <p className="mb-4 text-sm text-zinc-400">Owners and staff use this same page.</p>
+      <GoogleButton label="Continue with Google" />
+      <div className="my-4 flex items-center gap-3 text-xs text-zinc-500">
+        <span className="h-px flex-1 bg-zinc-800" />
+        or
+        <span className="h-px flex-1 bg-zinc-800" />
+      </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {errorMessage ? (
           <div className="rounded-md border border-red-500 bg-red-500/10 p-2 text-sm text-red-400">

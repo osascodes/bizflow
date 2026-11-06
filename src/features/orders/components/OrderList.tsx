@@ -88,7 +88,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                 {order.status === "pending" ? <Button type="button" onClick={() => move(order, "packed")} disabled={pendingId === order.id} className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">{pendingId === order.id ? "Saving..." : "Pack"}</Button> : null}
                 {order.status === "packed" ? <Button type="button" onClick={() => move(order, "out")} disabled={pendingId === order.id} className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">{pendingId === order.id ? "Saving..." : "Out"}</Button> : null}
                 {order.status === "out" ? <Button type="button" onClick={() => move(order, "done")} disabled={pendingId === order.id} className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">{pendingId === order.id ? "Saving..." : "Delivered"}</Button> : null}
-                {order.status === "pending" ? <Button type="button" onClick={() => move(order, "cancelled")} disabled={pendingId === order.id} className="h-9 border border-zinc-600 bg-zinc-800 text-white">Cancel</Button> : null}
+                <Button type="button" onClick={() => move(order, "cancelled")} disabled={pendingId === order.id} className="h-9 border border-zinc-600 bg-zinc-800 text-white">Cancel</Button>
               </div>
             ) : (
               <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${order.status === "done" ? "bg-emerald-500 text-white" : "bg-zinc-700 text-zinc-200"}`}>

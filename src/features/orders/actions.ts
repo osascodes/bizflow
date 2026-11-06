@@ -63,9 +63,9 @@ export async function updateOrderStatusAction(formData: FormData) {
     const { error } = await supabase.rpc("complete_store_order", { p_order_id: orderId });
     if (error) {
       for (const row of rows ?? []) {
-        if (!row.product_id) return { error: "Product missing on this order" };
+        if (!row.product_id) continue;
         const { data: product } = await supabase.from("products").select("name, price, stock").eq("id", row.product_id).eq("business_id", business.id).single();
-        if (!product) return { error: "Product not found" };
+        if (!product) continue;
         if (Number(product.stock) < Number(row.quantity)) return { error: `Not enough stock for ${product.name}` };
         const { data: sale, error: saleError } = await supabase.from("sales").insert({ business_id: business.id, total: Number(product.price) * Number(row.quantity) }).select("id").single();
         if (saleError || !sale) return { error: saleError?.message || "Could not record the sale" };

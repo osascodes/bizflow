@@ -32,3 +32,23 @@ export async function getTodaySalesTotal() {
 
   return (data ?? []).reduce((sum, sale) => sum + Number(sale.total), 0);
 }
+
+export async function getTodaySales() {
+  const business = await getCurrentBusiness();
+  if (!business) return [];
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const supabase = await createServerSupabase();
+  const { data } = await supabase
+    .from("sales")
+    .select("id, total, sale_items(name, quantity)")
+    .eq("business_id", business.id)
+    .gte("created_at", start.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(8);
+  return (data ?? []).map((sale) => ({
+    id: sale.id,
+    total: Number(sale.total),
+    items: (sale.sale_items ?? []).map((item: { name: string; quantity: number }) => `${item.quantity} x ${item.name}`).join(", ") || "Sale",
+  }));
+}

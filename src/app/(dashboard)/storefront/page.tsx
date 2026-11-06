@@ -3,7 +3,6 @@ import { getAuthState } from "@/lib/auth/utils";
 import SavedList from "@/components/SavedList";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
-import BusinessEditor from "@/features/business/components/BusinessEditor";
 import OrderList from "@/features/orders/components/OrderList";
 
 export default async function StorefrontPage() {
@@ -45,19 +44,12 @@ export default async function StorefrontPage() {
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-white">Store</h1>
-        <p className="mt-2 text-sm text-zinc-400">
-          {isOwner ? "Change the name, then save. The link updates after save." : "Store orders for this shop."}
-        </p>
-        {isOwner ? (
-          <BusinessEditor business={business} />
-        ) : (
-          <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-            <p className="text-sm text-zinc-400">Shop</p>
-            <p className="mt-1 font-semibold text-white">{business.name}</p>
-            <p className="mt-1 text-sm text-zinc-400">{business.phone} · {business.category}</p>
-            <p className="mt-3 text-sm text-violet-300">/store/{business.slug}</p>
-          </div>
-        )}
+        <p className="mt-2 text-sm text-zinc-400">Orders for this shop. Change the shop in Settings.</p>
+        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+          <p className="text-sm text-zinc-400">Store link</p>
+          <p className="mt-1 font-semibold text-white">{business.name}</p>
+          <p className="mt-1 text-sm text-violet-300">/store/{business.slug}</p>
+        </div>
         <OrderList
           orders={(orders ?? []).map((order) => ({
             id: order.id,

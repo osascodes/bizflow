@@ -41,7 +41,8 @@ export default function OrderList({ orders }: { orders: Order[] }) {
       const formData = new FormData();
       formData.set("order_id", order.id);
       formData.set("status", status);
-      await updateOrderStatusAction(formData);
+      const result = await updateOrderStatusAction(formData);
+      if (result?.error) throw new Error(result.error);
     } catch (error: unknown) {
       setItems((current) => current.map((item) => (item.id === order.id || (order.number && item.number === order.number)) ? { ...item, status: previous } : item));
       setErrorMessage(error instanceof Error ? error.message : "Could not update the order");
@@ -80,7 +81,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                 <p className="mt-1 text-sm text-zinc-400">{order.customer} · {order.phone}</p>
                 <p className="mt-1 text-xs text-zinc-500">{order.number || order.status} · {order.status}</p>
               </div>
-              <a className="text-sm text-violet-300" href={`https://wa.me/${order.phone.replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
+              <a className="text-sm text-violet-300" href={`https://wa.me/${(order.phone || "").replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
             </div>
             {order.status === "pending" || order.status === "packed" || order.status === "out" ? (
               <div className="mt-3 flex gap-2">

@@ -41,31 +41,49 @@ export async function placeCartAction(input: {
 export async function updateOrderStatusAction(formData: FormData) {
   const orderId = String(formData.get("order_id") || "");
   const status = String(formData.get("status") || "");
-  if (!orderId || !["pending", "packed", "out", "done", "cancelled"].includes(status)) throw new Error("Invalid order");
+  if (!orderId || !["pending", "packed", "out", "done", "cancelled"].includes(status)) return { error: "Invalid order" };
 
   const business = await getCurrentBusiness();
-  if (!business) throw new Error("Create your business first");
+  if (!business) return { error: "Create your business first" };
 
   const supabase = await createServerSupabase();
+  const { data: order, error: readError } = await supabase
+    .from("orders")
+    .select("id, order_number, product_id, product_name, quantity")
+    .eq("id", orderId)
+    .eq("business_id", business.id)
+    .single();
+  if (readError || !order) return { error: readError?.message || "Order not found" };
+
+  let rowsQuery = supabase.from("orders").select("id, product_id, product_name, quantity").eq("business_id", business.id);
+  rowsQuery = order.order_number ? rowsQuery.eq("order_number", order.order_number) : rowsQuery.eq("id", orderId);
+  const { data: rows } = await rowsQuery;
 
   if (status === "done") {
     const { error } = await supabase.rpc("complete_store_order", { p_order_id: orderId });
-    if (error) throw new Error(error.message);
+    if (error) {
+      for (const row of rows ?? []) {
+        if (!row.product_id) return { error: "Product missing on this order" };
+        const { data: product } = await supabase.from("products").select("name, price, stock").eq("id", row.product_id).eq("business_id", business.id).single();
+        if (!product) return { error: "Product not found" };
+        if (Number(product.stock) < Number(row.quantity)) return { error: `Not enough stock for ${product.name}` };
+        const { data: sale, error: saleError } = await supabase.from("sales").insert({ business_id: business.id, total: Number(product.price) * Number(row.quantity) }).select("id").single();
+        if (saleError || !sale) return { error: saleError?.message || "Could not record the sale" };
+        const { error: itemError } = await supabase.from("sale_items").insert({ sale_id: sale.id, product_id: row.product_id, name: product.name, quantity: row.quantity, price: product.price });
+        if (itemError) return { error: itemError.message };
+        const { error: stockError } = await supabase.from("products").update({ stock: Number(product.stock) - Number(row.quantity) }).eq("id", row.product_id);
+        if (stockError) return { error: stockError.message };
+      }
+      let doneQuery = supabase.from("orders").update({ status: "done" }).eq("business_id", business.id);
+      doneQuery = order.order_number ? doneQuery.eq("order_number", order.order_number) : doneQuery.eq("id", orderId);
+      const { error: doneError } = await doneQuery;
+      if (doneError) return { error: doneError.message };
+    }
   } else {
-    const { data: order, error: readError } = await supabase
-      .from("orders")
-      .select("order_number")
-      .eq("id", orderId)
-      .eq("business_id", business.id)
-      .single();
-    if (readError) throw new Error(readError.message);
-
     let query = supabase.from("orders").update({ status }).eq("business_id", business.id);
-    query = order.order_number
-      ? query.eq("order_number", order.order_number)
-      : query.eq("id", orderId);
+    query = order.order_number ? query.eq("order_number", order.order_number) : query.eq("id", orderId);
     const { error } = await query;
-    if (error) throw new Error(error.message);
+    if (error) return { error: error.message };
   }
 
   revalidatePath("/storefront");
@@ -73,4 +91,5 @@ export async function updateOrderStatusAction(formData: FormData) {
   revalidatePath("/inventory");
   revalidatePath("/dashboard");
   revalidatePath("/analytics");
+  return { error: "" };
 }

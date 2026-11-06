@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductEditor from "@/features/inventory/components/ProductEditor";
 
 type Product = {
@@ -13,13 +13,19 @@ type Product = {
   low_stock_at: number;
 };
 
-export default function StockList({ products }: { products: Product[] }) {
+export default function StockList({ products, highlightLow = false }: { products: Product[]; highlightLow?: boolean }) {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    if (!value) return products;
-    return products.filter((product) => product.name.toLowerCase().includes(value));
-  }, [products, query]);
+    const list = !value ? products : products.filter((product) => product.name.toLowerCase().includes(value));
+    if (!highlightLow) return list;
+    return [...list].sort((a, b) => Number(a.stock <= a.low_stock_at) === Number(b.stock <= b.low_stock_at) ? 0 : a.stock <= a.low_stock_at ? -1 : 1);
+  }, [products, query, highlightLow]);
+
+  useEffect(() => {
+    if (!highlightLow) return;
+    document.getElementById("low-stock")?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightLow, filtered]);
 
   return (
     <div className="space-y-3">
@@ -32,8 +38,11 @@ export default function StockList({ products }: { products: Product[] }) {
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No matching product.</div>
       ) : (
-        filtered.map((product) => (
-          <div key={product.id} className="relative flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+        filtered.map((product, index) => {
+          const low = product.stock <= product.low_stock_at;
+          const firstLow = highlightLow && low && filtered.findIndex((item) => item.stock <= item.low_stock_at) === index;
+          return (
+          <div id={firstLow ? "low-stock" : undefined} key={product.id} className={`relative flex gap-3 rounded-2xl border p-4 ${highlightLow && low ? "border-amber-400 bg-amber-500/10" : "border-zinc-800 bg-zinc-900"}`}>
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-16 w-16 rounded-xl object-cover" />
             ) : (
@@ -41,7 +50,8 @@ export default function StockList({ products }: { products: Product[] }) {
             )}
             <ProductEditor product={product} />
           </div>
-        ))
+          );
+        })
       )}
     </div>
   );

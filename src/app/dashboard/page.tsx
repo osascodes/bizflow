@@ -58,13 +58,13 @@ export default async function DashboardPage() {
         ["Left today", money(leftToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
-        ["Orders to do", String(ordersToDo)],
+        ...(ordersToDo > 0 ? [["Orders to do", String(ordersToDo)]] : []),
       ]
     : [
         ["Sales today", money(salesToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
-        ["Orders to do", String(ordersToDo)],
+        ...(ordersToDo > 0 ? [["Orders to do", String(ordersToDo)]] : []),
       ];
 
   return (

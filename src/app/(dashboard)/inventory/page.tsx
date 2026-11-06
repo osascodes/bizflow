@@ -7,7 +7,11 @@ import OfflineStock from "@/features/inventory/components/OfflineStock";
 import SavedList from "@/components/SavedList";
 import { redirect } from "next/navigation";
 
-export default async function InventoryPage() {
+export default async function InventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ focus?: string }>;
+}) {
   const { offline } = await getAuthState();
   let business = null;
   try {
@@ -35,6 +39,7 @@ export default async function InventoryPage() {
     redirect("/onboarding");
   }
 
+  const { focus } = await searchParams;
   const products = await getProducts();
   const saved = products.map((product) => ({
     id: product.id,
@@ -61,7 +66,7 @@ export default async function InventoryPage() {
               <ProductForm />
             </div>
           </div>
-          <StockList products={products} />
+          <StockList products={products} highlightLow={focus === "low"} />
         </div>
       </main>
     </>

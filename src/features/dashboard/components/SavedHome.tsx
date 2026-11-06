@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type Snapshot = {
   category: string;
@@ -56,12 +57,24 @@ export default function SavedHome({
         <p className="mt-1 text-sm text-violet-300">Role: {saved.role}</p>
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {saved.stats.map(([label, value]) => (
-            <div key={label} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
-              <p className="text-sm text-zinc-400">{label}</p>
-              <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
-            </div>
-          ))}
+          {saved.stats.map(([label, value]) => {
+            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales" : label === "Costs today" ? "/expenses" : "";
+            const card = (
+              <>
+                <p className="text-sm text-zinc-400">{label}</p>
+                <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+              </>
+            );
+            return href ? (
+              <Link key={label} href={href} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+                {card}
+              </Link>
+            ) : (
+              <div key={label} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+                {card}
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>

@@ -4,6 +4,7 @@ import { getLowStockCount } from "@/features/inventory/queries";
 import { getTodaySalesTotal } from "@/features/sales/queries";
 import { getDebtsDue } from "@/features/debts/queries";
 import { getTodayExpenses } from "@/features/expenses/queries";
+import { getOrdersToDoCount } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
 import SavedHome from "@/features/dashboard/components/SavedHome";
 
@@ -31,18 +32,21 @@ export default async function DashboardPage() {
   let salesToday = 0;
   let debtsDue = 0;
   let costsToday = 0;
+  let ordersToDo = 0;
   try {
-    [lowStock, salesToday, debtsDue, costsToday] = await Promise.all([
+    [lowStock, salesToday, debtsDue, costsToday, ordersToDo] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(),
       getDebtsDue(),
       isOwner ? getTodayExpenses() : Promise.resolve(0),
+      getOrdersToDoCount(),
     ]);
   } catch {
     lowStock = 0;
     salesToday = 0;
     debtsDue = 0;
     costsToday = 0;
+    ordersToDo = 0;
   }
 
   const leftToday = salesToday - costsToday;
@@ -54,11 +58,13 @@ export default async function DashboardPage() {
         ["Left today", money(leftToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
+        ["Orders to do", String(ordersToDo)],
       ]
     : [
         ["Sales today", money(salesToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
+        ["Orders to do", String(ordersToDo)],
       ];
 
   return (

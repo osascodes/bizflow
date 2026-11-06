@@ -55,11 +55,12 @@ export async function updateOrderStatusAction(formData: FormData) {
     .single();
   if (readError || !order) return { error: readError?.message || "Order not found" };
 
-  const rows = [order];
+  let groupQuery = supabase.from("orders").select("id, product_id, product_name, quantity").eq("business_id", business.id);
+  groupQuery = order.order_number ? groupQuery.eq("order_number", order.order_number) : groupQuery.eq("id", orderId);
+  const { data: group } = await groupQuery;
+  const rows = group && group.length > 0 ? group : [order];
 
   if (status === "done") {
-    const { error } = await supabase.rpc("complete_store_order", { p_order_id: orderId });
-    if (error) {
       for (const row of rows) {
         if (!row.product_id) continue;
         const { data: product } = await supabase.from("products").select("name, price, stock").eq("id", row.product_id).eq("business_id", business.id).single();
@@ -72,11 +73,14 @@ export async function updateOrderStatusAction(formData: FormData) {
         const { error: stockError } = await supabase.from("products").update({ stock: Number(product.stock) - Number(row.quantity) }).eq("id", row.product_id);
         if (stockError) return { error: stockError.message };
       }
-      const { error: doneError } = await supabase.from("orders").update({ status: "done" }).eq("business_id", business.id).eq("id", orderId);
+      let doneQuery = supabase.from("orders").update({ status: "done" }).eq("business_id", business.id);
+      doneQuery = order.order_number ? doneQuery.eq("order_number", order.order_number) : doneQuery.eq("id", orderId);
+      const { error: doneError } = await doneQuery;
       if (doneError) return { error: doneError.message };
-    }
   } else {
-    const { error } = await supabase.from("orders").update({ status }).eq("business_id", business.id).eq("id", orderId);
+    let query = supabase.from("orders").update({ status }).eq("business_id", business.id);
+    query = order.order_number ? query.eq("order_number", order.order_number) : query.eq("id", orderId);
+    const { error } = await query;
     if (error) return { error: error.message };
   }
 

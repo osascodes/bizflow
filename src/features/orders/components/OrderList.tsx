@@ -36,7 +36,8 @@ export default function OrderList({ orders }: { orders: Order[] }) {
     setErrorMessage("");
     setPendingId(order.id);
     const previous = order.status;
-    setItems((current) => current.map((item) => item.id === order.id ? { ...item, status } : item));
+    const same = (item: Order) => item.id === order.id || Boolean(order.number && item.number === order.number);
+    setItems((current) => current.map((item) => same(item) ? { ...item, status } : item));
     try {
       const formData = new FormData();
       formData.set("order_id", order.id);
@@ -44,7 +45,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
       const result = await updateOrderStatusAction(formData);
       if (result?.error) throw new Error(result.error);
     } catch (error: unknown) {
-      setItems((current) => current.map((item) => item.id === order.id ? { ...item, status: previous } : item));
+      setItems((current) => current.map((item) => same(item) ? { ...item, status: previous } : item));
       setErrorMessage(error instanceof Error ? error.message : "Could not update the order");
     } finally {
       setPendingId("");

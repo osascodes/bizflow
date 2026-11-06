@@ -28,7 +28,7 @@ const staffItems = [
   { href: "/storefront", label: "Store" },
 ];
 
-export default function AppNav({ role = "owner" }: { role?: string }) {
+export default function AppNav({ role = "owner", alertCount = 0 }: { role?: string; alertCount?: number }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [pressed, setPressed] = useState("");

@@ -24,7 +24,7 @@ export default async function SettingsPage() {
         <PlanCard plan={business.plan} trialEnds={business.trial_ends_at} />
         <BusinessEditor business={business} />
         <form action={logoutAction} className="mt-6">
-          <Button type="submit" variant="outline" className="w-full border-zinc-700 bg-zinc-950 text-white">Log out</Button>
+          <Button type="submit" className="w-full bg-zinc-100 text-zinc-950 hover:bg-white">Log out</Button>
         </form>
       </div>
     </main>

@@ -12,7 +12,15 @@ export async function getCurrentBusiness() {
 
   const { data: membership } = await supabase.rpc("current_membership");
   const row = Array.isArray(membership) ? membership[0] : membership;
-  if (row?.id) return row;
+  if (row?.id) {
+    if (row.trial_ends_at || row.plan) return row;
+    const { data: extra } = await supabase
+      .from("businesses")
+      .select("plan, trial_ends_at")
+      .eq("id", row.id)
+      .maybeSingle();
+    return { ...row, ...extra };
+  }
 
   const { data: owned } = await supabase
     .from("businesses")

@@ -29,16 +29,19 @@ export default function BusinessEditor({ business }: { business: Business }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [slug, setSlug] = useState(business.slug);
   const [pending, setPending] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   return (
     <form
       className="mt-6 space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
+        setSaved(false);
         setPending(true);
         try {
           const result = await updateBusinessAction(formData);
           setSlug(result.slug);
+          setSaved(true);
           router.refresh();
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save business.");
@@ -103,7 +106,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
         <Label className="text-zinc-300">Website</Label>
         <Input name="website" defaultValue={business.website || ""} placeholder="https://yourshop.com" />
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Save shop details"}</Button>
+      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:opacity-90" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save shop details"}</Button>
     </form>
   );
 }

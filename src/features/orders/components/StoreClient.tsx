@@ -275,7 +275,7 @@ export default function StoreClient({
       </section>
 
       {links.length > 0 || business.address ? (
-        <footer className="relative mx-auto max-w-6xl px-4 pb-32">
+        <footer className="relative mx-auto max-w-6xl px-4 pb-28">
           <div className="rounded-3xl border border-white/10 p-5">
             {business.address ? (
               <div>
@@ -284,11 +284,20 @@ export default function StoreClient({
               </div>
             ) : null}
             {links.length > 0 ? (
-              <div className={business.address ? "mt-5" : ""}>
-                <p className="text-sm text-zinc-400">Connect with {business.name}</p>
-                <div className="mt-3 flex flex-wrap gap-2">
+              <div className={business.address ? "mt-4" : ""}>
+                <div className="flex gap-3">
                   {links.map(([label, link]) => (
-                    <a key={label} href={link} target="_blank" className="rounded-full border border-white/10 px-4 py-2 text-sm text-white">{label}</a>
+                    <a key={label} href={link} target="_blank" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white">
+                      {label === "WhatsApp" ? (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M20.5 3.5A11 11 0 0 0 2.1 17.8L1 23l5.3-1.1A11 11 0 0 0 20.5 3.5zm-8.5 17a9.1 9.1 0 0 1-4.6-1.3l-.3-.2-3.1.8.8-3-.2-.3A9.1 9.1 0 1 1 12 20.5zm5-6.8c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.4-.5.2-.3a.5.5 0 0 0 0-.5l-.9-2.1c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4.1 15.3 15.3 0 0 0 1.5.6 3.6 3.6 0 0 0 1.7.1 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.6-.3z"/></svg>
+                      ) : label === "Instagram" ? (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.4 6.6a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
+                      ) : label === "TikTok" ? (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M14 3h2.2a5.2 5.2 0 0 0 3.6 3.4v2.3a7.4 7.4 0 0 1-3.6-1v6.6a5.7 5.7 0 1 1-5.7-5.7c.2 0 .5 0 .7.1v2.4a3.3 3.3 0 1 0 2.3 3.2V3z"/></svg>
+                      ) : (
+                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+                      )}
+                    </a>
                   ))}
                 </div>
               </div>

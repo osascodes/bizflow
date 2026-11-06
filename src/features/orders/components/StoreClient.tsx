@@ -408,7 +408,7 @@ export default function StoreClient({
                   {errorMessage ? <p className="mb-3 text-sm text-red-400">{errorMessage}</p> : null}
                   <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
                   <Input className="mt-3" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone" />
-                  <Button type="button" className="mt-4 w-full" disabled={pending || lines.length === 0} onClick={submit}>
+                  <Button type="button" className="mt-4 h-12 w-full bg-white text-zinc-950 hover:bg-zinc-200" disabled={pending || lines.length === 0} onClick={submit}>
                     {pending ? "Sending..." : `Send order · ₦${total.toLocaleString()}`}
                   </Button>
                 </div>

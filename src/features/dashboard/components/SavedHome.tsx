@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 type Need = { id: string; title: string; detail: string; status: string };
+type Low = { id: string; name: string; stock: number };
 type Snapshot = {
   category: string;
   name: string;
@@ -11,6 +12,7 @@ type Snapshot = {
   role: string;
   stats: [string, string][];
   needs?: Need[];
+  low?: Low[];
 };
 
 const KEY = "bizflow-home";
@@ -92,6 +94,22 @@ export default function SavedHome({
                     </div>
                     <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
                   </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        {saved.low && saved.low.length > 0 ? (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-white">Low stock</h2>
+            <div className="mt-3 space-y-3">
+              {saved.low.map((item) => (
+                <Link key={item.id} href="/inventory?focus=low" className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                  <div>
+                    <p className="font-semibold text-white">{item.name}</p>
+                    <p className="mt-1 text-sm text-amber-300">{item.stock} left</p>
+                  </div>
+                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
                 </Link>
               ))}
             </div>

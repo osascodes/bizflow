@@ -19,3 +19,10 @@ export async function getLowStockCount() {
   const products = await getProducts();
   return products.filter((product) => product.stock <= product.low_stock_at).length;
 }
+
+export async function getLowStock() {
+  const products = await getProducts();
+  return products
+    .filter((product) => product.stock <= product.low_stock_at)
+    .map((product) => ({ id: product.id, name: product.name, stock: product.stock }));
+}

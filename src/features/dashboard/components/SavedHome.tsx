@@ -84,9 +84,14 @@ export default function SavedHome({
             <div className="mt-3 space-y-3">
               {saved.needs.map((item) => (
                 <Link key={item.id} href="/storefront" className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                  <p className="font-semibold text-white">{item.title}</p>
-                  <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
-                  <p className="mt-1 text-xs capitalize text-violet-300">{item.status}</p>
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="font-semibold text-white">{item.title}</p>
+                      <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+                      <p className="mt-1 text-xs capitalize text-violet-300">{item.status}</p>
+                    </div>
+                    <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
+                  </div>
                 </Link>
               ))}
             </div>

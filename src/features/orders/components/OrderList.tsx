@@ -45,10 +45,10 @@ export default function OrderList({ orders }: { orders: Order[] }) {
             {order.status === "pending" || order.status === "packed" || order.status === "out" ? (
               <form action={updateOrderStatusAction} className="mt-3 flex gap-2">
                 <input type="hidden" name="order_id" value={order.id} />
-                {order.status === "pending" ? <Button name="status" value="packed" type="submit" className="h-9">Pack</Button> : null}
-                {order.status === "packed" ? <Button name="status" value="out" type="submit" className="h-9">Out</Button> : null}
-                {order.status === "out" ? <Button name="status" value="done" type="submit" className="h-9">Delivered</Button> : null}
-                {order.status === "pending" ? <Button name="status" value="cancelled" type="submit" variant="outline" className="h-9">Cancel</Button> : null}
+                {order.status === "pending" ? <Button name="status" value="packed" type="submit" className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">Pack</Button> : null}
+                {order.status === "packed" ? <Button name="status" value="out" type="submit" className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">Out</Button> : null}
+                {order.status === "out" ? <Button name="status" value="done" type="submit" className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white">Delivered</Button> : null}
+                {order.status === "pending" ? <Button name="status" value="cancelled" type="submit" className="h-9 border border-zinc-600 bg-zinc-800 text-white">Cancel</Button> : null}
               </form>
             ) : (
               <p className="mt-3 text-xs capitalize text-zinc-500">{order.status === "done" ? "Delivered" : order.status}</p>

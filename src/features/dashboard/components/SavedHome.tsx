@@ -3,12 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+type Need = { id: string; title: string; detail: string; status: string };
 type Snapshot = {
   category: string;
   name: string;
   welcome: string;
   role: string;
   stats: [string, string][];
+  needs?: Need[];
 };
 
 const KEY = "bizflow-home";
@@ -76,6 +78,20 @@ export default function SavedHome({
             );
           })}
         </div>
+        {saved.needs && saved.needs.length > 0 ? (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-white">Needs you</h2>
+            <div className="mt-3 space-y-3">
+              {saved.needs.map((item) => (
+                <Link key={item.id} href="/storefront" className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                  <p className="font-semibold text-white">{item.title}</p>
+                  <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+                  <p className="mt-1 text-xs capitalize text-violet-300">{item.status}</p>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
       </div>
     </main>
   );

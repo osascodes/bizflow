@@ -4,7 +4,7 @@ import { getLowStockCount } from "@/features/inventory/queries";
 import { getTodaySalesTotal } from "@/features/sales/queries";
 import { getDebtsDue } from "@/features/debts/queries";
 import { getTodayExpenses } from "@/features/expenses/queries";
-import { getOrdersToDoCount } from "@/features/orders/queries";
+import { getOrdersToDo } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
 import SavedHome from "@/features/dashboard/components/SavedHome";
 
@@ -32,21 +32,26 @@ export default async function DashboardPage() {
   let salesToday = 0;
   let debtsDue = 0;
   let costsToday = 0;
-  let ordersToDo = 0;
+  let ordersToDo: { id: string; customer: string; items: string[]; status: string }[] = [];
   try {
-    [lowStock, salesToday, debtsDue, costsToday, ordersToDo] = await Promise.all([
+    const [stock, sales, debts, costs, orders] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(),
       getDebtsDue(),
       isOwner ? getTodayExpenses() : Promise.resolve(0),
-      getOrdersToDoCount(),
+      getOrdersToDo(),
     ]);
+    lowStock = stock;
+    salesToday = sales;
+    debtsDue = debts;
+    costsToday = costs;
+    ordersToDo = orders;
   } catch {
     lowStock = 0;
     salesToday = 0;
     debtsDue = 0;
     costsToday = 0;
-    ordersToDo = 0;
+    ordersToDo = [];
   }
 
   const leftToday = salesToday - costsToday;
@@ -58,13 +63,13 @@ export default async function DashboardPage() {
         ["Left today", money(leftToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
-        ...(ordersToDo > 0 ? [["Orders to do", String(ordersToDo)]] : []),
+        ...(ordersToDo.length > 0 ? [["Orders to do", String(ordersToDo.length)]] : []),
       ]
     : [
         ["Sales today", money(salesToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", String(lowStock)],
-        ...(ordersToDo > 0 ? [["Orders to do", String(ordersToDo)]] : []),
+        ...(ordersToDo.length > 0 ? [["Orders to do", String(ordersToDo.length)]] : []),
       ];
 
   return (
@@ -75,6 +80,12 @@ export default async function DashboardPage() {
         welcome: `Welcome, ${name}`,
         role: business.role || "unknown",
         stats: stats as [string, string][],
+        needs: ordersToDo.map((order) => ({
+          id: order.id,
+          title: order.customer,
+          detail: order.items.join(", "),
+          status: order.status,
+        })),
       }}
     />
   );

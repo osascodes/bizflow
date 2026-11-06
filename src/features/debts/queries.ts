@@ -29,3 +29,14 @@ export async function getDebtsDue() {
   const debts = await getDebts();
   return debts.reduce((sum, debt) => sum + Math.max(0, Number(debt.amount) - Number(debt.paid)), 0);
 }
+
+export async function getDebtsOwed() {
+  const debts = await getDebts();
+  return debts
+    .map((debt) => ({
+      id: debt.id,
+      name: (Array.isArray(debt.customers) ? debt.customers[0]?.name : (debt.customers as { name?: string } | null)?.name) || "Customer",
+      left: Math.max(0, Number(debt.amount) - Number(debt.paid)),
+    }))
+    .filter((debt) => debt.left > 0);
+}

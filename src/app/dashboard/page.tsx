@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getLowStockCount, getLowStock } from "@/features/inventory/queries";
 import { getTodaySalesTotal } from "@/features/sales/queries";
-import { getDebtsDue } from "@/features/debts/queries";
+import { getDebtsDue, getDebtsOwed } from "@/features/debts/queries";
 import { getTodayExpenses } from "@/features/expenses/queries";
 import { getOrdersToDo } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
@@ -34,14 +34,16 @@ export default async function DashboardPage() {
   let costsToday = 0;
   let ordersToDo: { id: string; customer: string; items: string[]; status: string }[] = [];
   let lowItems: { id: string; name: string; stock: number }[] = [];
+  let owed: { id: string; name: string; left: number }[] = [];
   try {
-    const [stock, sales, debts, costs, orders, lows] = await Promise.all([
+    const [stock, sales, debts, costs, orders, lows, due] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(),
       getDebtsDue(),
       isOwner ? getTodayExpenses() : Promise.resolve(0),
       getOrdersToDo(),
       getLowStock(),
+      getDebtsOwed(),
     ]);
     lowStock = stock;
     salesToday = sales;
@@ -49,6 +51,7 @@ export default async function DashboardPage() {
     costsToday = costs;
     ordersToDo = orders;
     lowItems = lows;
+    owed = due;
   } catch {
     lowStock = 0;
     salesToday = 0;
@@ -56,6 +59,7 @@ export default async function DashboardPage() {
     costsToday = 0;
     ordersToDo = [];
     lowItems = [];
+    owed = [];
   }
 
   const leftToday = salesToday - costsToday;
@@ -91,6 +95,8 @@ export default async function DashboardPage() {
           status: order.status,
         })),
         low: lowItems,
+        owed,
+
       }}
     />
   );

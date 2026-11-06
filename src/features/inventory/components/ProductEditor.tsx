@@ -103,7 +103,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
           </form>
           <form action={deleteProductAction}>
             <input type="hidden" name="id" value={product.id} />
-            <Button type="submit" className="h-9 w-full bg-red-600 text-white hover:bg-red-500">Delete product</Button>
+            <Button type="submit" className="h-9 w-full bg-white text-red-600 hover:bg-zinc-200">Delete product</Button>
           </form>
         </div>
       ) : null}

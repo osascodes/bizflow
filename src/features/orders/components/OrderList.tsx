@@ -15,14 +15,29 @@ type Order = {
 
 export default function OrderList({ orders }: { orders: Order[] }) {
   const [query, setQuery] = useState("");
+  const [tab, setTab] = useState<"todo" | "done">("todo");
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    if (!value) return orders;
-    return orders.filter((order) => `${order.title} ${order.customer} ${order.number}`.toLowerCase().includes(value));
-  }, [orders, query]);
+    return orders.filter((order) => {
+      const done = order.status === "done" || order.status === "cancelled";
+      if (tab === "todo" && done) return false;
+      if (tab === "done" && !done) return false;
+      if (!value) return true;
+      return `${order.title} ${order.customer} ${order.number}`.toLowerCase().includes(value);
+    });
+  }, [orders, query, tab]);
+  const todoCount = orders.filter((order) => order.status !== "done" && order.status !== "cancelled").length;
 
   return (
     <div className="mt-8 space-y-3">
+      <div className="flex gap-2">
+        <button type="button" onClick={() => setTab("todo")} className={`h-10 rounded-full px-4 text-sm font-semibold ${tab === "todo" ? "bg-white text-zinc-950" : "border border-zinc-700 text-white"}`}>
+          To do{todoCount ? ` · ${todoCount}` : ""}
+        </button>
+        <button type="button" onClick={() => setTab("done")} className={`h-10 rounded-full px-4 text-sm font-semibold ${tab === "done" ? "bg-white text-zinc-950" : "border border-zinc-700 text-white"}`}>
+          Done
+        </button>
+      </div>
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}

@@ -66,7 +66,9 @@ export default function OrderList({ orders }: { orders: Order[] }) {
                 {order.status === "pending" ? <Button name="status" value="cancelled" type="submit" className="h-9 border border-zinc-600 bg-zinc-800 text-white">Cancel</Button> : null}
               </form>
             ) : (
-              <p className="mt-3 text-xs capitalize text-zinc-500">{order.status === "done" ? "Delivered" : order.status}</p>
+              <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${order.status === "done" ? "bg-emerald-500 text-white" : "bg-zinc-700 text-zinc-200"}`}>
+                {order.status === "done" ? "Delivered" : "Cancelled"}
+              </span>
             )}
           </div>
         ))

@@ -94,7 +94,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
   );
 }
 
-export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: string; name?: string; balance: number }) {
+export function PaymentForm({ debtId, name = "Customer", balance, onPaid }: { debtId: string; name?: string; balance: number; onPaid?: (amount: number) => void }) {
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
   const [paid, setPaid] = useState(false);
@@ -109,6 +109,8 @@ export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: st
           const payment = Number(formData.get("payment") || 0);
           if (payment <= 0) throw new Error("Payment must be more than 0");
           if (payment > balance) throw new Error("Payment is more than what is left");
+          setPaid(true);
+          onPaid?.(payment);
           if (!navigator.onLine) {
             writeDebtQueue([...readDebtQueue(), { id: crypto.randomUUID(), debtId, name, payment }]);
             setNotice("Saved on this phone.");

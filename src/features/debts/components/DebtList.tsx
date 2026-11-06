@@ -16,11 +16,12 @@ type Debt = {
 
 export default function DebtList({ debts }: { debts: Debt[] }) {
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState(debts);
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
     if (!value) return debts;
-    return debts.filter((debt) => `${debt.name} ${debt.note}`.toLowerCase().includes(value));
-  }, [debts, query]);
+    return items.filter((debt) => `${debt.name} ${debt.note}`.toLowerCase().includes(value));
+  }, [items, query]);
 
   return (
     <div className="space-y-3">
@@ -49,7 +50,7 @@ export default function DebtList({ debts }: { debts: Debt[] }) {
               <p className="mt-2 text-xs text-zinc-500">Owes ₦{debt.amount.toLocaleString()} · paid ₦{debt.paid.toLocaleString()}</p>
               {debt.balance > 0 ? (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  <PaymentForm debtId={debt.id} name={debt.name} balance={debt.balance} />
+                  <PaymentForm debtId={debt.id} name={debt.name} balance={debt.balance} onPaid={(amount) => setItems((current) => current.map((item) => item.id === debt.id ? { ...item, paid: item.paid + amount, balance: Math.max(0, item.balance - amount) } : item))} />
                   {phone ? (
                     <a
                       href={`https://wa.me/${phone}?text=${encodeURIComponent(`Hi ${debt.name}, this is a reminder from ${debt.shop}. You still owe NGN ${debt.balance.toLocaleString()}.`)}`}

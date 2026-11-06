@@ -15,12 +15,13 @@ type Product = {
 
 export default function StockList({ products, highlightLow = false }: { products: Product[]; highlightLow?: boolean }) {
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState(products);
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    const list = !value ? products : products.filter((product) => product.name.toLowerCase().includes(value));
+    const list = !value ? items : items.filter((product) => product.name.toLowerCase().includes(value));
     if (!highlightLow) return list;
     return [...list].sort((a, b) => Number(a.stock <= a.low_stock_at) === Number(b.stock <= b.low_stock_at) ? 0 : a.stock <= a.low_stock_at ? -1 : 1);
-  }, [products, query, highlightLow]);
+  }, [items, query, highlightLow]);
 
   useEffect(() => {
     if (!highlightLow) return;
@@ -48,7 +49,7 @@ export default function StockList({ products, highlightLow = false }: { products
             ) : (
               <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-zinc-950 text-[10px] text-zinc-600">No photo</div>
             )}
-            <ProductEditor product={product} />
+            <ProductEditor product={product} onStock={(stock) => setItems((current) => current.map((item) => item.id === product.id ? { ...item, stock } : item))} />
           </div>
           );
         })

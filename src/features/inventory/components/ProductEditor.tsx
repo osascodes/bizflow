@@ -17,7 +17,7 @@ type Product = {
   low_stock_at: number;
 };
 
-export default function ProductEditor({ product }: { product: Product }) {
+export default function ProductEditor({ product, onStock }: { product: Product; onStock?: (stock: number) => void }) {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notice, setNotice] = useState("");
@@ -48,6 +48,8 @@ export default function ProductEditor({ product }: { product: Product }) {
               setSaved(false);
               setSaving(true);
               const stock = Number(formData.get("stock") || 0);
+              setShownStock(stock);
+              onStock?.(stock);
               const saveLocally = () => {
                 if (stock < 0 || !Number.isInteger(stock)) throw new Error("Stock must be a whole number");
                 const queue = readStockQueue().filter((item) => item.productId !== product.id);

@@ -50,3 +50,8 @@ export async function getNotifications() {
 
   return items;
 }
+
+export async function getAlertCount() {
+  const items = await getNotifications();
+  return items.length;
+}

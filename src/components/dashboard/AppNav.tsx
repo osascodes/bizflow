@@ -58,6 +58,9 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
                 }`}
               >
                 {item.label}
+                {item.href === "/notifications" && alertCount > 0 ? (
+                  <span className="ml-2 rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
+                ) : null}
               </Link>
             );
           })}
@@ -107,6 +110,9 @@ export default function AppNav({ role = "owner" }: { role?: string }) {
                     }`}
                   >
                     {item.label}
+                {item.href === "/notifications" && alertCount > 0 ? (
+                  <span className="ml-2 rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
+                ) : null}
                   </Link>
                 );
               })}

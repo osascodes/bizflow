@@ -3,6 +3,7 @@ import { getCurrentBusiness } from "@/features/business/queries";
 import { logoutAction } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
 import AppNav from "@/components/dashboard/AppNav";
+import { getAlertCount } from "@/features/notifications/queries";
 import SyncSales from "@/features/sales/components/SyncSales";
 import SyncCosts from "@/features/expenses/components/SyncCosts";
 import SyncPayments from "@/features/debts/components/SyncPayments";
@@ -21,6 +22,15 @@ export default async function DashboardLayout({
     business = await getCurrentBusiness();
   } catch {
     business = null;
+  }
+
+  let alertCount = 0;
+  if (business?.role === "owner") {
+    try {
+      alertCount = await getAlertCount();
+    } catch {
+      alertCount = 0;
+    }
   }
 
   return (
@@ -43,7 +53,7 @@ export default async function DashboardLayout({
         </form>
       </header>
       <div className="md:flex">
-        <AppNav role={business?.role === "owner" ? "owner" : "staff"} />
+        <AppNav role={business?.role === "owner" ? "owner" : "staff"} alertCount={alertCount} />
         <div className="min-w-0 flex-1">{children}</div>
       </div>
     </div>

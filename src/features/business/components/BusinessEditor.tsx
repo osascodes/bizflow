@@ -43,6 +43,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
           setSlug(result.slug);
           setSaved(true);
           router.refresh();
+          window.setTimeout(() => setSaved(false), 2000);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save business.");
         } finally {

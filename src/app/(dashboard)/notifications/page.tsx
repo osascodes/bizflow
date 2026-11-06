@@ -15,9 +15,14 @@ export default async function NotificationsPage() {
   if (business.role !== "owner") redirect("/dashboard");
   const items = await getNotifications();
   const lowStock = items.filter((item) => item.id.startsWith("stock-"));
-  const message = [
+  const orders = items.filter((item) => item.id.startsWith("order-"));
+  const stockMessage = [
     `Low stock at ${business.name}:`,
     ...lowStock.map((item) => `- ${item.title}. ${item.detail}`),
+  ].join("\n");
+  const orderMessage = [
+    `New orders at ${business.name}:`,
+    ...orders.map((item) => `- ${item.title}. ${item.detail}`),
   ].join("\n");
   const phone = business.phone ? waPhone(business.phone) : "";
 
@@ -26,18 +31,21 @@ export default async function NotificationsPage() {
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-white">Alerts</h1>
         <p className="mt-2 text-sm text-zinc-400">Low stock, new store orders, and unpaid debts.</p>
-        {lowStock.length > 0 ? (
-          phone ? (
-            <a
-              href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`}
-              target="_blank"
-              className="mt-6 inline-flex h-11 items-center rounded-full bg-white px-5 text-sm font-semibold text-zinc-950"
-            >
-              Send low stock to WhatsApp
-            </a>
-          ) : (
-            <p className="mt-6 text-sm text-amber-300">Add the shop phone in Settings to send this alert.</p>
-          )
+        {phone && (lowStock.length > 0 || orders.length > 0) ? (
+          <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+            {orders.length > 0 ? (
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-semibold text-white">
+                Send orders to WhatsApp
+              </a>
+            ) : null}
+            {lowStock.length > 0 ? (
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(stockMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-700 px-5 text-sm font-semibold text-white">
+                Send low stock to WhatsApp
+              </a>
+            ) : null}
+          </div>
+        ) : !phone && items.length > 0 ? (
+          <p className="mt-6 text-sm text-amber-300">Add the shop phone in Settings to send alerts on WhatsApp.</p>
         ) : null}
         <div className="mt-6 space-y-3">
           {items.length === 0 ? (

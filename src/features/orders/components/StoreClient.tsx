@@ -275,7 +275,7 @@ export default function StoreClient({
       </section>
 
       {links.length > 0 || business.address ? (
-        <footer className="relative mx-auto max-w-6xl px-4 pb-28">
+        <footer className={`relative mx-auto max-w-6xl px-4 ${count > 0 ? "pb-28" : "pb-8"}`}>
           <div className="rounded-3xl border border-white/10 p-5">
             {business.address ? (
               <div>
@@ -285,7 +285,8 @@ export default function StoreClient({
             ) : null}
             {links.length > 0 ? (
               <div className={business.address ? "mt-4" : ""}>
-                <div className="flex gap-3">
+                <p className="text-sm text-zinc-400">Connect with {business.name}</p>
+                <div className="mt-3 flex gap-3">
                   {links.map(([label, link]) => (
                     <a key={label} href={link} target="_blank" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white">
                       {label === "WhatsApp" ? (
@@ -303,6 +304,7 @@ export default function StoreClient({
               </div>
             ) : null}
           </div>
+          <p className="mt-4 text-center text-xs text-zinc-500">Powered by BizFlow</p>
         </footer>
       ) : null}
 

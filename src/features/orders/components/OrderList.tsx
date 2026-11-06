@@ -36,14 +36,14 @@ export default function OrderList({ orders }: { orders: Order[] }) {
     setErrorMessage("");
     setPendingId(order.id);
     const previous = order.status;
-    setItems((current) => current.map((item) => item.id === order.id ? { ...item, status } : item));
+    setItems((current) => current.map((item) => (item.id === order.id || (order.number && item.number === order.number)) ? { ...item, status } : item));
     try {
       const formData = new FormData();
       formData.set("order_id", order.id);
       formData.set("status", status);
       await updateOrderStatusAction(formData);
     } catch (error: unknown) {
-      setItems((current) => current.map((item) => item.id === order.id ? { ...item, status: previous } : item));
+      setItems((current) => current.map((item) => (item.id === order.id || (order.number && item.number === order.number)) ? { ...item, status: previous } : item));
       setErrorMessage(error instanceof Error ? error.message : "Could not update the order");
     } finally {
       setPendingId("");

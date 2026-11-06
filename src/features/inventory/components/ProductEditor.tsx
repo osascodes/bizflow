@@ -21,6 +21,8 @@ export default function ProductEditor({ product }: { product: Product }) {
   const [open, setOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [notice, setNotice] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [shownStock, setShownStock] = useState(product.stock);
 
   return (
@@ -43,6 +45,8 @@ export default function ProductEditor({ product }: { product: Product }) {
             action={async (formData) => {
               setErrorMessage("");
               setNotice("");
+              setSaved(false);
+              setSaving(true);
               const stock = Number(formData.get("stock") || 0);
               const saveLocally = () => {
                 if (stock < 0 || !Number.isInteger(stock)) throw new Error("Stock must be a whole number");
@@ -66,7 +70,8 @@ export default function ProductEditor({ product }: { product: Product }) {
                 }
                 await updateProductAction(formData);
                 setShownStock(stock);
-                setOpen(false);
+                setSaved(true);
+                window.setTimeout(() => setSaved(false), 2000);
               } catch (error: unknown) {
                 const message = error instanceof Error ? error.message : "Could not update product.";
                 if (!navigator.onLine || /fetch|network|business first|failed/i.test(message)) {
@@ -74,6 +79,8 @@ export default function ProductEditor({ product }: { product: Product }) {
                   return;
                 }
                 setErrorMessage(message);
+              } finally {
+                setSaving(false);
               }
             }}
           >
@@ -90,11 +97,11 @@ export default function ProductEditor({ product }: { product: Product }) {
               <Label className="text-xs text-zinc-400">Replace photo</Label>
               <Input name="image" type="file" accept="image/*" />
             </div>
-            <Button type="submit" className="h-9 w-full">Save</Button>
+            <Button type="submit" className="h-9 w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={saving}>{saving ? "Saving..." : saved ? "Saved" : "Save"}</Button>
           </form>
           <form action={deleteProductAction}>
             <input type="hidden" name="id" value={product.id} />
-            <Button type="submit" variant="outline" className="h-9 w-full text-red-300">Delete product</Button>
+            <Button type="submit" className="h-9 w-full bg-red-600 text-white hover:bg-red-500">Delete product</Button>
           </form>
         </div>
       ) : null}

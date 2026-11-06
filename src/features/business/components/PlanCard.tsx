@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { choosePlanAction } from "@/features/business/actions";
+import { startPlanPaymentAction } from "@/features/billing/actions";
 
 export default function PlanCard({
   plan,
@@ -17,16 +17,16 @@ export default function PlanCard({
     : null;
   const label = plan === "pro" ? "Pro" : plan === "starter" ? "Starter" : "Free trial";
 
-  const choose = async (next: "starter" | "pro") => {
+  const pay = async (next: "starter" | "pro") => {
     setErrorMessage("");
     setPending(next);
     try {
       const formData = new FormData();
       formData.set("plan", next);
-      await choosePlanAction(formData);
+      const { url } = await startPlanPaymentAction(formData);
+      window.location.href = url;
     } catch (error: unknown) {
-      setErrorMessage(error instanceof Error ? error.message : "Could not change plan");
-    } finally {
+      setErrorMessage(error instanceof Error ? error.message : "Could not start payment");
       setPending("");
     }
   };
@@ -36,16 +36,16 @@ export default function PlanCard({
       <p className="text-sm text-zinc-400">Plan</p>
       <p className="mt-1 text-lg font-semibold text-white">{label}</p>
       {plan !== "starter" && plan !== "pro" && daysLeft !== null ? (
-        <p className="mt-1 text-sm text-zinc-300">{daysLeft} days of Pro left</p>
+        <p className="mt-1 text-sm text-zinc-300">{daysLeft} days of Pro left on the free trial</p>
       ) : null}
-      <p className="mt-3 text-sm text-zinc-400">Payment is not on yet. Choosing a plan saves it on the shop.</p>
+      <p className="mt-3 text-sm text-zinc-400">The plan changes only after Paystack confirms the payment.</p>
       {errorMessage ? <p className="mt-3 text-sm text-red-400">{errorMessage}</p> : null}
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        <button type="button" onClick={() => choose("starter")} disabled={pending !== ""} className="h-11 rounded-full border border-zinc-700 text-sm font-semibold text-white">
-          {pending === "starter" ? "Saving..." : "Starter · ₦5,000"}
+        <button type="button" onClick={() => pay("starter")} disabled={pending !== ""} className="h-11 rounded-full border border-zinc-700 text-sm font-semibold text-white">
+          {pending === "starter" ? "Opening Paystack..." : "Starter · ₦5,000"}
         </button>
-        <button type="button" onClick={() => choose("pro")} disabled={pending !== ""} className="h-11 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-semibold text-white">
-          {pending === "pro" ? "Saving..." : "Pro · ₦10,000"}
+        <button type="button" onClick={() => pay("pro")} disabled={pending !== ""} className="h-11 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-semibold text-white">
+          {pending === "pro" ? "Opening Paystack..." : "Pro · ₦10,000"}
         </button>
       </div>
     </div>

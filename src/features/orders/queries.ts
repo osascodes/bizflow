@@ -5,10 +5,11 @@ export async function getOrdersToDoCount() {
   const business = await getCurrentBusiness();
   if (!business) return 0;
   const supabase = await createServerSupabase();
-  const { count } = await supabase
+  const { data } = await supabase
     .from("orders")
-    .select("id", { count: "exact", head: true })
+    .select("id, order_number, status")
     .eq("business_id", business.id)
     .in("status", ["pending", "packed", "out"]);
-  return count || 0;
+  const numbers = new Set((data ?? []).map((order) => order.order_number || order.id));
+  return numbers.size;
 }

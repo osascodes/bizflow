@@ -26,12 +26,20 @@ export default async function StorefrontPage() {
   const isOwner = business.role === "owner";
 
   const supabase = await createServerSupabase();
-  const { data: orders } = await supabase
+  const { data: active } = await supabase
     .from("orders")
     .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number")
     .eq("business_id", business.id)
+    .in("status", ["pending", "packed", "out"])
+    .order("created_at", { ascending: false });
+  const { data: finished } = await supabase
+    .from("orders")
+    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number")
+    .eq("business_id", business.id)
+    .in("status", ["done", "cancelled"])
     .order("created_at", { ascending: false })
     .limit(20);
+  const orders = [...(active ?? []), ...(finished ?? [])];
 
   const saved = (orders ?? []).map((order) => ({
     id: order.id,

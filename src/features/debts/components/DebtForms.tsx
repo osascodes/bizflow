@@ -12,15 +12,19 @@ type Customer = { id: string; name: string; phone: string | null };
 export function CustomerForm() {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   return (
     <form
       className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
+        setSaved(false);
         setPending(true);
         try {
           await createCustomerAction(formData);
+          setSaved(true);
+          window.setTimeout(() => setSaved(false), 2000);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save customer.");
         } finally {
@@ -38,7 +42,7 @@ export function CustomerForm() {
         <Label className="text-zinc-300">Phone</Label>
         <Input name="phone" placeholder="0801 234 5678" />
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Save customer"}</Button>
+      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save customer"}</Button>
     </form>
   );
 }
@@ -46,15 +50,19 @@ export function CustomerForm() {
 export function DebtForm({ customers }: { customers: Customer[] }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   return (
     <form
       className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
       action={async (formData) => {
         setErrorMessage("");
+        setSaved(false);
         setPending(true);
         try {
           await createDebtAction(formData);
+          setSaved(true);
+          window.setTimeout(() => setSaved(false), 2000);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save debt.");
         } finally {
@@ -81,7 +89,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
         <Label className="text-zinc-300">Note</Label>
         <Input name="note" placeholder="2 gowns, pay Friday" />
       </div>
-      <Button type="submit" className="w-full" disabled={pending || customers.length === 0}>{pending ? "Saving..." : "Save debt"}</Button>
+      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={pending || customers.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>
     </form>
   );
 }
@@ -89,6 +97,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
 export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: string; name?: string; balance: number }) {
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
+  const [paid, setPaid] = useState(false);
 
   return (
     <form
@@ -106,6 +115,8 @@ export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: st
             return;
           }
           await recordPaymentAction(formData);
+          setPaid(true);
+          window.setTimeout(() => setPaid(false), 2000);
         } catch (error: unknown) {
           setNotice(error instanceof Error ? error.message : "Could not save payment.");
         } finally {
@@ -115,7 +126,7 @@ export function PaymentForm({ debtId, name = "Customer", balance }: { debtId: st
     >
       <input type="hidden" name="debt_id" value={debtId} />
       <Input name="payment" type="number" min="1" step="0.01" placeholder="Payment" className="h-9" />
-      <Button type="submit" className="h-9" disabled={balance <= 0 || pending}>{pending ? "..." : "Pay"}</Button>
+      <Button type="submit" className="h-9 bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={balance <= 0 || pending}>{pending ? "Saving..." : paid ? "Paid" : "Pay"}</Button>
       {notice ? <span className="text-xs text-amber-300">{notice}</span> : null}
     </form>
   );

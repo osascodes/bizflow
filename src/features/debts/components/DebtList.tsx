@@ -54,7 +54,7 @@ export default function DebtList({ debts }: { debts: Debt[] }) {
                     <a
                       href={`https://wa.me/${phone}?text=${encodeURIComponent(`Hi ${debt.name}, this is a reminder from ${debt.shop}. You still owe NGN ${debt.balance.toLocaleString()}.`)}`}
                       target="_blank"
-                      className="inline-flex h-10 items-center rounded-full border border-zinc-700 px-4 text-sm font-semibold text-white"
+                      className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950"
                     >
                       Remind on WhatsApp
                     </a>

@@ -27,3 +27,19 @@ export async function getTodayExpenses() {
     .gte("created_at", start.toISOString());
   return (data ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
 }
+
+export async function getTodayCosts() {
+  const business = await getCurrentBusiness();
+  if (!business) return [];
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  const supabase = await createServerSupabase();
+  const { data } = await supabase
+    .from("expenses")
+    .select("id, title, amount")
+    .eq("business_id", business.id)
+    .gte("created_at", start.toISOString())
+    .order("created_at", { ascending: false })
+    .limit(8);
+  return (data ?? []).map((row) => ({ id: row.id, title: row.title, amount: Number(row.amount) }));
+}

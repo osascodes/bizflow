@@ -3,7 +3,7 @@ import { getCurrentBusiness } from "@/features/business/queries";
 import { getLowStockCount, getLowStock } from "@/features/inventory/queries";
 import { getTodaySalesTotal, getTodaySales } from "@/features/sales/queries";
 import { getDebtsDue, getDebtsOwed } from "@/features/debts/queries";
-import { getTodayExpenses } from "@/features/expenses/queries";
+import { getTodayExpenses, getTodayCosts } from "@/features/expenses/queries";
 import { getOrdersToDo } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
 import SavedHome from "@/features/dashboard/components/SavedHome";
@@ -36,8 +36,9 @@ export default async function DashboardPage() {
   let lowItems: { id: string; name: string; stock: number }[] = [];
   let owed: { id: string; name: string; left: number }[] = [];
   let todaySales: { id: string; total: number; items: string }[] = [];
+  let todayCosts: { id: string; title: string; amount: number }[] = [];
   try {
-    const [stock, sales, debts, costs, orders, lows, due, todays] = await Promise.all([
+    const [stock, sales, debts, costs, orders, lows, due, todays, costItems] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(),
       getDebtsDue(),
@@ -46,6 +47,7 @@ export default async function DashboardPage() {
       getLowStock(),
       getDebtsOwed(),
       getTodaySales(),
+      isOwner ? getTodayCosts() : Promise.resolve([]),
     ]);
     lowStock = stock;
     salesToday = sales;
@@ -55,6 +57,7 @@ export default async function DashboardPage() {
     lowItems = lows;
     owed = due;
     todaySales = todays;
+    todayCosts = costItems;
   } catch {
     lowStock = 0;
     salesToday = 0;
@@ -64,6 +67,7 @@ export default async function DashboardPage() {
     lowItems = [];
     owed = [];
     todaySales = [];
+    todayCosts = [];
   }
 
   const leftToday = salesToday - costsToday;
@@ -101,6 +105,8 @@ export default async function DashboardPage() {
         low: lowItems,
         owed,
         today: todaySales,
+        costs: todayCosts,
+
 
       }}
     />

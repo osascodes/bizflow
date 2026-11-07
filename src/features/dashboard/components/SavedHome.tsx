@@ -7,6 +7,7 @@ type Need = { id: string; title: string; detail: string; status: string };
 type Low = { id: string; name: string; stock: number };
 type Owed = { id: string; name: string; left: number };
 type Today = { id: string; total: number; items: string };
+type Cost = { id: string; title: string; amount: number };
 type Snapshot = {
   category: string;
   name: string;
@@ -17,6 +18,7 @@ type Snapshot = {
   low?: Low[];
   owed?: Owed[];
   today?: Today[];
+  costs?: Cost[];
 };
 
 const KEY = "bizflow-home";
@@ -66,7 +68,7 @@ export default function SavedHome({
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {saved.stats.map(([label, value]) => {
-            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales?today=1" : label === "Costs today" ? "/expenses" : "";
+            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales?today=1" : label === "Costs today" ? "/expenses?today=1" : "";
             const card = (
               <>
                 <p className="text-sm text-zinc-400">{label}</p>
@@ -144,6 +146,22 @@ export default function SavedHome({
                   <div>
                     <p className="font-semibold text-white">{item.items}</p>
                     <p className="mt-1 text-sm text-zinc-400">₦{item.total.toLocaleString()}</p>
+                  </div>
+                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        ) : null}
+        {saved.costs && saved.costs.length > 0 ? (
+          <div className="mt-8">
+            <h2 className="text-lg font-semibold text-white">Costs today</h2>
+            <div className="mt-3 space-y-3">
+              {saved.costs.map((item) => (
+                <Link key={item.id} href="/expenses?today=1" className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                  <div>
+                    <p className="font-semibold text-white">{item.title}</p>
+                    <p className="mt-1 text-sm text-zinc-400">₦{item.amount.toLocaleString()}</p>
                   </div>
                   <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
                 </Link>

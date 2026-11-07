@@ -66,7 +66,7 @@ export default function SavedHome({
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {saved.stats.map(([label, value]) => {
-            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales" : label === "Costs today" ? "/expenses" : "";
+            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales?today=1" : label === "Costs today" ? "/expenses" : "";
             const card = (
               <>
                 <p className="text-sm text-zinc-400">{label}</p>

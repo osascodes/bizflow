@@ -1,20 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-type Sale = { id: string; title: string; when: string; total: number };
+type Sale = { id: string; title: string; when: string; at?: string; total: number };
 
-export default function SaleList({ sales }: { sales: Sale[] }) {
+export default function SaleList({ sales, todayOnly = false }: { sales: Sale[]; todayOnly?: boolean }) {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    if (!value) return sales;
-    return sales.filter((sale) => sale.title.toLowerCase().includes(value));
-  }, [sales, query]);
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    return sales.filter((sale) => {
+      if (todayOnly && sale.at && new Date(sale.at) < start) return false;
+      if (!value) return true;
+      return sale.title.toLowerCase().includes(value);
+    });
+  }, [sales, query, todayOnly]);
+
+  useEffect(() => {
+    if (!todayOnly) return;
+    document.getElementById("sales-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [todayOnly]);
 
   return (
-    <div className="space-y-3">
+    <div id="sales-list" className="space-y-3">
+      {todayOnly ? <h2 className="text-lg font-semibold text-white">Today's sales</h2> : null}
+
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}

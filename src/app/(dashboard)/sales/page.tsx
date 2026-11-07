@@ -9,8 +9,11 @@ import SavedList from "@/components/SavedList";
 import OfflineSales from "@/features/sales/components/OfflineSales";
 import { redirect } from "next/navigation";
 
-export default async function SalesPage() {
+export default async function SalesPage({ searchParams }: { searchParams: Promise<{ today?: string }> }) {
+  const params = await searchParams;
+  const todayOnly = params.today === "1";
   const { offline } = await getAuthState();
+
   let business = null;
   try {
     business = await getCurrentBusiness();
@@ -62,12 +65,14 @@ export default async function SalesPage() {
             </div>
           </div>
           <SaleList
+            todayOnly={todayOnly}
             sales={sales.map((sale) => {
               const items = sale.sale_items ?? [];
               return {
                 id: sale.id,
                 title: items.length > 1 ? `${items.length} items` : items[0] ? `${items[0].quantity} x ${items[0].name}` : "Sale",
                 when: new Date(sale.created_at).toLocaleString(),
+                at: sale.created_at,
                 total: Number(sale.total),
               };
             })}

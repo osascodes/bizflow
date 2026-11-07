@@ -14,6 +14,7 @@ type Line = { productId: string; quantity: number };
 export default function SaleForm({ products, customers = [], offlineMode = false }: { products: Product[]; customers?: Customer[]; offlineMode?: boolean }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
+  const [saved, setSaved] = useState(false);
   const [productId, setProductId] = useState("");
   const [quantity, setQuantity] = useState(1);
   const [lines, setLines] = useState<Line[]>([]);
@@ -81,6 +82,8 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         return;
       }
       await recordSaleAction(formData);
+          setSaved(true);
+          window.setTimeout(() => setSaved(false), 2000);
       setLines([]);
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Could not record sale.");
@@ -110,7 +113,7 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         <Label className="text-zinc-300">Quantity</Label>
         <Input value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} type="number" min="1" step="1" />
       </div>
-      <button type="button" onClick={addLine} className="inline-flex h-10 w-full items-center justify-center rounded-full border border-zinc-700 text-sm font-semibold text-white">
+      <button type="button" onClick={addLine} className="inline-flex h-11 w-full items-center justify-center rounded-full bg-white text-sm font-semibold text-zinc-950">
         Add item
       </button>
       {lines.length > 0 ? (
@@ -144,8 +147,8 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
         Customer will pay later
       </label>
-      <Button type="submit" className="w-full" disabled={pending || lines.length === 0}>
-        {pending ? "Saving..." : offlineMode ? "Save offline" : onCredit ? "Record credit sale" : "Record sale"}
+      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={pending || lines.length === 0}>
+        {pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : onCredit ? "Record credit sale" : "Record sale"}
       </Button>
     </form>
   );

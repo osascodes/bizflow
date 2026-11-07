@@ -1,19 +1,31 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-type Cost = { id: string; title: string; detail: string; amount: number };
+type Cost = { id: string; title: string; detail: string; amount: number; at?: string };
 
-export default function CostList({ costs }: { costs: Cost[] }) {
+export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; todayOnly?: boolean }) {
   const [query, setQuery] = useState("");
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    if (!value) return costs;
-    return costs.filter((cost) => `${cost.title} ${cost.detail}`.toLowerCase().includes(value));
-  }, [costs, query]);
+    const start = new Date();
+    start.setHours(0, 0, 0, 0);
+    return costs.filter((cost) => {
+      if (todayOnly && cost.at && new Date(cost.at) < start) return false;
+      if (!value) return true;
+      return `${cost.title} ${cost.detail}`.toLowerCase().includes(value);
+    });
+  }, [costs, query, todayOnly]);
+
+  useEffect(() => {
+    if (!todayOnly) return;
+    document.getElementById("costs-list")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [todayOnly]);
 
   return (
-    <div className="space-y-3">
+    <div id="costs-list" className="space-y-3">
+      {todayOnly ? <h2 className="text-lg font-semibold text-white">Today's costs</h2> : null}
+
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}

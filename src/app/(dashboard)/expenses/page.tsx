@@ -7,8 +7,11 @@ import OfflineCosts from "@/features/expenses/components/OfflineCosts";
 import CostList from "@/features/expenses/components/CostList";
 import SavedList from "@/components/SavedList";
 
-export default async function ExpensesPage() {
+export default async function ExpensesPage({ searchParams }: { searchParams: Promise<{ today?: string }> }) {
+  const params = await searchParams;
+  const todayOnly = params.today === "1";
   const { offline } = await getAuthState();
+
   let business = null;
   try {
     business = await getCurrentBusiness();
@@ -55,10 +58,12 @@ export default async function ExpensesPage() {
             </div>
           </div>
           <CostList
+            todayOnly={todayOnly}
             costs={expenses.map((expense) => ({
               id: expense.id,
               title: expense.title,
               detail: `${expense.category} · ${new Date(expense.created_at).toLocaleString()}`,
+              at: expense.created_at,
               amount: Number(expense.amount),
             }))}
           />

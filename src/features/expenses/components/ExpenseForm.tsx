@@ -13,6 +13,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
   const [errorMessage, setErrorMessage] = useState("");
   const [notice, setNotice] = useState("");
   const [pending, setPending] = useState(false);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     const clear = () => {
@@ -28,6 +29,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
       action={async (formData) => {
         setErrorMessage("");
         setNotice("");
+        setSaved(false);
         setPending(true);
         try {
           if (offlineMode || !navigator.onLine) {
@@ -45,8 +47,8 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
             return;
           }
           await createExpenseAction(formData);
-          setNotice("Saved.");
-          window.setTimeout(() => setNotice(""), 2000);
+          setSaved(true);
+          window.setTimeout(() => setSaved(false), 2000);
         } catch (error: unknown) {
           setErrorMessage(error instanceof Error ? error.message : "Could not save expense.");
         } finally {
@@ -72,7 +74,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
         <Label className="text-zinc-300">Amount</Label>
         <Input name="amount" type="number" min="1" step="0.01" required />
       </div>
-      <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : offlineMode ? "Save offline" : "Save expense"}</Button>
+      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : "Save expense"}</Button>
     </form>
   );
 }

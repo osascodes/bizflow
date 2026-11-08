@@ -66,6 +66,22 @@ export default function SavedHome({
         <p className="mt-2 text-sm text-zinc-400">{saved.welcome}</p>
         <p className="mt-1 text-sm text-violet-300">Role: {saved.role}</p>
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
+        <button
+          type="button"
+          onClick={() => {
+            const lines = [
+              saved.name,
+              "Today",
+              ...saved.stats.map(([label, value]) => `${label}: ${value}`),
+            ];
+            if (saved.needs?.length) lines.push("", "Orders", ...saved.needs.map((item) => `${item.title}: ${item.detail}`));
+            if (saved.low?.length) lines.push("", "Low stock", ...saved.low.map((item) => `${item.name}: ${item.stock} left`));
+            window.open(`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`, "_blank");
+          }}
+          className="mt-6 inline-flex h-11 items-center rounded-full bg-white px-5 text-sm font-semibold text-zinc-950"
+        >
+          Send today on WhatsApp
+        </button>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {saved.stats.map(([label, value]) => {
             const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales?today=1" : label === "Costs today" ? "/expenses?today=1" : "";

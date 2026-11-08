@@ -71,3 +71,37 @@ export async function recordSaleAction(formData: FormData) {
   revalidatePath("/debts");
   revalidatePath("/customers");
 }
+
+export async function deleteSaleAction(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Sale not found" };
+  const business = await getCurrentBusiness();
+  if (!business) return { error: "Create your business first" };
+  if (business.role !== "owner") return { error: "Only the owner can remove a sale" };
+
+  const supabase = await createServerSupabase();
+  const { data: sale, error: readError } = await supabase
+    .from("sales")
+    .select("id, sale_items(product_id, quantity)")
+    .eq("id", id)
+    .eq("business_id", business.id)
+    .single();
+  if (readError || !sale) return { error: readError?.message || "Sale not found" };
+
+  for (const item of sale.sale_items ?? []) {
+    if (!item.product_id) continue;
+    const { data: product } = await supabase.from("products").select("stock").eq("id", item.product_id).eq("business_id", business.id).single();
+    if (!product) continue;
+    const { error: stockError } = await supabase.from("products").update({ stock: Number(product.stock) + Number(item.quantity) }).eq("id", item.product_id);
+    if (stockError) return { error: stockError.message };
+  }
+
+  const { error } = await supabase.from("sales").delete().eq("id", id).eq("business_id", business.id);
+  if (error) return { error: error.message };
+
+  revalidatePath("/sales");
+  revalidatePath("/inventory");
+  revalidatePath("/dashboard");
+  revalidatePath("/analytics");
+  return { error: "" };
+}

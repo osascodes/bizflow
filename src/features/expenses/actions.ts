@@ -29,3 +29,17 @@ export async function createExpenseAction(formData: FormData) {
   revalidatePath("/expenses");
   revalidatePath("/dashboard");
 }
+
+export async function deleteExpenseAction(formData: FormData) {
+  const id = String(formData.get("id") || "");
+  if (!id) return { error: "Cost not found" };
+  const business = await getCurrentBusiness();
+  if (!business) return { error: "Create your business first" };
+  if (business.role !== "owner") return { error: "Only the owner can remove a cost" };
+  const supabase = await createServerSupabase();
+  const { error } = await supabase.from("expenses").delete().eq("id", id).eq("business_id", business.id);
+  if (error) return { error: error.message };
+  revalidatePath("/expenses");
+  revalidatePath("/dashboard");
+  return { error: "" };
+}

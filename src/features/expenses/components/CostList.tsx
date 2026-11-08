@@ -1,21 +1,25 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { deleteExpenseAction } from "@/features/expenses/actions";
 
 type Cost = { id: string; title: string; detail: string; amount: number; at?: string };
 
 export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; todayOnly?: boolean }) {
   const [query, setQuery] = useState("");
+  const [items, setItems] = useState(costs);
+  const [pendingId, setPendingId] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
     const start = new Date();
     start.setHours(0, 0, 0, 0);
-    return costs.filter((cost) => {
+    return items.filter((cost) => {
       if (todayOnly && cost.at && new Date(cost.at) < start) return false;
       if (!value) return true;
       return `${cost.title} ${cost.detail}`.toLowerCase().includes(value);
     });
-  }, [costs, query, todayOnly]);
+  }, [items, query, todayOnly]);
 
   useEffect(() => {
     if (!todayOnly) return;
@@ -32,6 +36,7 @@ export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; 
         placeholder="Search costs"
         className="h-11 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none"
       />
+      {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No matching cost.</div>
       ) : (
@@ -44,6 +49,30 @@ export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; 
               </div>
               <p className="text-sm text-white">₦{cost.amount.toLocaleString()}</p>
             </div>
+            <button
+              type="button"
+              disabled={pendingId === cost.id}
+              onClick={async () => {
+                setErrorMessage("");
+                setPendingId(cost.id);
+                const previous = items;
+                setItems((current) => current.filter((item) => item.id !== cost.id));
+                try {
+                  const formData = new FormData();
+                  formData.set("id", cost.id);
+                  const result = await deleteExpenseAction(formData);
+                  if (result?.error) throw new Error(result.error);
+                } catch (error: unknown) {
+                  setItems(previous);
+                  setErrorMessage(error instanceof Error ? error.message : "Could not remove the cost");
+                } finally {
+                  setPendingId("");
+                }
+              }}
+              className="mt-3 text-sm font-semibold text-red-400"
+            >
+              {pendingId === cost.id ? "Removing..." : "Remove"}
+            </button>
           </div>
         ))
       )}

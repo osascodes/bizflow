@@ -91,7 +91,7 @@ export default function SavedHome({
             const card = (
               <>
                 <p className="text-sm text-zinc-400">{label}</p>
-                <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+                <p className={`mt-2 text-2xl font-semibold ${label === "Debts due" ? "text-amber-300" : "text-white"}`}>{value}</p>
               </>
             );
             return href ? (

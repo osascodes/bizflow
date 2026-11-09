@@ -26,12 +26,56 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
   const [shownStock, setShownStock] = useState(product.stock);
   const [addAmount, setAddAmount] = useState("");
   const [adding, setAdding] = useState(false);
+  const [shownPrice, setShownPrice] = useState(Number(product.price));
+  const [priceInput, setPriceInput] = useState("");
+  const [savingPrice, setSavingPrice] = useState(false);
 
   return (
     <div className="flex flex-1 items-start justify-between gap-3">
       <div>
         <h2 className="font-semibold text-white">{product.name}</h2>
-        <p className="mt-1 text-sm text-zinc-400">₦{Number(product.price).toLocaleString()}</p>
+        <p className="mt-1 text-sm text-zinc-400">₦{shownPrice.toLocaleString()}</p>
+        <form
+          className="mt-2 flex items-center gap-2"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const next = Number(priceInput);
+            if (!Number.isFinite(next) || next < 0) {
+              setErrorMessage("Enter a price");
+              return;
+            }
+            const previous = shownPrice;
+            setErrorMessage("");
+            setSavingPrice(true);
+            setShownPrice(next);
+            try {
+              const formData = new FormData();
+              formData.set("id", product.id);
+              formData.set("name", product.name);
+              formData.set("price", String(next));
+              formData.set("stock", String(shownStock));
+              formData.set("description", product.description || "");
+              await updateProductAction(formData);
+              setPriceInput("");
+            } catch (error: unknown) {
+              setShownPrice(previous);
+              setErrorMessage(error instanceof Error ? error.message : "Could not update the price");
+            } finally {
+              setSavingPrice(false);
+            }
+          }}
+        >
+          <input
+            value={priceInput}
+            onChange={(event) => setPriceInput(event.target.value)}
+            inputMode="decimal"
+            placeholder="Price"
+            className="h-9 w-20 rounded-lg border border-zinc-700 bg-zinc-950 px-2 text-sm text-white outline-none"
+          />
+          <button type="submit" disabled={savingPrice} className="h-9 rounded-full bg-white px-3 text-xs font-semibold text-zinc-950">
+            {savingPrice ? "..." : "Price"}
+          </button>
+        </form>
         <button type="button" onClick={() => setOpen((value) => !value)} className="mt-2 text-xs text-violet-300">
           {open ? "Close" : "Edit"}
         </button>

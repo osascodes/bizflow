@@ -24,6 +24,8 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [shownStock, setShownStock] = useState(product.stock);
+  const [addAmount, setAddAmount] = useState("");
+  const [adding, setAdding] = useState(false);
 
   return (
     <div className="flex flex-1 items-start justify-between gap-3">
@@ -35,9 +37,54 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
         </button>
         {notice ? <p className="mt-1 text-xs text-amber-300">{notice}</p> : null}
       </div>
-      <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-300"}>
-        {shownStock} in stock
-      </p>
+      <div className="text-right">
+        <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-300"}>
+          {shownStock} in stock
+        </p>
+        <form
+          className="mt-2 flex items-center gap-2"
+          onSubmit={async (event) => {
+            event.preventDefault();
+            const amount = Number(addAmount);
+            if (!Number.isInteger(amount) || amount < 1) {
+              setErrorMessage("Enter how many you added");
+              return;
+            }
+            const next = shownStock + amount;
+            setErrorMessage("");
+            setAdding(true);
+            setShownStock(next);
+            onStock?.(next);
+            try {
+              const formData = new FormData();
+              formData.set("id", product.id);
+              formData.set("name", product.name);
+              formData.set("price", String(product.price));
+              formData.set("stock", String(next));
+              formData.set("description", product.description || "");
+              await updateProductAction(formData);
+              setAddAmount("");
+            } catch (error: unknown) {
+              setShownStock(shownStock);
+              onStock?.(shownStock);
+              setErrorMessage(error instanceof Error ? error.message : "Could not add stock");
+            } finally {
+              setAdding(false);
+            }
+          }}
+        >
+          <input
+            value={addAmount}
+            onChange={(event) => setAddAmount(event.target.value)}
+            inputMode="numeric"
+            placeholder="Add"
+            className="h-9 w-16 rounded-lg border border-zinc-700 bg-zinc-950 px-2 text-sm text-white outline-none"
+          />
+          <button type="submit" disabled={adding} className="h-9 rounded-full bg-white px-3 text-xs font-semibold text-zinc-950">
+            {adding ? "..." : "Add"}
+          </button>
+        </form>
+      </div>
       {open ? (
         <div className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-700 bg-zinc-950 p-3">
           <form

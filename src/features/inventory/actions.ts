@@ -58,6 +58,7 @@ export async function updateProductAction(formData: FormData) {
     price: formData.get("price"),
     stock: formData.get("stock"),
     description: formData.get("description") || undefined,
+    low_stock_at: formData.get("low_stock_at") || undefined,
   });
   if (!id) throw new Error("Missing product");
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message || "Invalid product");
@@ -67,11 +68,12 @@ export async function updateProductAction(formData: FormData) {
 
   const supabase = await createServerSupabase();
   const file = formData.get("image");
-  const updates: { name: string; price: number; stock: number; description: string | null; image_url?: string } = {
+  const updates: { name: string; price: number; stock: number; description: string | null; low_stock_at?: number; image_url?: string } = {
     name: parsed.data.name,
     price: parsed.data.price,
     stock: parsed.data.stock,
     description: parsed.data.description || null,
+    ...(parsed.data.low_stock_at !== undefined ? { low_stock_at: parsed.data.low_stock_at } : {}),
   };
 
   if (file instanceof File && file.size > 0) {

@@ -143,6 +143,10 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
               <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
             </div>
             <div className="space-y-1">
+              <Label className="text-xs text-zinc-400">Warn me when stock is</Label>
+              <Input name="low_stock_at" type="number" min="0" step="1" defaultValue={product.low_stock_at} />
+            </div>
+            <div className="space-y-1">
               <Label className="text-xs text-zinc-400">Replace photo</Label>
               <Input name="image" type="file" accept="image/*" />
             </div>

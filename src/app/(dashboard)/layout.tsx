@@ -41,7 +41,7 @@ export default async function DashboardLayout({
       <SyncStock />
       <header className="flex items-center justify-between border-b border-zinc-800 px-4 py-4 md:px-6">
         <div className="flex items-center gap-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-violet-600 to-fuchsia-600 text-sm font-bold">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#635BFF] text-sm font-bold">
             B
           </span>
           <span className="font-semibold">BizFlow</span>

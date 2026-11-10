@@ -38,7 +38,7 @@ export default function PricingPage() {
           </div>
 
           <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            <article className="rounded-3xl border border-violet-500/40 bg-gradient-to-b from-violet-600/20 to-zinc-900 p-7">
+            <article className="rounded-3xl border border-[#635BFF]/40 bg-gradient-to-b from-[#635BFF]/20 to-zinc-900 p-7">
               <p className="text-sm font-medium text-violet-200">Free trial</p>
               <p className="mt-4 text-4xl font-semibold">14 days</p>
               <p className="mt-2 text-sm text-zinc-300">Full Pro access. No card to start.</p>
@@ -66,14 +66,14 @@ export default function PricingPage() {
               </Link>
             </article>
 
-            <article className="relative rounded-3xl border border-fuchsia-500/50 bg-zinc-900 p-7 shadow-2xl shadow-fuchsia-950/30">
+            <article className="relative rounded-3xl border border-[#635BFF]/50 bg-zinc-900 p-7 shadow-2xl shadow-[#635BFF]/20">
               <span className="absolute right-6 top-6 rounded-full bg-[#635BFF] px-3 py-1 text-xs font-semibold">Most shops</span>
-              <p className="text-sm font-medium text-fuchsia-200">Pro</p>
+              <p className="text-sm font-medium text-indigo-200">Pro</p>
               <p className="mt-4 text-4xl font-semibold">₦10,000</p>
               <p className="mt-2 text-sm text-zinc-400">per month</p>
               <ul className="mt-6 space-y-3 text-sm text-zinc-200">
                 {pro.map((item) => (
-                  <li key={item} className="flex gap-2"><span className="text-fuchsia-300">✓</span>{item}</li>
+                  <li key={item} className="flex gap-2"><span className="text-indigo-300">✓</span>{item}</li>
                 ))}
               </ul>
               <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">

@@ -28,8 +28,8 @@ export default async function AnalyticsPage() {
   const hasWeekSales = analytics.weekSales > 0;
 
   const cards = [
-    { label: "This week", value: analytics.weekSales, tone: "from-violet-500/20 to-violet-500/5", accent: "text-violet-300" },
-    { label: "This month", value: analytics.monthSales, tone: "from-fuchsia-500/20 to-fuchsia-500/5", accent: "text-fuchsia-300" },
+    { label: "This week", value: analytics.weekSales, tone: "from-[#635BFF]/20 to-[#635BFF]/5", accent: "text-indigo-300" },
+    { label: "This month", value: analytics.monthSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-indigo-300" },
     { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-300" },
     { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-300" : "text-rose-300" },
   ];
@@ -49,7 +49,7 @@ export default async function AnalyticsPage() {
       />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm text-violet-300">{business.name}</p>
+        <p className="text-sm text-indigo-300">{business.name}</p>
         <h1 className="mt-2 text-3xl font-semibold text-white">Analytics</h1>
         <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">Sales, costs, what is selling, and what is running low.</p>
 
@@ -68,7 +68,7 @@ export default async function AnalyticsPage() {
               <h2 className="font-semibold text-white">Last 7 days</h2>
               <p className="mt-1 text-sm text-zinc-500">Days stay. Bars only show when there is a sale.</p>
             </div>
-            <p className="text-sm text-violet-300">N{analytics.weekSales.toLocaleString()}</p>
+            <p className="text-sm text-indigo-300">N{analytics.weekSales.toLocaleString()}</p>
           </div>
           {hasWeekSales ? (
             <div className="mt-8 flex h-56 items-end gap-3">
@@ -80,7 +80,7 @@ export default async function AnalyticsPage() {
                     <div className="flex h-40 w-full items-end border-b border-white/10">
                       {height > 0 ? (
                         <div
-                          className="w-full origin-bottom rounded-t-xl bg-gradient-to-t from-[#7e22ce] to-[#d946ef]"
+                          className="w-full origin-bottom rounded-t-xl bg-[#635BFF]"
                           style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
                         />
                       ) : null}
@@ -107,7 +107,7 @@ export default async function AnalyticsPage() {
               ) : (
                 analytics.topProducts.map((product, index) => (
                   <div key={product.name} className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/20 text-xs font-semibold text-violet-200">{index + 1}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#635BFF]/20 text-xs font-semibold text-indigo-200">{index + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-white">{product.name}</p>
                       <p className="text-xs text-zinc-500">{product.quantity} sold</p>

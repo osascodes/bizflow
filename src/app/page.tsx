@@ -24,12 +24,12 @@ export default function Home() {
 
       <main>
         <section className="relative overflow-hidden px-6 pb-20 pt-16 md:pt-24">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(ellipse_at_left,_rgba(124,58,237,0.22),_transparent_72%)] md:w-80" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-[radial-gradient(ellipse_at_right,_rgba(192,38,211,0.16),_transparent_72%)] md:w-80" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(ellipse_at_left,_rgba(99,91,255,0.22),_transparent_72%)] md:w-80" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-[radial-gradient(ellipse_at_right,_rgba(99,91,255,0.14),_transparent_72%)] md:w-80" />
 
           <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="text-center lg:text-left">
-              <p className="text-sm font-medium text-violet-300">Built for vendors who sell from their phone</p>
+              <p className="text-sm font-medium text-indigo-300">Built for vendors who sell from their phone</p>
               <h1 className="mt-5 text-4xl font-semibold tracking-tight text-white md:text-6xl">
                 Run your business from your phone
               </h1>
@@ -46,7 +46,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-sm rounded-[2rem] border border-zinc-800 bg-zinc-900 p-3 shadow-2xl shadow-violet-950/40">
+            <div className="mx-auto w-full max-w-sm rounded-[2rem] border border-zinc-800 bg-zinc-900 p-3 shadow-2xl shadow-[#635BFF]/20">
               <div className="rounded-[1.4rem] border border-zinc-800 bg-zinc-950 p-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold">Today</p>
@@ -80,7 +80,7 @@ export default function Home() {
             <div className="mt-10 grid gap-4 md:grid-cols-3">
             {steps.map(([number, title, body]) => (
               <div key={number} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 px-5 py-6">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-violet-500/15 text-sm font-semibold text-violet-300">{number}</span>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#635BFF]/15 text-sm font-semibold text-indigo-300">{number}</span>
                 <h2 className="mt-4 text-lg font-semibold">{title}</h2>
                 <p className="mt-2 text-sm leading-6 text-zinc-300">{body}</p>
               </div>
@@ -95,7 +95,7 @@ export default function Home() {
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {features.map(([number, title, body]) => (
                 <div key={title} className="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-8 transition hover:border-zinc-700">
-                  <p className="text-xs font-semibold tracking-[0.2em] text-violet-300">{number}</p>
+                  <p className="text-xs font-semibold tracking-[0.2em] text-indigo-300">{number}</p>
                   <h3 className="mt-3 text-lg font-semibold text-white">{title}</h3>
                   <p className="mt-3 text-sm leading-7 text-zinc-300">{body}</p>
                 </div>
@@ -152,7 +152,7 @@ export default function Home() {
         </section>
 
         <section className="border-t border-zinc-800 px-6 py-24 text-center">
-          <p className="text-sm font-medium text-violet-300">Start from your phone</p>
+          <p className="text-sm font-medium text-indigo-300">Start from your phone</p>
           <h2 className="mt-3 text-3xl font-semibold text-white md:text-4xl">Create your account</h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-zinc-300">
             Set up the shop, share the store link, and start recording sales today.

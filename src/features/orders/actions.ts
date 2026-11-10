@@ -13,10 +13,12 @@ export async function placeCartAction(input: {
   slug: string;
   customerName: string;
   customerPhone: string;
+  deliveryAddress: string;
   items: { productId: string; productName: string; quantity: number }[];
 }) {
   if (input.customerName.trim().length < 2) throw new Error("Name is required");
   if (input.customerPhone.trim().length < 10) throw new Error("Phone is required");
+  if (input.deliveryAddress.trim().length < 5) throw new Error("Delivery address is required");
   if (input.items.length === 0) throw new Error("Add a product first");
 
   const supabase = await createServerSupabase();
@@ -28,6 +30,7 @@ export async function placeCartAction(input: {
     quantity: item.quantity,
     customer_name: input.customerName.trim(),
     customer_phone: input.customerPhone.trim(),
+    delivery_address: input.deliveryAddress.trim(),
     order_number: number,
   }));
 

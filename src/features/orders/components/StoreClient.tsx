@@ -73,6 +73,7 @@ export default function StoreClient({
   const [cart, setCart] = useState<Record<string, number>>({});
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Product | null>(null);
   const [waPos, setWaPos] = useState<{ x: number; y: number } | null>(null);
@@ -137,14 +138,19 @@ export default function StoreClient({
         slug: business.slug,
         customerName: name,
         customerPhone: phone,
+        deliveryAddress: address,
         items: lines.map((line) => ({ productId: line.id, productName: line.name, quantity: line.quantity })),
       });
       const message = [
-        `Order ${result.orderNumber} for ${business.name}`,
-        ...lines.map((line) => `${line.quantity} x ${line.name}`),
-        `Total: NGN ${total.toLocaleString()}`,
-        `Name: ${name}`,
+        `NEW ORDER - ${business.name}`,
+        `Customer: ${name}`,
         `Phone: ${phone}`,
+        `Delivery address: ${address}`,
+        "",
+        "Items:",
+        ...lines.map((line) => `${line.quantity} x ${line.name} (NGN ${(Number(line.price) * line.quantity).toLocaleString()})`),
+        "",
+        `Total: NGN ${total.toLocaleString()}`,
       ].join("\n");
       if (business.phone) {
         window.open(`https://wa.me/${whatsappNumber(business.phone)}?text=${encodeURIComponent(message)}`, "_blank");
@@ -446,6 +452,7 @@ export default function StoreClient({
                   {errorMessage ? <p className="mb-3 text-sm text-red-400">{errorMessage}</p> : null}
                   <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
                   <Input className="mt-3" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone" />
+                  <Input className="mt-3" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Delivery address" />
                   <Button type="button" className="mt-4 h-12 w-full bg-white text-zinc-950 hover:bg-zinc-200" disabled={pending || lines.length === 0} onClick={submit}>
                     {pending ? "Sending..." : `Send order · ₦${total.toLocaleString()}`}
                   </Button>

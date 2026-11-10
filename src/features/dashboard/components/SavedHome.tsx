@@ -82,7 +82,7 @@ export default function SavedHome({
         >
           Send today on WhatsApp
         </button>
-        <Link href="/storefront" className="ml-2 mt-6 inline-flex h-11 items-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-5 text-sm font-semibold text-white">
+        <Link href="/storefront" className="ml-2 mt-6 inline-flex h-11 items-center rounded-full bg-[#635BFF] px-5 text-sm font-semibold text-white">
           Open store
         </Link>
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

@@ -107,7 +107,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
         <Label className="text-zinc-300">Website</Label>
         <Input name="website" defaultValue={business.website || ""} placeholder="https://yourshop.com" />
       </div>
-      <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:opacity-90" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save shop details"}</Button>
+      <Button type="submit" className="w-full bg-[#635BFF] text-white hover:opacity-90" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save shop details"}</Button>
     </form>
   );
 }

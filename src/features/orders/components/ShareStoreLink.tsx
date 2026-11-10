@@ -28,7 +28,7 @@ export default function ShareStoreLink({ name, slug }: { name: string; slug: str
         <button type="button" onClick={copy} className="h-11 rounded-full bg-white text-sm font-semibold text-zinc-950">
           {copied ? "Copied" : "Copy link"}
         </button>
-        <button type="button" onClick={share} className="h-11 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-semibold text-white">
+        <button type="button" onClick={share} className="h-11 rounded-full bg-[#635BFF] text-sm font-semibold text-white">
           Send on WhatsApp
         </button>
       </div>

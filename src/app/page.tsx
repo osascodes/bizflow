@@ -37,7 +37,7 @@ export default function Home() {
                 Get a beautiful public storefront link for your customers to check out, while you manage inventory, sales, receipts, and debts in the background.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
-                <Link href="/register" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
+                <Link href="/register" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
                   Get Started
                 </Link>
                 <Link href="/login" className="inline-flex h-12 w-full items-center justify-center rounded-full border border-zinc-700 px-8 text-sm font-semibold text-white transition hover:border-zinc-500 sm:w-44">
@@ -138,7 +138,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <Link href="/pricing" className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white">
+            <Link href="/pricing" className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white">
               See full pricing
             </Link>
           </div>
@@ -157,7 +157,7 @@ export default function Home() {
           <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-zinc-300">
             Set up the shop, share the store link, and start recording sales today.
           </p>
-          <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
+          <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
             Get Started
           </Link>
         </section>

@@ -114,7 +114,7 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        <Button type="submit" className="w-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-white hover:opacity-90" disabled={isPending}>
+        <Button type="submit" className="w-full bg-[#635BFF] text-white hover:opacity-90" disabled={isPending}>
           {isPending ? 'Creating account...' : 'Create Account'}
         </Button>
       </form>

@@ -213,23 +213,29 @@ export default function StoreClient({
 
   return (
     <main className="min-h-screen bg-[#07070a] text-white">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(139,92,246,0.16),transparent_32%),radial-gradient(circle_at_top_right,rgba(217,70,239,0.12),transparent_28%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,91,255,0.18),transparent_32%),radial-gradient(circle_at_top_right,rgba(99,91,255,0.10),transparent_28%)]" />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             {business.logo_url ? (
               <img src={business.logo_url} alt="" className="h-11 w-11 rounded-2xl object-cover" />
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-violet-500 to-fuchsia-500 text-sm font-semibold">{initial(business.name)}</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-sm font-semibold">{initial(business.name)}</span>
             )}
             <div>
               <p className="font-semibold">{business.name}</p>
               <p className="text-xs text-zinc-400">{business.address ? titleCase(business.address) : business.category}</p>
             </div>
           </div>
-          {shopWhatsapp ? (
-            <a href={shopWhatsapp} target="_blank" className="inline-flex h-10 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">WhatsApp</a>
-          ) : null}
+          <button type="button" onClick={() => setOpen(true)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white" aria-label="Cart">
+            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M6 6h15l-1.5 9h-12z" />
+              <path d="M6 6 5 3H2" />
+              <circle cx="9" cy="20" r="1" />
+              <circle cx="18" cy="20" r="1" />
+            </svg>
+            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] font-semibold">{count}</span> : null}
+          </button>
         </div>
       </header>
 
@@ -306,6 +312,14 @@ export default function StoreClient({
           </div>
           <p className="mt-4 text-center text-xs text-zinc-500">Powered by BizFlow</p>
         </footer>
+      ) : null}
+
+      {shopWhatsapp ? (
+        <a href={shopWhatsapp} target="_blank" aria-label="WhatsApp" className={`fixed right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/30 ${count > 0 && !orderNumber ? "bottom-24" : "bottom-6"}`}>
+          <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white" aria-hidden="true">
+            <path d="M20.5 3.5A11 11 0 0 0 2.1 17.8L1 23l5.3-1.1A11 11 0 0 0 20.5 3.5zM12 20.5a9 9 0 0 1-4.6-1.3l-.3-.2-3.1.8.8-3-.2-.3A9 9 0 1 1 12 20.5zm5-6.7c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.4-.4.2-.4a.5.5 0 0 0 0-.5c-.1-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.5 4 3.6 3.6 0 0 0 1.7.1 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.6-.3z" />
+          </svg>
+        </a>
       ) : null}
 
       {count > 0 && !orderNumber ? (

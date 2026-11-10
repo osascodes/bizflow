@@ -67,7 +67,7 @@ export default function PricingPage() {
             </article>
 
             <article className="relative rounded-3xl border border-fuchsia-500/50 bg-zinc-900 p-7 shadow-2xl shadow-fuchsia-950/30">
-              <span className="absolute right-6 top-6 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 px-3 py-1 text-xs font-semibold">Most shops</span>
+              <span className="absolute right-6 top-6 rounded-full bg-[#635BFF] px-3 py-1 text-xs font-semibold">Most shops</span>
               <p className="text-sm font-medium text-fuchsia-200">Pro</p>
               <p className="mt-4 text-4xl font-semibold">₦10,000</p>
               <p className="mt-2 text-sm text-zinc-400">per month</p>
@@ -76,7 +76,7 @@ export default function PricingPage() {
                   <li key={item} className="flex gap-2"><span className="text-fuchsia-300">✓</span>{item}</li>
                 ))}
               </ul>
-              <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-600 text-sm font-semibold text-white">
+              <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">
                 Choose Pro
               </Link>
             </article>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { placeCartAction } from "@/features/orders/actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +75,9 @@ export default function StoreClient({
   const [phone, setPhone] = useState("");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<Product | null>(null);
+  const [waPos, setWaPos] = useState<{ x: number; y: number } | null>(null);
+  const waDrag = useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
+
   const [detailQty, setDetailQty] = useState(1);
   const [errorMessage, setErrorMessage] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
@@ -167,7 +170,7 @@ export default function StoreClient({
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(139,92,246,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
+              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(99,91,255,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
                 <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
               </div>
             )}
@@ -222,10 +225,7 @@ export default function StoreClient({
             ) : (
               <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-sm font-semibold">{initial(business.name)}</span>
             )}
-            <div>
-              <p className="font-semibold">{business.name}</p>
-              <p className="text-xs text-zinc-400">{business.address ? titleCase(business.address) : business.category}</p>
-            </div>
+            <p className="font-semibold">{business.name}</p>
           </div>
           <button type="button" onClick={() => setOpen(true)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white" aria-label="Cart">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
@@ -315,14 +315,40 @@ export default function StoreClient({
       ) : null}
 
       {shopWhatsapp ? (
-        <a href={shopWhatsapp} target="_blank" aria-label="WhatsApp" className={`fixed right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/30 ${count > 0 && !orderNumber ? "bottom-24" : "bottom-6"}`}>
+        <button
+          type="button"
+          aria-label="WhatsApp"
+          style={waPos ? { left: waPos.x, top: waPos.y, right: "auto", bottom: "auto" } : undefined}
+          className={`fixed z-30 flex h-14 w-14 touch-none items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/30 ${waPos ? "" : count > 0 && !orderNumber && !selected ? "bottom-24 right-4" : "bottom-6 right-4"}`}
+          onPointerDown={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            waDrag.current = { x: event.clientX, y: event.clientY, left: rect.left, top: rect.top, moved: false };
+            event.currentTarget.setPointerCapture(event.pointerId);
+          }}
+          onPointerMove={(event) => {
+            const drag = waDrag.current;
+            if (!drag) return;
+            const dx = event.clientX - drag.x;
+            const dy = event.clientY - drag.y;
+            if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
+            setWaPos({
+              x: Math.min(window.innerWidth - 64, Math.max(8, drag.left + dx)),
+              y: Math.min(window.innerHeight - 64, Math.max(8, drag.top + dy)),
+            });
+          }}
+          onPointerUp={() => {
+            const drag = waDrag.current;
+            waDrag.current = null;
+            if (drag && !drag.moved) window.open(shopWhatsapp, "_blank");
+          }}
+        >
           <svg viewBox="0 0 24 24" className="h-7 w-7 fill-white" aria-hidden="true">
             <path d="M20.5 3.5A11 11 0 0 0 2.1 17.8L1 23l5.3-1.1A11 11 0 0 0 20.5 3.5zM12 20.5a9 9 0 0 1-4.6-1.3l-.3-.2-3.1.8.8-3-.2-.3A9 9 0 1 1 12 20.5zm5-6.7c-.3-.1-1.6-.8-1.8-.9s-.4-.1-.6.1-.7.9-.8 1-.3.2-.6.1a7.4 7.4 0 0 1-2.2-1.4 8.2 8.2 0 0 1-1.5-1.9c-.2-.3 0-.4.1-.6l.4-.4.2-.4a.5.5 0 0 0 0-.5c-.1-.1-.6-1.4-.8-1.9s-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.8 11.8 0 0 0 4.5 4 3.6 3.6 0 0 0 1.7.1 2.7 2.7 0 0 0 1.8-1.3 2.2 2.2 0 0 0 .2-1.3c-.1-.1-.3-.2-.6-.3z" />
           </svg>
-        </a>
+        </button>
       ) : null}
 
-      {count > 0 && !orderNumber ? (
+      {count > 0 && !orderNumber && !selected ? (
         <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07070a]/95 p-4 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>

@@ -44,7 +44,7 @@ export default function PlanCard({
         <button type="button" onClick={() => pay("starter")} disabled={pending !== ""} className="h-11 rounded-full border border-zinc-700 text-sm font-semibold text-white">
           {pending === "starter" ? "Opening Paystack..." : "Starter · ₦5,000"}
         </button>
-        <button type="button" onClick={() => pay("pro")} disabled={pending !== ""} className="h-11 rounded-full bg-[#635BFF] text-sm font-semibold text-white">
+        <button type="button" onClick={() => pay("pro")} disabled={pending !== ""} className="h-11 rounded-full bg-[#00E5E5] text-sm font-semibold text-zinc-950">
           {pending === "pro" ? "Opening Paystack..." : "Pro · ₦10,000"}
         </button>
       </div>

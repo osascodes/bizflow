@@ -74,7 +74,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
         <Label className="text-zinc-300">Amount</Label>
         <Input name="amount" type="number" min="1" step="0.01" required />
       </div>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : "Save expense"}</Button>
+      <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : "Save expense"}</Button>
     </form>
   );
 }

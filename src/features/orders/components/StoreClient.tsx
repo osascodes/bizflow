@@ -132,6 +132,7 @@ export default function StoreClient({
   const submit = async () => {
     setErrorMessage("");
     setPending(true);
+    const wa = business.phone ? window.open("about:blank", "_blank") : null;
     try {
       const result = await placeCartAction({
         businessId: business.id,
@@ -152,9 +153,9 @@ export default function StoreClient({
         "",
         `Total: NGN ${total.toLocaleString()}`,
       ].join("\n");
-      if (business.phone) {
-        window.open(`https://wa.me/${whatsappNumber(business.phone)}?text=${encodeURIComponent(message)}`, "_blank");
-      }
+      const waUrl = business.phone ? `https://wa.me/${whatsappNumber(business.phone)}?text=${encodeURIComponent(message)}` : "";
+      if (wa && waUrl) wa.location.href = waUrl;
+      else if (waUrl) window.location.href = waUrl;
       setOrderNumber(result.orderNumber);
       setSuccessTotal(total);
       setCart({});
@@ -176,7 +177,7 @@ export default function StoreClient({
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(99,91,255,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
+              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(0,229,229,0.28),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
                 <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
               </div>
             )}
@@ -222,14 +223,16 @@ export default function StoreClient({
 
   return (
     <main className="min-h-screen bg-[#07070a] text-white">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,91,255,0.18),transparent_32%),radial-gradient(circle_at_top_right,rgba(99,91,255,0.10),transparent_28%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,229,229,0.16),transparent_32%),radial-gradient(circle_at_top_right,rgba(0,229,229,0.08),transparent_28%)]" />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             {business.logo_url ? (
-              <img src={business.logo_url} alt="" className="h-11 w-11 rounded-2xl object-cover" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white p-1.5">
+                <img src={business.logo_url} alt="" className="h-full w-full object-contain" />
+              </span>
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-sm font-semibold">{initial(business.name)}</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#00E5E5] text-sm font-semibold text-zinc-950">{initial(business.name)}</span>
             )}
             <p className="font-semibold">{business.name}</p>
           </div>
@@ -240,17 +243,17 @@ export default function StoreClient({
               <circle cx="9" cy="20" r="1" />
               <circle cx="18" cy="20" r="1" />
             </svg>
-            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] font-semibold">{count}</span> : null}
+            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#00E5E5] px-1 text-[10px] font-semibold">{count}</span> : null}
           </button>
         </div>
       </header>
 
       {business.hero_url ? (
-        <section className="relative mx-auto max-w-6xl px-4 pt-6">
-          <div className="relative overflow-hidden rounded-[32px]">
-            <img src={business.hero_url} alt="" className="h-[420px] w-full object-cover sm:h-[480px]" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10" />
-            <div className="absolute inset-0 flex items-center p-6 sm:p-10">
+        <section className="relative">
+          <div className="relative h-[78vh] min-h-[520px] overflow-hidden">
+            <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15" />
+            <div className="absolute inset-0 flex items-center px-5 sm:px-10">
               <div className="max-w-xl">
                 <h1 className="text-3xl font-semibold sm:text-5xl">{headline}</h1>
                 <p className="mt-3 text-sm leading-6 text-zinc-200">{description}</p>
@@ -316,7 +319,7 @@ export default function StoreClient({
               </div>
             ) : null}
           </div>
-          <p className="mt-4 text-center text-xs text-zinc-500">Powered by BizFlow</p>
+          <p className="mt-4 text-center text-xs text-zinc-500">Powered by Brinset</p>
         </footer>
       ) : null}
 

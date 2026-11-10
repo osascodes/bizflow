@@ -42,7 +42,7 @@ export default function JoinPage() {
           <Label>Password</Label>
           <PasswordInput name="password" required />
         </div>
-        <Button type="submit" className="w-full bg-[#635BFF] text-white hover:opacity-90" disabled={pending}>{pending ? "Joining..." : "Join shop"}</Button>
+        <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950 hover:opacity-90" disabled={pending}>{pending ? "Joining..." : "Join shop"}</Button>
         <Link href="/login" className="block text-center text-sm text-violet-300">Already joined? Log in</Link>
       </form>
     </main>

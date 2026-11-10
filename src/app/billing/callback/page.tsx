@@ -28,7 +28,7 @@ export default async function BillingCallbackPage({
         <p className="mt-3 text-sm leading-6 text-zinc-300">
           {errorMessage || `Your shop is now on ${plan === "pro" ? "Pro" : "Starter"}.`}
         </p>
-        <Link href="/settings" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">
+        <Link href="/settings" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#00E5E5] text-sm font-semibold text-zinc-950">
           Back to settings
         </Link>
       </div>

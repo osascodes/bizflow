@@ -147,7 +147,7 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
         Customer will pay later
       </label>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending || lines.length === 0}>
+      <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950" disabled={pending || lines.length === 0}>
         {pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : onCredit ? "Record credit sale" : "Record sale"}
       </Button>
     </form>

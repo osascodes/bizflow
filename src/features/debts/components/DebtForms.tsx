@@ -42,7 +42,7 @@ export function CustomerForm() {
         <Label className="text-zinc-300">Phone</Label>
         <Input name="phone" placeholder="0801 234 5678" />
       </div>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save customer"}</Button>
+      <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save customer"}</Button>
     </form>
   );
 }
@@ -89,7 +89,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
         <Label className="text-zinc-300">Note</Label>
         <Input name="note" placeholder="2 gowns, pay Friday" />
       </div>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending || customers.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>
+      <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950" disabled={pending || customers.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>
     </form>
   );
 }
@@ -128,7 +128,7 @@ export function PaymentForm({ debtId, name = "Customer", balance, onPaid }: { de
     >
       <input type="hidden" name="debt_id" value={debtId} />
       <Input name="payment" type="number" min="1" step="0.01" placeholder="Payment" className="h-9" />
-      <Button type="submit" className="h-9 bg-[#635BFF] text-white" disabled={balance <= 0 || pending}>{pending ? "Saving..." : paid ? "Paid" : "Pay"}</Button>
+      <Button type="submit" className="h-9 bg-[#00E5E5] text-zinc-950" disabled={balance <= 0 || pending}>{pending ? "Saving..." : paid ? "Paid" : "Pay"}</Button>
       {notice ? <span className="text-xs text-amber-300">{notice}</span> : null}
     </form>
   );

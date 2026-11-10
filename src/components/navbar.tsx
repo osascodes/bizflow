@@ -10,17 +10,17 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#635BFF] text-sm font-bold text-white">
+          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#00E5E5] text-sm font-bold text-white">
             B
           </span>
-          <span className="text-lg font-semibold text-white">BizFlow</span>
+          <span className="text-lg font-semibold text-white">Brinset</span>
         </Link>
 
         <div className="hidden items-center gap-8 text-sm text-zinc-300 md:flex">
           <a href="#features" className="hover:text-white">Features</a>
           <Link href="/pricing" className="hover:text-white">Pricing</Link>
           <Link href="/login" className="hover:text-white">Sign In</Link>
-          <Link href="/register" className="rounded-full bg-[#635BFF] px-4 py-2 font-medium text-white">
+          <Link href="/register" className="rounded-full bg-[#00E5E5] px-4 py-2 font-medium text-zinc-950">
             Get Started
           </Link>
         </div>
@@ -42,7 +42,7 @@ export default function Navbar() {
           <a href="#features" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Features</a>
           <Link href="/pricing" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Pricing</Link>
           <Link href="/login" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Sign In</Link>
-          <Link href="/register" className="mt-2 flex h-12 items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white" onClick={() => setOpen(false)}>
+          <Link href="/register" className="mt-2 flex h-12 items-center justify-center rounded-full bg-[#00E5E5] text-sm font-semibold text-zinc-950" onClick={() => setOpen(false)}>
             Get Started
           </Link>
         </div>

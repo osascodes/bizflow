@@ -4,7 +4,7 @@ export default function StartPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
       <div className="w-full max-w-md">
-        <p className="text-sm text-violet-300">BizFlow</p>
+        <p className="text-sm text-violet-300">Brinset</p>
         <h1 className="mt-2 text-3xl font-semibold">How are you joining?</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">You are logged in, but this account is not linked to a shop yet.</p>
         <div className="mt-8 space-y-3">

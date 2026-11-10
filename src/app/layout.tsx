@@ -9,14 +9,14 @@ const jakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "BizFlow — Run your business from your phone",
+  title: "Brinset — Run your business from your phone",
   description:
     "Inventory, sales, receipts, customers, debt tracking, and WhatsApp checkout for small businesses.",
-  applicationName: "BizFlow",
+  applicationName: "Brinset",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "BizFlow",
+    title: "Brinset",
     statusBarStyle: "black-translucent",
   },
   icons: {

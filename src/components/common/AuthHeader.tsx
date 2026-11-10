@@ -1,10 +1,10 @@
 export default function AuthHeader() {
   return (
     <div className="mb-4 flex flex-col items-center text-center">
-      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#635BFF]">
+      <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#00E5E5]">
         <span className="text-2xl font-bold text-white">B</span>
       </div>
-      <h1 className="text-xl font-semibold tracking-tight text-white">BizFlow</h1>
+      <h1 className="text-xl font-semibold tracking-tight text-white">Brinset</h1>
       <p className="mt-1 text-sm text-zinc-400">Run your business from anywhere</p>
     </div>
   );

@@ -150,7 +150,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
               <Label className="text-xs text-zinc-400">Replace photo</Label>
               <Input name="image" type="file" accept="image/*" />
             </div>
-            <Button type="submit" className="h-9 w-full bg-[#635BFF] text-white" disabled={saving}>{saving ? "Saving..." : saved ? "Saved" : "Save"}</Button>
+            <Button type="submit" className="h-9 w-full bg-[#00E5E5] text-zinc-950" disabled={saving}>{saving ? "Saving..." : saved ? "Saved" : "Save"}</Button>
           </form>
           <form action={deleteProductAction}>
             <input type="hidden" name="id" value={product.id} />

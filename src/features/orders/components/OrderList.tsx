@@ -118,9 +118,9 @@ export default function OrderList({ orders }: { orders: Order[] }) {
             </div>
             {group.status === "pending" || group.status === "packed" || group.status === "out" ? (
               <div className="mt-3 flex gap-2">
-                {group.status === "pending" ? <Button type="button" onClick={() => move(group, "packed")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Pack"}</Button> : null}
-                {group.status === "packed" ? <Button type="button" onClick={() => move(group, "out")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Out"}</Button> : null}
-                {group.status === "out" ? <Button type="button" onClick={() => move(group, "done")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Delivered"}</Button> : null}
+                {group.status === "pending" ? <Button type="button" onClick={() => move(group, "packed")} disabled={pendingKey === group.key} className="h-9 bg-[#00E5E5] text-zinc-950">{pendingKey === group.key ? "Saving..." : "Pack"}</Button> : null}
+                {group.status === "packed" ? <Button type="button" onClick={() => move(group, "out")} disabled={pendingKey === group.key} className="h-9 bg-[#00E5E5] text-zinc-950">{pendingKey === group.key ? "Saving..." : "Out"}</Button> : null}
+                {group.status === "out" ? <Button type="button" onClick={() => move(group, "done")} disabled={pendingKey === group.key} className="h-9 bg-[#00E5E5] text-zinc-950">{pendingKey === group.key ? "Saving..." : "Delivered"}</Button> : null}
                 <Button type="button" onClick={() => move(group, "cancelled")} disabled={pendingKey === group.key} className="h-9 border border-zinc-600 bg-zinc-800 text-white">Cancel</Button>
               </div>
             ) : (

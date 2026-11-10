@@ -34,7 +34,7 @@ export default async function NotificationsPage() {
         {phone && (lowStock.length > 0 || orders.length > 0) ? (
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
             {orders.length > 0 ? (
-              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full bg-[#635BFF] px-5 text-sm font-semibold text-white">
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(orderMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full bg-[#00E5E5] px-5 text-sm font-semibold text-white">
                 Send orders to WhatsApp
               </a>
             ) : null}

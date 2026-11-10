@@ -24,8 +24,8 @@ export default function Home() {
 
       <main>
         <section className="relative overflow-hidden px-6 pb-20 pt-16 md:pt-24">
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(ellipse_at_left,_rgba(99,91,255,0.22),_transparent_72%)] md:w-80" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-[radial-gradient(ellipse_at_right,_rgba(99,91,255,0.14),_transparent_72%)] md:w-80" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-40 bg-[radial-gradient(ellipse_at_left,_rgba(0,229,229,0.18),_transparent_72%)] md:w-80" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-40 bg-[radial-gradient(ellipse_at_right,_rgba(0,229,229,0.12),_transparent_72%)] md:w-80" />
 
           <div className="relative mx-auto grid max-w-6xl items-center gap-14 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="text-center lg:text-left">
@@ -37,7 +37,7 @@ export default function Home() {
                 Get a beautiful public storefront link for your customers to check out, while you manage inventory, sales, receipts, and debts in the background.
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
-                <Link href="/register" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
+                <Link href="/register" className="inline-flex h-12 w-full items-center justify-center rounded-full bg-[#00E5E5] px-8 text-sm font-semibold text-zinc-950 transition hover:opacity-90 sm:w-44">
                   Get Started
                 </Link>
                 <Link href="/login" className="inline-flex h-12 w-full items-center justify-center rounded-full border border-zinc-700 px-8 text-sm font-semibold text-white transition hover:border-zinc-500 sm:w-44">
@@ -46,7 +46,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="mx-auto w-full max-w-sm rounded-[2rem] border border-zinc-800 bg-zinc-900 p-3 shadow-2xl shadow-[#635BFF]/20">
+            <div className="mx-auto w-full max-w-sm rounded-[2rem] border border-zinc-800 bg-zinc-900 p-3 shadow-2xl shadow-[#00E5E5]/20">
               <div className="rounded-[1.4rem] border border-zinc-800 bg-zinc-950 p-4">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold">Today</p>
@@ -80,7 +80,7 @@ export default function Home() {
             <div className="mt-10 grid gap-4 md:grid-cols-3">
             {steps.map(([number, title, body]) => (
               <div key={number} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 px-5 py-6">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#635BFF]/15 text-sm font-semibold text-indigo-300">{number}</span>
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5E5]/15 text-sm font-semibold text-indigo-300">{number}</span>
                 <h2 className="mt-4 text-lg font-semibold">{title}</h2>
                 <p className="mt-2 text-sm leading-6 text-zinc-300">{body}</p>
               </div>
@@ -91,7 +91,7 @@ export default function Home() {
 
         <section id="features" className="border-t border-zinc-800 px-6 py-20">
           <div className="mx-auto max-w-6xl">
-            <h2 className="text-center text-3xl font-semibold text-white">What BizFlow handles</h2>
+            <h2 className="text-center text-3xl font-semibold text-white">What Brinset handles</h2>
             <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {features.map(([number, title, body]) => (
                 <div key={title} className="rounded-2xl border border-zinc-800 bg-zinc-900 px-6 py-8 transition hover:border-zinc-700">
@@ -138,7 +138,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <Link href="/pricing" className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white">
+            <Link href="/pricing" className="mt-8 inline-flex h-12 items-center justify-center rounded-full bg-[#00E5E5] px-8 text-sm font-semibold text-zinc-950">
               See full pricing
             </Link>
           </div>
@@ -157,7 +157,7 @@ export default function Home() {
           <p className="mx-auto mt-4 max-w-lg text-sm leading-6 text-zinc-300">
             Set up the shop, share the store link, and start recording sales today.
           </p>
-          <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] px-8 text-sm font-semibold text-white transition hover:opacity-90 sm:w-44">
+          <Link href="/register" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#00E5E5] px-8 text-sm font-semibold text-zinc-950 transition hover:opacity-90 sm:w-44">
             Get Started
           </Link>
         </section>
@@ -165,7 +165,7 @@ export default function Home() {
 
       <footer className="border-t border-zinc-800 px-6 py-8">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 text-sm text-zinc-400 sm:flex-row">
-          <p>BizFlow</p>
+          <p>Brinset</p>
           <div className="flex gap-5">
             <a href="#features" className="hover:text-white">Features</a>
             <Link href="/pricing" className="hover:text-white">Pricing</Link>

@@ -80,7 +80,7 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
             <span className="h-px w-4 bg-white" />
           </span>
         </button>
-        <p className="text-sm font-medium text-zinc-300">{current?.label || "BizFlow"}</p>
+        <p className="text-sm font-medium text-zinc-300">{current?.label || "Brinset"}</p>
       </div>
 
       {open ? (

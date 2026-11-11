@@ -250,7 +250,7 @@ export default function StoreClient({
 
       {business.hero_url ? (
         <section className="relative">
-          <div className="relative h-[78vh] min-h-[520px] overflow-hidden">
+          <div className="relative h-[420px] overflow-hidden sm:h-[480px]">
             <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15" />
             <div className="absolute inset-0 flex items-center px-5 sm:px-10">

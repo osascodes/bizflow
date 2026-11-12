@@ -39,19 +39,19 @@ export default async function DashboardLayout({
       <SyncCosts />
       <SyncPayments />
       <SyncStock />
-      <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 md:px-6">
+      <header className="hidden items-center justify-between border-b border-zinc-200 px-4 py-4 md:flex md:px-6">
         <div className="flex items-center gap-3">
           <img src="/brinset-logo.jpg" alt="Brinset" className="h-8 w-auto rounded-md bg-black object-contain" />
         </div>
         <form action={logoutAction}>
-          <button type="submit" className="text-sm text-zinc-400 hover:text-zinc-950">
+          <button type="submit" className="text-sm text-zinc-600 hover:text-zinc-950">
             Log out
           </button>
         </form>
       </header>
       <div className="md:flex">
         <AppNav role={business?.role === "owner" ? "owner" : "staff"} alertCount={alertCount} />
-        <div className="min-w-0 flex-1">{children}</div>
+        <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>
       </div>
     </div>
   );

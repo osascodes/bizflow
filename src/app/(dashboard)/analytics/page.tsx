@@ -47,94 +47,87 @@ export default async function AnalyticsPage() {
           lowStock: analytics.lowStock,
         }}
       />
-    <main className="px-4 py-8 md:px-8">
+    <main className="px-4 py-6 pb-28 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm text-indigo-300">{business.name}</p>
-        <h1 className="mt-2 text-3xl font-semibold text-zinc-950">Analytics</h1>
-        <p className="mt-2 max-w-xl text-sm leading-6 text-zinc-400">Sales, costs, what is selling, and what is running low.</p>
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-3xl font-semibold">Analytics</h1>
+            <p className="mt-1 text-sm text-zinc-500">Understand your business performance</p>
+          </div>
+          <span className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600">Last 7 days</span>
+        </div>
 
-        <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-6 grid grid-cols-2 gap-3">
           {cards.map((card) => (
-            <div key={card.label} className={`rounded-3xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-5 transition duration-300 hover:-translate-y-0.5`}>
-              <p className={`text-sm ${card.accent}`}>{card.label}</p>
-              <p className="mt-3 text-2xl font-semibold text-zinc-950">N{Number(card.value).toLocaleString()}</p>
+            <div key={card.label} className={`rounded-3xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-4`}>
+              <p className={`text-sm font-medium ${card.accent}`}>{card.label}</p>
+              <p className="mt-2 text-2xl font-semibold">N{Number(card.value).toLocaleString()}</p>
             </div>
           ))}
         </div>
 
-        <section className="mt-6 overflow-hidden rounded-3xl border border-zinc-200 bg-white p-5">
-          <div className="flex items-end justify-between gap-3">
-            <div>
-              <h2 className="font-semibold text-zinc-950">Last 7 days</h2>
-              <p className="mt-1 text-sm text-zinc-500">Days stay. Bars only show when there is a sale.</p>
-            </div>
-            <p className="text-sm text-indigo-300">N{analytics.weekSales.toLocaleString()}</p>
+        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="font-semibold">Sales overview</h2>
+            <span className="flex items-center gap-1 text-xs text-zinc-500"><span className="h-2 w-2 rounded-full bg-[#635BFF]" /> Sales</span>
           </div>
           {hasWeekSales ? (
-            <div className="mt-8 flex h-56 items-end gap-3">
+            <div className="mt-6 flex h-52 items-end gap-2">
               {analytics.days.map((day, index) => {
-                const height = day.total === 0 ? 0 : Math.max(22, (day.total / max) * 100);
+                const height = day.total === 0 ? 0 : Math.max(18, (day.total / max) * 100);
                 return (
                   <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                    <p className="text-[11px] text-zinc-500">{day.total === 0 ? "0" : `N${day.total.toLocaleString()}`}</p>
-                    <div className="flex h-40 w-full items-end border-b border-zinc-200">
+                    <div className="flex h-40 w-full items-end">
                       {height > 0 ? (
-                        <div
-                          className="w-full origin-bottom rounded-t-xl bg-[#635BFF]"
-                          style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
-                        />
+                        <div className="w-full origin-bottom rounded-t-xl bg-[#635BFF]" style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }} />
                       ) : null}
                     </div>
-                    <p className="text-xs text-zinc-400">{day.label}</p>
+                    <p className="text-[11px] text-zinc-500">{day.label}</p>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="mt-8 rounded-2xl border border-dashed border-zinc-300 px-4 py-10 text-center">
-              <p className="text-sm text-zinc-600">No sales in the last 7 days.</p>
-              <p className="mt-2 text-sm text-zinc-500">This month is N{analytics.monthSales.toLocaleString()}. Those sales were earlier than this week.</p>
-            </div>
+            <p className="mt-6 text-sm text-zinc-500">No sales in the last 7 days. This month is N{analytics.monthSales.toLocaleString()}.</p>
           )}
         </section>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <section className="rounded-3xl border border-zinc-200 bg-white p-5">
-            <h2 className="font-semibold text-zinc-950">Top products this month</h2>
-            <div className="mt-4 space-y-4">
-              {analytics.topProducts.length === 0 ? (
-                <p className="text-sm text-zinc-500">No sales yet.</p>
-              ) : (
-                analytics.topProducts.map((product, index) => (
-                  <div key={product.name} className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#635BFF]/20 text-xs font-semibold text-indigo-200">{index + 1}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-zinc-950">{product.name}</p>
-                      <p className="text-xs text-zinc-500">{product.quantity} sold</p>
-                    </div>
-                    <p className="text-sm text-zinc-200">N{product.amount.toLocaleString()}</p>
+        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+          <h2 className="font-semibold">Top-selling products</h2>
+          <div className="mt-4 space-y-4">
+            {analytics.topProducts.length === 0 ? (
+              <p className="text-sm text-zinc-500">No sales yet.</p>
+            ) : (
+              analytics.topProducts.map((product) => (
+                <div key={product.name}>
+                  <div className="flex items-center justify-between text-sm">
+                    <p className="font-medium">{product.name}</p>
+                    <p className="text-zinc-500">{product.quantity} sold</p>
                   </div>
-                ))
-              )}
-            </div>
-          </section>
+                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
+                    <div className="h-full rounded-full bg-[#635BFF]" style={{ width: `${Math.max(12, Math.min(100, (product.amount / Math.max(...analytics.topProducts.map((item) => item.amount), 1)) * 100))}%` }} />
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
 
-          <section className="rounded-3xl border border-zinc-200 bg-white p-5">
-            <h2 className="font-semibold text-zinc-950">Low stock</h2>
-            <div className="mt-4 space-y-4">
-              {analytics.lowStock.length === 0 ? (
-                <p className="text-sm text-zinc-500">Nothing is low.</p>
-              ) : (
-                analytics.lowStock.map((product) => (
-                  <div key={product.name} className="flex items-center justify-between">
-                    <p className="text-sm text-zinc-950">{product.name}</p>
-                    <p className="rounded-full bg-amber-500/15 px-3 py-1 text-xs text-amber-200">{product.stock} left</p>
-                  </div>
-                ))
-              )}
-            </div>
-          </section>
-        </div>
+        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+          <h2 className="font-semibold">Low stock</h2>
+          <div className="mt-4 space-y-3">
+            {analytics.lowStock.length === 0 ? (
+              <p className="text-sm text-zinc-500">Nothing is low.</p>
+            ) : (
+              analytics.lowStock.map((product) => (
+                <div key={product.name} className="flex items-center justify-between">
+                  <p className="text-sm font-medium">{product.name}</p>
+                  <p className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-700">{product.stock} left</p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
       </div>
       <style>{`@keyframes barRise { from { transform: scaleY(0.2); opacity: 0.4; } to { transform: scaleY(1); opacity: 1; } }`}</style>
     </main>

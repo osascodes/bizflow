@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Box, Receipt, ShoppingBag, Store, TrendingDown, TrendingUp, Wallet } from "lucide-react";
 
 type Need = { id: string; title: string; detail: string; status: string };
 type Low = { id: string; name: string; stock: number };
@@ -23,13 +24,25 @@ type Snapshot = {
 
 const KEY = "bizflow-home";
 
-export default function SavedHome({
-  snapshot,
-  offline = false,
-}: {
-  snapshot?: Snapshot | null;
-  offline?: boolean;
-}) {
+const tones: Record<string, { wrap: string; icon: string; Icon: typeof Receipt }> = {
+  "Sales today": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: Receipt },
+  "Costs today": { wrap: "bg-amber-100", icon: "text-amber-600", Icon: Wallet },
+  "Left today": { wrap: "bg-emerald-100", icon: "text-emerald-600", Icon: TrendingUp },
+  "Debts due": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: ShoppingBag },
+  "Low stock": { wrap: "bg-rose-100", icon: "text-rose-600", Icon: Box },
+  "Orders to do": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: Store },
+};
+
+function hrefFor(label: string) {
+  if (label === "Orders to do") return "/storefront";
+  if (label === "Low stock") return "/inventory?focus=low";
+  if (label === "Debts due") return "/debts";
+  if (label === "Sales today") return "/sales?today=1";
+  if (label === "Costs today") return "/expenses?today=1";
+  return "";
+}
+
+export default function SavedHome({ snapshot, offline = false }: { snapshot?: Snapshot | null; offline?: boolean }) {
   const [saved, setSaved] = useState<Snapshot | null>(snapshot || null);
 
   useEffect(() => {
@@ -49,144 +62,97 @@ export default function SavedHome({
 
   if (!saved) {
     return (
-      <main className="px-4 py-8 md:px-8">
-        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-200 bg-white p-6">
-          <h1 className="text-xl font-semibold text-zinc-950">You are offline</h1>
-          <p className="mt-2 text-sm text-zinc-400">Open Home once while online. After that, the last numbers stay here.</p>
+      <main className="px-4 py-8 pb-28 md:px-8">
+        <div className="mx-auto max-w-xl rounded-3xl border border-zinc-200 bg-white p-6">
+          <h1 className="text-xl font-semibold">You are offline</h1>
+          <p className="mt-2 text-sm text-zinc-600">Open Home once while online. After that, the last numbers stay here.</p>
         </div>
       </main>
     );
   }
 
+  const share = () => {
+    const lines = [saved.name, "Today", ...saved.stats.map(([label, value]) => `${label}: ${value}`)];
+    if (saved.needs?.length) lines.push("", "Orders", ...saved.needs.map((item) => `${item.title}: ${item.detail}`));
+    if (saved.low?.length) lines.push("", "Low stock", ...saved.low.map((item) => `${item.name}: ${item.stock} left`));
+    window.open(`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`, "_blank");
+  };
+
   return (
-    <main className="px-4 py-8 md:px-8">
+    <main className="px-4 py-6 pb-28 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm text-violet-300">{saved.category}</p>
-        <h1 className="mt-2 text-3xl font-semibold text-zinc-950">{saved.name}</h1>
-        <p className="mt-2 text-sm text-zinc-400">{saved.welcome}</p>
-        <p className="mt-1 text-sm text-violet-300">Role: {saved.role}</p>
-        {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
-        <button
-          type="button"
-          onClick={() => {
-            const lines = [
-              saved.name,
-              "Today",
-              ...saved.stats.map(([label, value]) => `${label}: ${value}`),
-            ];
-            if (saved.needs?.length) lines.push("", "Orders", ...saved.needs.map((item) => `${item.title}: ${item.detail}`));
-            if (saved.low?.length) lines.push("", "Low stock", ...saved.low.map((item) => `${item.name}: ${item.stock} left`));
-            window.open(`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`, "_blank");
-          }}
-          className="mt-6 inline-flex h-11 items-center rounded-full bg-white px-5 text-sm font-semibold text-zinc-950"
-        >
-          Send today on WhatsApp
-        </button>
-        <Link href="/storefront" className="ml-2 mt-6 inline-flex h-11 items-center rounded-full bg-[#635BFF] px-5 text-sm font-semibold text-white">
-          Open store
-        </Link>
-        <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <p className="text-sm text-zinc-500">{saved.welcome}</p>
+        <h1 className="mt-1 text-2xl font-semibold">{saved.name}</h1>
+        <p className="mt-1 text-sm text-zinc-500">{saved.category} · {saved.role}</p>
+        {offline ? <p className="mt-2 text-xs text-amber-600">Last saved numbers</p> : null}
+
+        <div className="mt-5 flex gap-2">
+          <button type="button" onClick={share} className="inline-flex h-11 flex-1 items-center justify-center rounded-2xl bg-[#635BFF] px-4 text-sm font-semibold text-white">
+            Share summary
+          </button>
+          <Link href="/storefront" className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl border border-zinc-200 bg-white px-4 text-sm font-semibold">
+            <Store className="h-4 w-4 text-[#635BFF]" /> Open store
+          </Link>
+        </div>
+
+        <div className="mt-7 flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Business overview</h2>
+          <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600">Today</span>
+        </div>
+        <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
           {saved.stats.map(([label, value]) => {
-            const href = label === "Orders to do" ? "/storefront" : label === "Low stock" ? "/inventory?focus=low" : label === "Debts due" ? "/debts" : label === "Sales today" ? "/sales?today=1" : label === "Costs today" ? "/expenses?today=1" : "";
-            const card = (
+            const tone = tones[label] || tones["Sales today"];
+            const Icon = tone.Icon;
+            const href = hrefFor(label);
+            const body = (
               <>
-                <p className="text-sm text-zinc-400">{label}</p>
-                <p className={`mt-2 text-2xl font-semibold ${label === "Debts due" ? "text-amber-300" : "text-zinc-950"}`}>{value}</p>
+                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone.wrap} ${tone.icon}`}>
+                  <Icon className="h-4 w-4" />
+                </span>
+                <p className="mt-3 text-sm text-zinc-500">{label}</p>
+                <p className="mt-1 text-xl font-semibold">{value}</p>
               </>
             );
             return href ? (
-              <Link key={label} href={href} className="rounded-2xl border border-zinc-200 bg-white p-5">
-                {card}
-              </Link>
+              <Link key={label} href={href} className="rounded-3xl border border-zinc-200 bg-white p-4">{body}</Link>
             ) : (
-              <div key={label} className="rounded-2xl border border-zinc-200 bg-white p-5">
-                {card}
-              </div>
+              <div key={label} className="rounded-3xl border border-zinc-200 bg-white p-4">{body}</div>
             );
           })}
         </div>
+
         {saved.needs && saved.needs.length > 0 ? (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-zinc-950">Needs you</h2>
-            <div className="mt-3 space-y-3">
+          <section className="mt-8">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Needs you</h2>
+              <Link href="/storefront" className="text-sm font-medium text-[#635BFF]">View all</Link>
+            </div>
+            <div className="mt-3 space-y-2">
               {saved.needs.map((item) => (
-                <Link key={item.id} href="/storefront" className="block rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="font-semibold text-zinc-950">{item.title}</p>
-                      <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
-                      <p className="mt-1 text-xs capitalize text-violet-300">{item.status}</p>
-                    </div>
-                    <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
+                <Link key={item.id} href="/storefront" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
+                  <div>
+                    <p className="font-medium">{item.title}</p>
+                    <p className="mt-1 text-sm text-zinc-500">{item.detail}</p>
                   </div>
+                  <span className="rounded-full bg-[#635BFF]/10 px-2 py-1 text-xs font-medium text-[#635BFF]">{item.status}</span>
                 </Link>
               ))}
             </div>
-          </div>
+          </section>
         ) : null}
+
         {saved.low && saved.low.length > 0 ? (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-zinc-950">Low stock</h2>
-            <div className="mt-3 space-y-3">
+          <section className="mt-8">
+            <h2 className="text-lg font-semibold">Low stock</h2>
+            <div className="mt-3 space-y-2">
               {saved.low.map((item) => (
                 <Link key={item.id} href="/inventory?focus=low" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div>
-                    <p className="font-semibold text-zinc-950">{item.name}</p>
-                    <p className="mt-1 text-sm text-amber-300">{item.stock} left</p>
-                  </div>
-                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
+                  <p className="font-medium">{item.name}</p>
+                  <span className="text-sm font-medium text-rose-600">{item.stock} left</span>
                 </Link>
               ))}
             </div>
-          </div>
-        ) : null}
-        {saved.owed && saved.owed.length > 0 ? (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-zinc-950">Who owes</h2>
-            <div className="mt-3 space-y-3">
-              {saved.owed.map((item) => (
-                <Link key={item.id} href="/debts" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div>
-                    <p className="font-semibold text-zinc-950">{item.name}</p>
-                    <p className="mt-1 text-sm text-amber-300">₦{item.left.toLocaleString()} left</p>
-                  </div>
-                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        {saved.today && saved.today.length > 0 ? (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-zinc-950">Sales today</h2>
-            <div className="mt-3 space-y-3">
-              {saved.today.map((item) => (
-                <Link key={item.id} href={`/sales/${item.id}`} className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div>
-                    <p className="font-semibold text-zinc-950">{item.items}</p>
-                    <p className="mt-1 text-sm text-zinc-400">₦{item.total.toLocaleString()}</p>
-                  </div>
-                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
-                </Link>
-              ))}
-            </div>
-          </div>
-        ) : null}
-        {saved.costs && saved.costs.length > 0 ? (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold text-zinc-950">Costs today</h2>
-            <div className="mt-3 space-y-3">
-              {saved.costs.map((item) => (
-                <Link key={item.id} href="/expenses?today=1" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
-                  <div>
-                    <p className="font-semibold text-zinc-950">{item.title}</p>
-                    <p className="mt-1 text-sm text-zinc-400">₦{item.amount.toLocaleString()}</p>
-                  </div>
-                  <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
-                </Link>
-              ))}
-            </div>
-          </div>
+          </section>
         ) : null}
       </div>
     </main>

@@ -86,7 +86,7 @@ export default function OnboardingPage() {
             </select>
           </div>
 
-          <Button type="submit" className="w-full bg-[#00E5E5] text-zinc-950 hover:opacity-90" disabled={pending}>
+          <Button type="submit" className="w-full bg-[#635BFF] text-white hover:opacity-90" disabled={pending}>
             {pending ? "Saving..." : "Continue to dashboard"}
           </Button>
         </form>

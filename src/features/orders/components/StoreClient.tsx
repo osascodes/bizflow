@@ -177,7 +177,7 @@ export default function StoreClient({
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(0,229,229,0.28),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
+              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(99,91,255,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
                 <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
               </div>
             )}
@@ -223,7 +223,7 @@ export default function StoreClient({
 
   return (
     <main className="min-h-screen bg-[#07070a] text-white">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(0,229,229,0.16),transparent_32%),radial-gradient(circle_at_top_right,rgba(0,229,229,0.08),transparent_28%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,91,255,0.18),transparent_32%),radial-gradient(circle_at_top_right,rgba(99,91,255,0.10),transparent_28%)]" />
       <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
@@ -232,7 +232,7 @@ export default function StoreClient({
                 <img src={business.logo_url} alt="" className="h-full w-full object-contain" />
               </span>
             ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#00E5E5] text-sm font-semibold text-zinc-950">{initial(business.name)}</span>
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-sm font-semibold text-white">{initial(business.name)}</span>
             )}
             <p className="font-semibold">{business.name}</p>
           </div>
@@ -243,7 +243,7 @@ export default function StoreClient({
               <circle cx="9" cy="20" r="1" />
               <circle cx="18" cy="20" r="1" />
             </svg>
-            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#00E5E5] px-1 text-[10px] font-semibold">{count}</span> : null}
+            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] font-semibold">{count}</span> : null}
           </button>
         </div>
       </header>

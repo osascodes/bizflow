@@ -28,8 +28,8 @@ export default async function AnalyticsPage() {
   const hasWeekSales = analytics.weekSales > 0;
 
   const cards = [
-    { label: "This week", value: analytics.weekSales, tone: "from-[#00E5E5]/20 to-[#00E5E5]/5", accent: "text-indigo-300" },
-    { label: "This month", value: analytics.monthSales, tone: "from-[#00E5E5]/15 to-[#00E5E5]/5", accent: "text-indigo-300" },
+    { label: "This week", value: analytics.weekSales, tone: "from-[#635BFF]/20 to-[#635BFF]/5", accent: "text-indigo-300" },
+    { label: "This month", value: analytics.monthSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-indigo-300" },
     { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-300" },
     { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-300" : "text-rose-300" },
   ];
@@ -80,7 +80,7 @@ export default async function AnalyticsPage() {
                     <div className="flex h-40 w-full items-end border-b border-white/10">
                       {height > 0 ? (
                         <div
-                          className="w-full origin-bottom rounded-t-xl bg-[#00E5E5]"
+                          className="w-full origin-bottom rounded-t-xl bg-[#635BFF]"
                           style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}
                         />
                       ) : null}
@@ -107,7 +107,7 @@ export default async function AnalyticsPage() {
               ) : (
                 analytics.topProducts.map((product, index) => (
                   <div key={product.name} className="flex items-center gap-3">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#00E5E5]/20 text-xs font-semibold text-indigo-200">{index + 1}</span>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#635BFF]/20 text-xs font-semibold text-indigo-200">{index + 1}</span>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-white">{product.name}</p>
                       <p className="text-xs text-zinc-500">{product.quantity} sold</p>

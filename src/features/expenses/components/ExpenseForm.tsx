@@ -25,7 +25,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
 
   return (
     <form
-      className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setNotice("");
@@ -59,19 +59,19 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       {notice ? <p className="text-sm text-amber-300">{notice}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">What did you spend on?</Label>
+        <Label className="text-zinc-600">What did you spend on?</Label>
         <Input name="title" placeholder="Fabric" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Category</Label>
-        <select name="category" className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Category</Label>
+        <select name="category" className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           {categories.map((category) => (
             <option key={category} value={category}>{category}</option>
           ))}
         </select>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Amount</Label>
+        <Label className="text-zinc-600">Amount</Label>
         <Input name="amount" type="number" min="1" step="0.01" required />
       </div>
       <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : offlineMode ? "Save offline" : "Save expense"}</Button>

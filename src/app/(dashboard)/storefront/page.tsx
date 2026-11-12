@@ -52,7 +52,7 @@ export default async function StorefrontPage() {
     <SavedList storageKey="bizflow-store" title="Store" subtitle="Saved for offline." items={saved} />
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-2xl font-semibold text-white">Store</h1>
+        <h1 className="text-2xl font-semibold text-zinc-950">Store</h1>
         <p className="mt-2 text-sm text-zinc-400">Orders for this shop. Change the shop in Settings.</p>
         <ShareStoreLink name={business.name} slug={business.slug} />
         <OrderList

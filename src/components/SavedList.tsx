@@ -45,7 +45,7 @@ export default function SavedList({
   return (
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-2xl font-semibold text-white">{title}</h1>
+        <h1 className="text-2xl font-semibold text-zinc-950">{title}</h1>
         <p className="mt-2 text-sm text-zinc-400">{subtitle}</p>
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved list. Adding or editing needs the network.</p> : null}
         <div className="mt-6 space-y-3">
@@ -56,8 +56,8 @@ export default function SavedList({
           ) : (
             saved.map((item) => {
               const body = (
-                <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                  <h2 className="font-semibold text-white">{item.title}</h2>
+                <div className="rounded-2xl border border-zinc-200 bg-white p-4">
+                  <h2 className="font-semibold text-zinc-950">{item.title}</h2>
                   <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
                 </div>
               );

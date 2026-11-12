@@ -43,7 +43,7 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
 
   return (
     <>
-      <aside className="hidden w-56 shrink-0 border-r border-zinc-800 p-4 md:block">
+      <aside className="hidden w-56 shrink-0 border-r border-zinc-200 p-4 md:block">
         <nav className="flex flex-col gap-1">
           {items.map((item) => {
             const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -54,12 +54,12 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
                 prefetch
                 onClick={() => setPressed(item.href)}
                 className={`rounded-xl px-3 py-2 text-sm font-medium touch-manipulation ${
-                  active ? "bg-zinc-800 text-white" : pressed === item.href ? "bg-zinc-800 text-amber-200" : "text-zinc-400 hover:text-white"
+                  active ? "bg-[#635BFF] text-white" : pressed === item.href ? "bg-zinc-100 text-zinc-950" : "text-zinc-400 hover:text-zinc-950"
                 }`}
               >
                 {item.label}
                 {item.href === "/notifications" && alertCount > 0 ? (
-                  <span className="ml-2 rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
+                  <span className="ml-2 rounded-full bg-[#635BFF] px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
                 ) : null}
               </Link>
             );
@@ -67,7 +67,7 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
         </nav>
       </aside>
 
-      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-3 md:hidden">
+      <div className="sticky top-0 z-30 flex items-center justify-between border-b border-zinc-200 bg-white px-4 py-3 md:hidden">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -75,20 +75,20 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
           aria-label="Open menu"
         >
           <span className="flex flex-col gap-1">
-            <span className="h-px w-4 bg-white" />
-            <span className="h-px w-4 bg-white" />
-            <span className="h-px w-4 bg-white" />
+            <span className="h-px w-4 bg-zinc-950" />
+            <span className="h-px w-4 bg-zinc-950" />
+            <span className="h-px w-4 bg-zinc-950" />
           </span>
         </button>
-        <p className="text-sm font-medium text-zinc-300">{current?.label || "Brinset"}</p>
+        <p className="text-sm font-medium text-zinc-600">{current?.label || "Brinset"}</p>
       </div>
 
       {open ? (
         <div className="fixed inset-0 z-50 md:hidden">
           <button type="button" className="absolute inset-0 bg-black/60" onClick={() => setOpen(false)} aria-label="Close menu" />
-          <nav className="absolute inset-y-0 left-0 flex w-72 flex-col bg-zinc-950 p-4 shadow-2xl">
+          <nav className="absolute inset-y-0 left-0 flex w-72 flex-col bg-white p-4 shadow-2xl">
             <div className="mb-4 flex items-center justify-between">
-              <p className="text-sm font-semibold text-white">Menu</p>
+              <p className="text-sm font-semibold text-zinc-950">Menu</p>
               <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400">
                 Close
               </button>
@@ -106,12 +106,12 @@ export default function AppNav({ role = "owner", alertCount = 0 }: { role?: stri
                       setOpen(false);
                     }}
                     className={`rounded-xl px-3 py-3 text-sm font-medium ${
-                      active ? "bg-zinc-800 text-white" : "text-zinc-300"
+                      active ? "bg-[#635BFF] text-white" : "text-zinc-600"
                     }`}
                   >
                     {item.label}
                 {item.href === "/notifications" && alertCount > 0 ? (
-                  <span className="ml-2 rounded-full bg-violet-600 px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
+                  <span className="ml-2 rounded-full bg-[#635BFF] px-1.5 py-0.5 text-[10px] font-semibold text-white">{alertCount}</span>
                 ) : null}
                   </Link>
                 );

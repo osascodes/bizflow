@@ -31,7 +31,7 @@ export default function ShareReceiptButton({ receiptNo }: { receiptNo: string })
     <button
       type="button"
       onClick={share}
-      className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-full border border-zinc-700 text-sm font-semibold text-white print:hidden"
+      className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-full border border-zinc-300 text-sm font-semibold text-zinc-950 print:hidden"
     >
       Share receipt on WhatsApp
     </button>

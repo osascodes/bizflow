@@ -20,13 +20,13 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
-      <header className="flex items-center justify-between border-b border-zinc-800 px-4 py-4 md:px-6">
+    <div className="min-h-screen bg-zinc-50 text-zinc-950">
+      <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 md:px-6">
         <div className="flex items-center gap-3">
           <img src="/brinset-logo.jpg" alt="Brinset" className="h-8 w-auto rounded-md bg-black object-contain" />
         </div>
         <form action={logoutAction}>
-          <button type="submit" className="text-sm text-zinc-400 hover:text-white">
+          <button type="submit" className="text-sm text-zinc-400 hover:text-zinc-950">
             Log out
           </button>
         </form>

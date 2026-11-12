@@ -13,7 +13,7 @@ export default function CustomerForm() {
   return (
     <form
       id="customer-form"
-      className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setPending(true);
@@ -29,11 +29,11 @@ export default function CustomerForm() {
     >
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Name</Label>
+        <Label className="text-zinc-600">Name</Label>
         <Input name="name" placeholder="Chioma" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Phone</Label>
+        <Label className="text-zinc-600">Phone</Label>
         <Input name="phone" placeholder="08012345678" required />
       </div>
       <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Add customer"}</Button>

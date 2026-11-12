@@ -29,18 +29,18 @@ export default function DebtList({ debts }: { debts: Debt[] }) {
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Search debts"
-        className="h-11 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none"
+        className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none"
       />
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No matching debt.</div>
+        <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">No matching debt.</div>
       ) : (
         filtered.map((debt) => {
           const phone = debt.phone?.replace(/\D/g, "").replace(/^0/, "234");
           return (
-            <div key={debt.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+            <div key={debt.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <h2 className="font-semibold text-white">{debt.name}</h2>
+                  <h2 className="font-semibold text-zinc-950">{debt.name}</h2>
                   <p className="mt-1 text-sm text-zinc-500">{debt.note || "No note"}</p>
                 </div>
                 <p className={debt.balance > 0 ? "text-sm text-amber-300" : "text-sm text-emerald-300"}>

@@ -44,7 +44,7 @@ export default function OnboardingPage() {
     <main className="px-6 py-10">
       <div className="mx-auto max-w-lg">
         <p className="text-sm text-violet-300">Set up your shop</p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">Tell us about your business</h1>
+        <h1 className="mt-2 text-3xl font-semibold text-zinc-950">Tell us about your business</h1>
         <p className="mt-3 text-sm leading-6 text-zinc-400">
           This creates your storefront link and keeps inventory, sales, and debts under one shop.
         </p>
@@ -57,7 +57,7 @@ export default function OnboardingPage() {
           ) : null}
 
           <div className="space-y-1.5">
-            <Label className="text-zinc-300">Business name</Label>
+            <Label className="text-zinc-600">Business name</Label>
             <Input {...form.register("name")} placeholder="Ada Fashion" />
             {form.formState.errors.name ? (
               <p className="text-xs text-red-400">{form.formState.errors.name.message}</p>
@@ -65,7 +65,7 @@ export default function OnboardingPage() {
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-zinc-300">Business phone</Label>
+            <Label className="text-zinc-600">Business phone</Label>
             <Input {...form.register("phone")} type="tel" placeholder="0801 234 5678" />
             {form.formState.errors.phone ? (
               <p className="text-xs text-red-400">{form.formState.errors.phone.message}</p>
@@ -73,10 +73,10 @@ export default function OnboardingPage() {
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-zinc-300">Category</Label>
+            <Label className="text-zinc-600">Category</Label>
             <select
               {...form.register("category")}
-              className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white"
+              className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950"
             >
               {businessCategories.map((category) => (
                 <option key={category} value={category}>

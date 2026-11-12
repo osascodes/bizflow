@@ -18,16 +18,16 @@ export default function FaqList() {
       {items.map(([question, answer], index) => {
         const active = open === index;
         return (
-          <div key={question} className="overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900">
+          <div key={question} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
             <button
               type="button"
               onClick={() => setOpen(active ? -1 : index)}
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
             >
-              <span className="text-base font-semibold text-white">{question}</span>
+              <span className="text-base font-semibold text-zinc-950">{question}</span>
               <span className={`text-zinc-400 transition ${active ? "rotate-180" : ""}`}>▾</span>
             </button>
-            {active ? <p className="px-6 pb-5 text-sm leading-6 text-zinc-300">{answer}</p> : null}
+            {active ? <p className="px-6 pb-5 text-sm leading-6 text-zinc-600">{answer}</p> : null}
           </div>
         );
       })}

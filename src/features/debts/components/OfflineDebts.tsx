@@ -33,9 +33,9 @@ export default function OfflineDebts({ debts }: { debts?: SavedDebt[] }) {
         <p className="text-sm text-zinc-500">Open Debts once while online.</p>
       ) : (
         saved.map((debt) => (
-          <div key={debt.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+          <div key={debt.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
             <div className="flex items-start justify-between gap-3">
-              <h2 className="font-semibold text-white">{debt.name}</h2>
+              <h2 className="font-semibold text-zinc-950">{debt.name}</h2>
               <p className={debt.balance > 0 ? "text-sm text-amber-300" : "text-sm text-emerald-300"}>
                 {debt.balance > 0 ? `₦${debt.balance.toLocaleString()} left` : "Paid"}
               </p>

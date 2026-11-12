@@ -7,16 +7,16 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/90 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
           <img src="/brinset-logo.jpg" alt="Brinset" className="h-9 w-auto rounded-md bg-black object-contain" />
         </Link>
 
-        <div className="hidden items-center gap-8 text-sm text-zinc-300 md:flex">
-          <a href="#features" className="hover:text-white">Features</a>
-          <Link href="/pricing" className="hover:text-white">Pricing</Link>
-          <Link href="/login" className="hover:text-white">Sign In</Link>
+        <div className="hidden items-center gap-8 text-sm text-zinc-600 md:flex">
+          <a href="#features" className="hover:text-zinc-950">Features</a>
+          <Link href="/pricing" className="hover:text-zinc-950">Pricing</Link>
+          <Link href="/login" className="hover:text-zinc-950">Sign In</Link>
           <Link href="/register" className="rounded-full bg-[#635BFF] px-4 py-2 font-medium text-white">
             Get Started
           </Link>
@@ -35,7 +35,7 @@ export default function Navbar() {
       </nav>
 
       {open ? (
-        <div className="space-y-1 border-t border-zinc-800 px-4 py-3 md:hidden">
+        <div className="space-y-1 border-t border-zinc-200 px-4 py-3 md:hidden">
           <a href="#features" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Features</a>
           <Link href="/pricing" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Pricing</Link>
           <Link href="/login" className="block rounded-xl px-3 py-3 text-base text-zinc-200" onClick={() => setOpen(false)}>Sign In</Link>

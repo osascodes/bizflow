@@ -56,9 +56,9 @@ export default function RegisterPage() {
     <AuthCard title="Create your business account">
       <GoogleButton label="Sign up with Google" />
       <div className="my-4 flex items-center gap-3 text-xs text-zinc-500">
-        <span className="h-px flex-1 bg-zinc-800" />
+        <span className="h-px flex-1 bg-zinc-100" />
         or
-        <span className="h-px flex-1 bg-zinc-800" />
+        <span className="h-px flex-1 bg-zinc-100" />
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         {errorMessage ? (
@@ -73,7 +73,7 @@ export default function RegisterPage() {
         ) : null}
 
         <div className="space-y-1.5">
-          <Label htmlFor="full_name" className="text-zinc-300">Full name</Label>
+          <Label htmlFor="full_name" className="text-zinc-600">Full name</Label>
           <Input {...form.register('full_name')} placeholder="Ada Okafor" autoComplete="name" />
           {form.formState.errors.full_name ? (
             <p className="text-xs text-red-400">{form.formState.errors.full_name.message}</p>
@@ -82,14 +82,14 @@ export default function RegisterPage() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="email" className="text-zinc-300">Email</Label>
+            <Label htmlFor="email" className="text-zinc-600">Email</Label>
             <Input {...form.register('email')} type="email" placeholder="you@email.com" autoComplete="email" />
             {form.formState.errors.email ? (
               <p className="text-xs text-red-400">{form.formState.errors.email.message}</p>
             ) : null}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="phone" className="text-zinc-300">Phone</Label>
+            <Label htmlFor="phone" className="text-zinc-600">Phone</Label>
             <Input {...form.register('phone')} type="tel" placeholder="0801 234 5678" autoComplete="tel" />
             {form.formState.errors.phone ? (
               <p className="text-xs text-red-400">{form.formState.errors.phone.message}</p>
@@ -99,14 +99,14 @@ export default function RegisterPage() {
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1.5">
-            <Label htmlFor="password" className="text-zinc-300">Password</Label>
+            <Label htmlFor="password" className="text-zinc-600">Password</Label>
             <PasswordInput {...form.register('password')} placeholder="At least 8 characters" autoComplete="new-password" />
             {form.formState.errors.password ? (
               <p className="text-xs text-red-400">{form.formState.errors.password.message}</p>
             ) : null}
           </div>
           <div className="space-y-1.5">
-            <Label htmlFor="confirm_password" className="text-zinc-300">Confirm</Label>
+            <Label htmlFor="confirm_password" className="text-zinc-600">Confirm</Label>
             <PasswordInput {...form.register('confirm_password')} placeholder="Repeat password" autoComplete="new-password" />
             {form.formState.errors.confirm_password ? (
               <p className="text-xs text-red-400">{form.formState.errors.confirm_password.message}</p>

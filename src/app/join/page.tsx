@@ -13,9 +13,9 @@ export default function JoinPage() {
   const [pending, setPending] = useState(false);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-4 text-white">
+    <main className="flex min-h-screen items-center justify-center bg-white px-4 text-zinc-950">
       <form
-        className="w-full max-w-sm space-y-4 rounded-3xl border border-zinc-800 bg-zinc-900 p-6"
+        className="w-full max-w-sm space-y-4 rounded-3xl border border-zinc-200 bg-white p-6"
         action={async (formData) => {
           setErrorMessage("");
           setPending(true);

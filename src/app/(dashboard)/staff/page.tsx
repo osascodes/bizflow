@@ -15,7 +15,7 @@ export default async function StaffPage() {
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
         <div>
-          <h1 className="text-2xl font-semibold text-white">Staff</h1>
+          <h1 className="text-2xl font-semibold text-zinc-950">Staff</h1>
           <p className="mt-2 text-sm text-zinc-400">Invite a helper. They join with the code at /join.</p>
           <div className="mt-6">
             <StaffForm />
@@ -23,13 +23,13 @@ export default async function StaffPage() {
         </div>
         <div className="space-y-3">
           {staff.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No staff yet.</div>
+            <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">No staff yet.</div>
           ) : (
             staff.map((member) => (
-              <div key={member.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+              <div key={member.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-semibold text-white">{member.name}</h2>
+                    <h2 className="font-semibold text-zinc-950">{member.name}</h2>
                     <p className="mt-1 text-sm text-zinc-400">{member.role} · {member.email}</p>
                     <p className="mt-1 text-xs text-zinc-500">{member.user_id ? "Joined" : `Invite code: ${member.invite_code}`}</p>
                   </div>

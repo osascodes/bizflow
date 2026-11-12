@@ -38,7 +38,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${jakarta.variable} h-full antialiased`}>
-      <body className={`${jakarta.className} min-h-full bg-zinc-950 text-white`}>
+      <body className={`${jakarta.className} min-h-full bg-zinc-50 text-zinc-950`}>
         <OfflineReady />
         {children}
       </body>

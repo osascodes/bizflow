@@ -29,7 +29,7 @@ export default async function NotificationsPage() {
   return (
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-3xl">
-        <h1 className="text-2xl font-semibold text-white">Alerts</h1>
+        <h1 className="text-2xl font-semibold text-zinc-950">Alerts</h1>
         <p className="mt-2 text-sm text-zinc-400">Low stock, new store orders, and unpaid debts.</p>
         {phone && (lowStock.length > 0 || orders.length > 0) ? (
           <div className="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -39,7 +39,7 @@ export default async function NotificationsPage() {
               </a>
             ) : null}
             {lowStock.length > 0 ? (
-              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(stockMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-700 px-5 text-sm font-semibold text-white">
+              <a href={`https://wa.me/${phone}?text=${encodeURIComponent(stockMessage)}`} target="_blank" className="inline-flex h-11 items-center justify-center rounded-full border border-zinc-300 px-5 text-sm font-semibold text-zinc-950">
                 Send low stock to WhatsApp
               </a>
             ) : null}
@@ -49,11 +49,11 @@ export default async function NotificationsPage() {
         ) : null}
         <div className="mt-6 space-y-3">
           {items.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">Nothing needs attention.</div>
+            <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">Nothing needs attention.</div>
           ) : (
             items.map((item) => (
-              <Link key={item.id} href={item.href} className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                <h2 className="font-semibold text-white">{item.title}</h2>
+              <Link key={item.id} href={item.href} className="block rounded-2xl border border-zinc-200 bg-white p-4">
+                <h2 className="font-semibold text-zinc-950">{item.title}</h2>
                 <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
               </Link>
             ))

@@ -50,8 +50,8 @@ export default function SavedHome({
   if (!saved) {
     return (
       <main className="px-4 py-8 md:px-8">
-        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
-          <h1 className="text-xl font-semibold text-white">You are offline</h1>
+        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-200 bg-white p-6">
+          <h1 className="text-xl font-semibold text-zinc-950">You are offline</h1>
           <p className="mt-2 text-sm text-zinc-400">Open Home once while online. After that, the last numbers stay here.</p>
         </div>
       </main>
@@ -62,7 +62,7 @@ export default function SavedHome({
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-5xl">
         <p className="text-sm text-violet-300">{saved.category}</p>
-        <h1 className="mt-2 text-3xl font-semibold text-white">{saved.name}</h1>
+        <h1 className="mt-2 text-3xl font-semibold text-zinc-950">{saved.name}</h1>
         <p className="mt-2 text-sm text-zinc-400">{saved.welcome}</p>
         <p className="mt-1 text-sm text-violet-300">Role: {saved.role}</p>
         {offline ? <p className="mt-3 text-xs text-amber-300">Last saved numbers</p> : null}
@@ -91,15 +91,15 @@ export default function SavedHome({
             const card = (
               <>
                 <p className="text-sm text-zinc-400">{label}</p>
-                <p className={`mt-2 text-2xl font-semibold ${label === "Debts due" ? "text-amber-300" : "text-white"}`}>{value}</p>
+                <p className={`mt-2 text-2xl font-semibold ${label === "Debts due" ? "text-amber-300" : "text-zinc-950"}`}>{value}</p>
               </>
             );
             return href ? (
-              <Link key={label} href={href} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+              <Link key={label} href={href} className="rounded-2xl border border-zinc-200 bg-white p-5">
                 {card}
               </Link>
             ) : (
-              <div key={label} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+              <div key={label} className="rounded-2xl border border-zinc-200 bg-white p-5">
                 {card}
               </div>
             );
@@ -107,13 +107,13 @@ export default function SavedHome({
         </div>
         {saved.needs && saved.needs.length > 0 ? (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-white">Needs you</h2>
+            <h2 className="text-lg font-semibold text-zinc-950">Needs you</h2>
             <div className="mt-3 space-y-3">
               {saved.needs.map((item) => (
-                <Link key={item.id} href="/storefront" className="block rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link key={item.id} href="/storefront" className="block rounded-2xl border border-zinc-200 bg-white p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-white">{item.title}</p>
+                      <p className="font-semibold text-zinc-950">{item.title}</p>
                       <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
                       <p className="mt-1 text-xs capitalize text-violet-300">{item.status}</p>
                     </div>
@@ -126,12 +126,12 @@ export default function SavedHome({
         ) : null}
         {saved.low && saved.low.length > 0 ? (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-white">Low stock</h2>
+            <h2 className="text-lg font-semibold text-zinc-950">Low stock</h2>
             <div className="mt-3 space-y-3">
               {saved.low.map((item) => (
-                <Link key={item.id} href="/inventory?focus=low" className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link key={item.id} href="/inventory?focus=low" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
                   <div>
-                    <p className="font-semibold text-white">{item.name}</p>
+                    <p className="font-semibold text-zinc-950">{item.name}</p>
                     <p className="mt-1 text-sm text-amber-300">{item.stock} left</p>
                   </div>
                   <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
@@ -142,12 +142,12 @@ export default function SavedHome({
         ) : null}
         {saved.owed && saved.owed.length > 0 ? (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-white">Who owes</h2>
+            <h2 className="text-lg font-semibold text-zinc-950">Who owes</h2>
             <div className="mt-3 space-y-3">
               {saved.owed.map((item) => (
-                <Link key={item.id} href="/debts" className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link key={item.id} href="/debts" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
                   <div>
-                    <p className="font-semibold text-white">{item.name}</p>
+                    <p className="font-semibold text-zinc-950">{item.name}</p>
                     <p className="mt-1 text-sm text-amber-300">₦{item.left.toLocaleString()} left</p>
                   </div>
                   <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
@@ -158,12 +158,12 @@ export default function SavedHome({
         ) : null}
         {saved.today && saved.today.length > 0 ? (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-white">Sales today</h2>
+            <h2 className="text-lg font-semibold text-zinc-950">Sales today</h2>
             <div className="mt-3 space-y-3">
               {saved.today.map((item) => (
-                <Link key={item.id} href={`/sales/${item.id}`} className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link key={item.id} href={`/sales/${item.id}`} className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
                   <div>
-                    <p className="font-semibold text-white">{item.items}</p>
+                    <p className="font-semibold text-zinc-950">{item.items}</p>
                     <p className="mt-1 text-sm text-zinc-400">₦{item.total.toLocaleString()}</p>
                   </div>
                   <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>
@@ -174,12 +174,12 @@ export default function SavedHome({
         ) : null}
         {saved.costs && saved.costs.length > 0 ? (
           <div className="mt-8">
-            <h2 className="text-lg font-semibold text-white">Costs today</h2>
+            <h2 className="text-lg font-semibold text-zinc-950">Costs today</h2>
             <div className="mt-3 space-y-3">
               {saved.costs.map((item) => (
-                <Link key={item.id} href="/expenses?today=1" className="flex items-center justify-between rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+                <Link key={item.id} href="/expenses?today=1" className="flex items-center justify-between rounded-2xl border border-zinc-200 bg-white p-4">
                   <div>
-                    <p className="font-semibold text-white">{item.title}</p>
+                    <p className="font-semibold text-zinc-950">{item.title}</p>
                     <p className="mt-1 text-sm text-zinc-400">₦{item.amount.toLocaleString()}</p>
                   </div>
                   <span className="inline-flex h-9 items-center rounded-full bg-white px-4 text-sm font-semibold text-zinc-950">Open</span>

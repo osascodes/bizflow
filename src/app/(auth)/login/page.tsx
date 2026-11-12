@@ -44,9 +44,9 @@ export default function LoginPage() {
       <p className="mb-4 text-sm text-zinc-400">Owners and staff use this same page.</p>
       <GoogleButton label="Continue with Google" />
       <div className="my-4 flex items-center gap-3 text-xs text-zinc-500">
-        <span className="h-px flex-1 bg-zinc-800" />
+        <span className="h-px flex-1 bg-zinc-100" />
         or
-        <span className="h-px flex-1 bg-zinc-800" />
+        <span className="h-px flex-1 bg-zinc-100" />
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         {errorMessage ? (
@@ -56,7 +56,7 @@ export default function LoginPage() {
         ) : null}
 
         <div className="space-y-1.5">
-          <Label htmlFor="email" className="text-zinc-300">Email</Label>
+          <Label htmlFor="email" className="text-zinc-600">Email</Label>
           <Input {...form.register('email')} type="email" placeholder="you@email.com" />
           {form.formState.errors.email ? (
             <p className="text-xs text-red-400">{form.formState.errors.email.message}</p>
@@ -64,7 +64,7 @@ export default function LoginPage() {
         </div>
 
         <div className="space-y-1.5">
-          <Label htmlFor="password" className="text-zinc-300">Password</Label>
+          <Label htmlFor="password" className="text-zinc-600">Password</Label>
           <PasswordInput {...form.register('password')} autoComplete="current-password" />
           {form.formState.errors.password ? (
             <p className="text-xs text-red-400">{form.formState.errors.password.message}</p>
@@ -85,7 +85,7 @@ export default function LoginPage() {
         <Link href="/join" className="text-violet-400 hover:underline">Join with a code</Link>
       </div>
       <div className="mt-2 text-center">
-        <Link href="/forgot-password" className="text-sm text-zinc-500 hover:text-white">
+        <Link href="/forgot-password" className="text-sm text-zinc-500 hover:text-zinc-950">
           Forgot password?
         </Link>
       </div>

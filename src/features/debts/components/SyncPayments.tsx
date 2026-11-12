@@ -41,5 +41,5 @@ export default function SyncPayments() {
   }, [router]);
 
   if (!message) return null;
-  return <p className="border-b border-zinc-800 bg-amber-500/10 px-4 py-2 text-center text-xs text-amber-200">{message}</p>;
+  return <p className="border-b border-zinc-200 bg-amber-500/10 px-4 py-2 text-center text-xs text-amber-200">{message}</p>;
 }

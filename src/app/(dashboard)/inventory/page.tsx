@@ -29,7 +29,7 @@ export default async function InventoryPage({
       return (
         <main className="px-4 py-8 md:px-8">
           <div className="mx-auto max-w-3xl">
-            <h1 className="text-2xl font-semibold text-white">Stock</h1>
+            <h1 className="text-2xl font-semibold text-zinc-950">Stock</h1>
             <p className="mt-2 text-sm text-amber-300">Offline. Stock changes stay on this phone until the network returns.</p>
             <OfflineStock />
           </div>
@@ -60,7 +60,7 @@ export default async function InventoryPage({
       <main className="px-4 py-8 md:px-8">
         <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
           <div>
-            <h1 className="text-2xl font-semibold text-white">Stock</h1>
+            <h1 className="text-2xl font-semibold text-zinc-950">Stock</h1>
             <p className="mt-2 text-sm text-zinc-400">Add what you sell. Tap Edit if the name, price, or stock is wrong.</p>
             <div className="mt-6">
               <ProductForm />

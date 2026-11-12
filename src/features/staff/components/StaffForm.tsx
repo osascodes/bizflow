@@ -14,7 +14,7 @@ export default function StaffForm() {
   return (
     <form
       id="staff-form"
-      className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setPending(true);
@@ -30,20 +30,20 @@ export default function StaffForm() {
     >
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Name</Label>
+        <Label className="text-zinc-600">Name</Label>
         <Input name="name" placeholder="Ada" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Phone</Label>
+        <Label className="text-zinc-600">Phone</Label>
         <Input name="phone" placeholder="08012345678" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Email</Label>
+        <Label className="text-zinc-600">Email</Label>
         <Input name="email" type="email" placeholder="ada@shop.com" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Role</Label>
-        <select name="role" defaultValue="Sales" className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Role</Label>
+        <select name="role" defaultValue="Sales" className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           {staffRoles.map((role) => <option key={role} value={role}>{role}</option>)}
         </select>
       </div>

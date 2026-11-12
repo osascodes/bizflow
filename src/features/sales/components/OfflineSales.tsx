@@ -34,8 +34,8 @@ export default function OfflineSales() {
           <p className="text-sm text-zinc-500">No offline sales waiting.</p>
         ) : (
           queue.map((sale) => (
-            <div key={sale.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <h2 className="font-semibold text-white">{sale.label}</h2>
+            <div key={sale.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <h2 className="font-semibold text-zinc-950">{sale.label}</h2>
               <p className="mt-1 text-sm text-amber-300">Waiting to send · ₦{sale.total.toLocaleString()}</p>
             </div>
           ))

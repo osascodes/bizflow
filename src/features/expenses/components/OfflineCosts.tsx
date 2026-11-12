@@ -19,8 +19,8 @@ export default function OfflineCosts() {
           <p className="text-sm text-zinc-500">No offline costs waiting.</p>
         ) : (
           queue.map((cost) => (
-            <div key={cost.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-              <h2 className="font-semibold text-white">{cost.title}</h2>
+            <div key={cost.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
+              <h2 className="font-semibold text-zinc-950">{cost.title}</h2>
               <p className="mt-1 text-sm text-amber-300">Waiting to send · {cost.category} · ₦{cost.amount.toLocaleString()}</p>
             </div>
           ))

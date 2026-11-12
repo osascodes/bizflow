@@ -33,7 +33,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
 
   return (
     <form
-      className="mt-6 space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="mt-6 space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setSaved(false);
@@ -51,7 +51,7 @@ export default function BusinessEditor({ business }: { business: Business }) {
         }
       }}
     >
-      <h2 className="font-semibold text-white">Shop details</h2>
+      <h2 className="font-semibold text-zinc-950">Shop details</h2>
       <p className="text-sm text-zinc-400">Current link</p>
       <Link href={`/store/${slug}`} className="inline-flex text-sm text-violet-300">/store/{slug}</Link>
       <div className="flex gap-3">
@@ -60,51 +60,51 @@ export default function BusinessEditor({ business }: { business: Business }) {
       </div>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Logo</Label>
+        <Label className="text-zinc-600">Logo</Label>
         <Input name="logo" type="file" accept="image/*" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Hero image, optional</Label>
+        <Label className="text-zinc-600">Hero image, optional</Label>
         <Input name="hero" type="file" accept="image/*" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Store headline</Label>
+        <Label className="text-zinc-600">Store headline</Label>
         <Input name="store_headline" defaultValue={business.store_headline || ""} placeholder="Shop Solo Gadgets" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Store description</Label>
+        <Label className="text-zinc-600">Store description</Label>
         <Input name="store_description" defaultValue={business.store_description || ""} placeholder="Gadgets and accessories, ready to order." />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Business name</Label>
+        <Label className="text-zinc-600">Business name</Label>
         <Input name="name" defaultValue={business.name} required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Phone</Label>
+        <Label className="text-zinc-600">Phone</Label>
         <Input name="phone" defaultValue={business.phone} required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Address, optional</Label>
+        <Label className="text-zinc-600">Address, optional</Label>
         <Input name="address" defaultValue={business.address || ""} placeholder="12 Allen Avenue, Ikeja" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Category</Label>
-        <select name="category" defaultValue={business.category} className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Category</Label>
+        <select name="category" defaultValue={business.category} className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           {businessCategories.map((category) => (
             <option key={category} value={category}>{category}</option>
           ))}
         </select>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Instagram</Label>
+        <Label className="text-zinc-600">Instagram</Label>
         <Input name="instagram" defaultValue={business.instagram || ""} placeholder="https://instagram.com/yourshop" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">TikTok</Label>
+        <Label className="text-zinc-600">TikTok</Label>
         <Input name="tiktok" defaultValue={business.tiktok || ""} placeholder="https://tiktok.com/@yourshop" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Website</Label>
+        <Label className="text-zinc-600">Website</Label>
         <Input name="website" defaultValue={business.website || ""} placeholder="https://yourshop.com" />
       </div>
       <Button type="submit" className="w-full bg-[#635BFF] text-white hover:opacity-90" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save shop details"}</Button>

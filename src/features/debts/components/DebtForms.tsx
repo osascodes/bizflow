@@ -16,7 +16,7 @@ export function CustomerForm() {
 
   return (
     <form
-      className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setSaved(false);
@@ -32,14 +32,14 @@ export function CustomerForm() {
         }
       }}
     >
-      <h2 className="font-semibold text-white">Add customer</h2>
+      <h2 className="font-semibold text-zinc-950">Add customer</h2>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Name</Label>
+        <Label className="text-zinc-600">Name</Label>
         <Input name="name" placeholder="Ada" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Phone</Label>
+        <Label className="text-zinc-600">Phone</Label>
         <Input name="phone" placeholder="0801 234 5678" />
       </div>
       <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save customer"}</Button>
@@ -54,7 +54,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
 
   return (
     <form
-      className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5"
+      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
       action={async (formData) => {
         setErrorMessage("");
         setSaved(false);
@@ -70,11 +70,11 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
         }
       }}
     >
-      <h2 className="font-semibold text-white">Record debt</h2>
+      <h2 className="font-semibold text-zinc-950">Record debt</h2>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Customer</Label>
-        <select name="customer_id" required className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Customer</Label>
+        <select name="customer_id" required className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           <option value="">Select a customer</option>
           {customers.map((customer) => (
             <option key={customer.id} value={customer.id}>{customer.name}</option>
@@ -82,11 +82,11 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
         </select>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Amount</Label>
+        <Label className="text-zinc-600">Amount</Label>
         <Input name="amount" type="number" min="1" step="0.01" required />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Note</Label>
+        <Label className="text-zinc-600">Note</Label>
         <Input name="note" placeholder="2 gowns, pay Friday" />
       </div>
       <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending || customers.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>

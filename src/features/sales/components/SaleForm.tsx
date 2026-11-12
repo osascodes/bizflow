@@ -93,14 +93,14 @@ export default function SaleForm({ products, customers = [], offlineMode = false
   };
 
   return (
-    <form action={onSubmit} className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+    <form action={onSubmit} className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5">
       {errorMessage ? (
         <div className="rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400">{errorMessage}</div>
       ) : null}
       <input type="hidden" name="items" value={JSON.stringify(lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })))} />
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Product</Label>
-        <select value={productId} onChange={(event) => setProductId(event.target.value)} className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Product</Label>
+        <select value={productId} onChange={(event) => setProductId(event.target.value)} className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           <option value="">Select a product</option>
           {products.map((product) => (
             <option key={product.id} value={product.id}>
@@ -110,40 +110,40 @@ export default function SaleForm({ products, customers = [], offlineMode = false
         </select>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Quantity</Label>
+        <Label className="text-zinc-600">Quantity</Label>
         <Input value={quantity} onChange={(event) => setQuantity(Number(event.target.value))} type="number" min="1" step="1" />
       </div>
       <button type="button" onClick={addLine} className="inline-flex h-11 w-full items-center justify-center rounded-full bg-white text-sm font-semibold text-zinc-950">
         Add item
       </button>
       {lines.length > 0 ? (
-        <div className="space-y-2 border-t border-zinc-800 pt-3">
+        <div className="space-y-2 border-t border-zinc-200 pt-3">
           {lines.map((line) => {
             const product = products.find((item) => item.id === line.productId);
             return (
               <div key={line.productId} className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-white">{line.quantity} x {product?.name || "Item"}</span>
+                <span className="text-zinc-950">{line.quantity} x {product?.name || "Item"}</span>
                 <button type="button" onClick={() => setLines((current) => current.filter((item) => item.productId !== line.productId))} className="text-zinc-500">Remove</button>
               </div>
             );
           })}
-          <p className="text-sm font-semibold text-white">Total ₦{Math.max(total - discount, 0).toLocaleString()}</p>
+          <p className="text-sm font-semibold text-zinc-950">Total ₦{Math.max(total - discount, 0).toLocaleString()}</p>
         </div>
       ) : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Discount</Label>
+        <Label className="text-zinc-600">Discount</Label>
         <Input name="discount" type="number" min="0" step="0.01" value={discount || ""} onChange={(event) => setDiscount(Number(event.target.value) || 0)} placeholder="0" />
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Customer</Label>
-        <select name="customer_id" required={onCredit} className="h-10 w-full rounded-lg border border-zinc-700 bg-zinc-950 px-3 text-sm text-white">
+        <Label className="text-zinc-600">Customer</Label>
+        <select name="customer_id" required={onCredit} className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           <option value="">No customer</option>
           {customers.map((customer) => (
             <option key={customer.id} value={customer.id}>{customer.name}</option>
           ))}
         </select>
       </div>
-      <label className="flex items-center gap-2 text-sm text-zinc-300">
+      <label className="flex items-center gap-2 text-sm text-zinc-600">
         <input type="checkbox" name="on_credit" checked={onCredit} onChange={(event) => setOnCredit(event.target.checked)} />
         Customer will pay later
       </label>

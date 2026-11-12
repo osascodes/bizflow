@@ -41,7 +41,7 @@ export default async function ReceiptPage({
   return (
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-md">
-        <Link href="/sales" className="text-sm text-zinc-400 hover:text-white print:hidden">
+        <Link href="/sales" className="text-sm text-zinc-400 hover:text-zinc-950 print:hidden">
           Back to sales
         </Link>
         <article id="receipt-card" className="mt-4 rounded-2xl border border-zinc-200 bg-white px-6 py-7 text-zinc-950 print:border-0">

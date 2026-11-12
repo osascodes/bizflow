@@ -30,7 +30,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
   return (
     <div className="flex flex-1 items-start justify-between gap-3">
       <div>
-        <h2 className="font-semibold text-white">{product.name}</h2>
+        <h2 className="font-semibold text-zinc-950">{product.name}</h2>
         <p className="mt-1 text-sm text-zinc-400">₦{Number(product.price).toLocaleString()}</p>
         <button type="button" onClick={() => setOpen((value) => !value)} className="mt-2 text-xs text-violet-300">
           {open ? "Close" : "Edit"}
@@ -38,7 +38,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
         {notice ? <p className="mt-1 text-xs text-amber-300">{notice}</p> : null}
       </div>
       <div className="text-right">
-        <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-300"}>
+        <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-600"}>
           {shownStock} in stock
         </p>
         <form
@@ -78,7 +78,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
             onChange={(event) => setAddAmount(event.target.value)}
             inputMode="numeric"
             placeholder="Qty"
-            className="h-9 w-16 rounded-lg border border-zinc-700 bg-zinc-950 px-2 text-sm text-white outline-none"
+            className="h-9 w-16 rounded-lg border border-zinc-300 bg-white px-2 text-sm text-zinc-950 outline-none"
           />
           <button type="submit" disabled={adding} className="h-9 rounded-full bg-white px-3 text-xs font-semibold text-zinc-950">
             {adding ? "..." : "Add"}
@@ -86,7 +86,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
         </form>
       </div>
       {open ? (
-        <div className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-700 bg-zinc-950 p-3">
+        <div className="absolute inset-x-4 top-full z-10 mt-2 space-y-2 rounded-2xl border border-zinc-300 bg-white p-3">
           <form
             className="space-y-2"
             action={async (formData) => {

@@ -22,10 +22,10 @@ export default async function BillingCallbackPage({
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
+    <main className="flex min-h-screen items-center justify-center bg-white px-6 text-zinc-950">
       <div className="w-full max-w-md text-center">
         <h1 className="text-3xl font-semibold">{errorMessage ? "Payment not confirmed" : "Plan updated"}</h1>
-        <p className="mt-3 text-sm leading-6 text-zinc-300">
+        <p className="mt-3 text-sm leading-6 text-zinc-600">
           {errorMessage || `Your shop is now on ${plan === "pro" ? "Pro" : "Starter"}.`}
         </p>
         <Link href="/settings" className="mt-8 inline-flex h-12 w-full items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">

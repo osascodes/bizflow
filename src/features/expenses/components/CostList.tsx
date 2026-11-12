@@ -28,26 +28,26 @@ export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; 
 
   return (
     <div id="costs-list" className="space-y-3">
-      {todayOnly ? <h2 className="text-lg font-semibold text-white">Today's costs</h2> : null}
+      {todayOnly ? <h2 className="text-lg font-semibold text-zinc-950">Today's costs</h2> : null}
 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Search costs"
-        className="h-11 w-full rounded-xl border border-zinc-700 bg-zinc-950 px-3 text-sm text-white outline-none"
+        className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none"
       />
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       {filtered.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-zinc-800 p-6 text-sm text-zinc-500">No matching cost.</div>
+        <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">No matching cost.</div>
       ) : (
         filtered.map((cost) => (
-          <div key={cost.id} className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+          <div key={cost.id} className="rounded-2xl border border-zinc-200 bg-white p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <h2 className="font-semibold text-white">{cost.title}</h2>
+                <h2 className="font-semibold text-zinc-950">{cost.title}</h2>
                 <p className="mt-1 text-sm text-zinc-500">{cost.detail}</p>
               </div>
-              <p className="text-sm text-white">₦{cost.amount.toLocaleString()}</p>
+              <p className="text-sm text-zinc-950">₦{cost.amount.toLocaleString()}</p>
             </div>
             <button
               type="button"

@@ -43,31 +43,31 @@ export default function ProductForm() {
   };
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5">
       {errorMessage ? (
         <div className="rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400">{errorMessage}</div>
       ) : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Product</Label>
+        <Label className="text-zinc-600">Product</Label>
         <Input {...form.register("name")} placeholder="Ankara gown" />
         {form.formState.errors.name ? <p className="text-xs text-red-400">{form.formState.errors.name.message}</p> : null}
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Description</Label>
+        <Label className="text-zinc-600">Description</Label>
         <Input {...form.register("description")} placeholder="Size, color, or short details" />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-zinc-300">Price</Label>
+          <Label className="text-zinc-600">Price</Label>
           <Input {...form.register("price")} type="number" min="0" step="0.01" />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-zinc-300">Stock</Label>
+          <Label className="text-zinc-600">Stock</Label>
           <Input {...form.register("stock")} type="number" min="0" step="1" />
         </div>
       </div>
       <div className="space-y-1.5">
-        <Label className="text-zinc-300">Photo</Label>
+        <Label className="text-zinc-600">Photo</Label>
         <Input type="file" accept="image/*" onChange={(event) => setImage(event.target.files?.[0] || null)} />
       </div>
       <Button type="submit" className="w-full" disabled={pending}>{pending ? "Saving..." : "Add product"}</Button>

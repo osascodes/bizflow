@@ -171,29 +171,29 @@ export default function StoreClient({
     const qty = cart[product.id] || 0;
     const stock = stockState(product.stock);
     return (
-      <article key={`${badge || "all"}-${product.id}`} className="overflow-hidden rounded-[28px] border border-white/10 bg-zinc-900/80">
+      <article key={`${badge || "all"}-${product.id}`} className="overflow-hidden rounded-[28px] border border-zinc-200 bg-white">
         <button type="button" onClick={() => openProduct(product)} className="block w-full text-left">
-          <div className="relative aspect-square bg-zinc-950">
+          <div className="relative aspect-square bg-white">
             {product.image_url ? (
               <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(99,91,255,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
-                <span className="text-4xl font-semibold text-white/80">{initial(product.name)}</span>
+                <span className="text-4xl font-semibold text-zinc-950/80">{initial(product.name)}</span>
               </div>
             )}
-            {badge ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-white">{badge}</span> : null}
+            {badge ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-zinc-950">{badge}</span> : null}
           </div>
           <div className="p-4 pb-0">
             <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
             <div className="mt-2 flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-zinc-100">₦{Number(product.price).toLocaleString()}</p>
+              <p className="text-sm font-semibold text-zinc-900">₦{Number(product.price).toLocaleString()}</p>
               <span className={`rounded-full px-2 py-1 text-[11px] ${stock.className}`}>{stock.label}</span>
             </div>
           </div>
         </button>
         <div className="p-4">
           {product.stock <= 0 ? (
-            <button type="button" disabled className="h-10 w-full rounded-full bg-zinc-800 text-sm font-semibold text-zinc-500">Out of stock</button>
+            <button type="button" disabled className="h-10 w-full rounded-full bg-zinc-100 text-sm font-semibold text-zinc-500">Out of stock</button>
           ) : qty === 0 ? (
             <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 w-full rounded-full bg-white text-sm font-semibold text-zinc-950">Add to cart</button>
           ) : (
@@ -222,9 +222,9 @@ export default function StoreClient({
   const description = business.store_description || "Add what you want, then send the order on WhatsApp. The shop gets it instantly.";
 
   return (
-    <main className="min-h-screen bg-[#07070a] text-white">
+    <main className="min-h-screen bg-zinc-50 text-zinc-950">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,91,255,0.18),transparent_32%),radial-gradient(circle_at_top_right,rgba(99,91,255,0.10),transparent_28%)]" />
-      <header className="sticky top-0 z-20 border-b border-white/10 bg-[#07070a]/80 backdrop-blur">
+      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-zinc-50/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             {business.logo_url ? (
@@ -236,7 +236,7 @@ export default function StoreClient({
             )}
             <p className="font-semibold">{business.name}</p>
           </div>
-          <button type="button" onClick={() => setOpen(true)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white" aria-label="Cart">
+          <button type="button" onClick={() => setOpen(true)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white/5 text-zinc-950" aria-label="Cart">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
               <path d="M6 6h15l-1.5 9h-12z" />
               <path d="M6 6 5 3H2" />
@@ -272,7 +272,7 @@ export default function StoreClient({
       )}
 
       <section id="products" className="relative mx-auto max-w-6xl px-4 py-6">
-        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-12 rounded-full bg-zinc-900" />
+        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-12 rounded-full bg-white" />
       </section>
 
       {row("New", visibleFresh, "New")}
@@ -282,7 +282,7 @@ export default function StoreClient({
         <h2 className="mb-4 text-lg font-semibold">All products</h2>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">
           {visible.length === 0 ? (
-            <div className="col-span-2 rounded-3xl border border-dashed border-white/10 p-8 text-sm text-zinc-500 lg:col-span-3">{search ? "No product matches that search." : "Nothing in the shop yet."}</div>
+            <div className="col-span-2 rounded-3xl border border-dashed border-zinc-200 p-8 text-sm text-zinc-500 lg:col-span-3">{search ? "No product matches that search." : "Nothing in the shop yet."}</div>
           ) : (
             visible.map((product) => card(product))
           )}
@@ -291,11 +291,11 @@ export default function StoreClient({
 
       {links.length > 0 || business.address ? (
         <footer className={`relative mx-auto max-w-6xl px-4 ${count > 0 ? "pb-28" : "pb-8"}`}>
-          <div className="rounded-3xl border border-white/10 p-5">
+          <div className="rounded-3xl border border-zinc-200 p-5">
             {business.address ? (
               <div>
                 <p className="text-sm text-zinc-400">Visit</p>
-                <p className="mt-1 text-sm text-white">{titleCase(business.address)}</p>
+                <p className="mt-1 text-sm text-zinc-950">{titleCase(business.address)}</p>
               </div>
             ) : null}
             {links.length > 0 ? (
@@ -303,7 +303,7 @@ export default function StoreClient({
                 <p className="text-sm text-zinc-400">Connect with {business.name}</p>
                 <div className="mt-3 flex gap-3">
                   {links.map(([label, link]) => (
-                    <a key={label} href={link} target="_blank" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 text-white">
+                    <a key={label} href={link} target="_blank" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 text-zinc-950">
                       {label === "WhatsApp" ? (
                         <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"/></svg>
                       ) : label === "Instagram" ? (
@@ -356,7 +356,7 @@ export default function StoreClient({
       ) : null}
 
       {count > 0 && !orderNumber && !selected ? (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-white/10 bg-[#07070a]/95 p-4 backdrop-blur">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-200 bg-zinc-50/95 p-4 backdrop-blur">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
             <div>
               <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
@@ -369,12 +369,12 @@ export default function StoreClient({
 
       {selected ? (
         <div className="fixed inset-0 z-40 bg-black/70" onClick={() => setSelected(null)}>
-          <div className="absolute inset-x-0 bottom-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-zinc-900 p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[440px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
+          <div className="absolute inset-x-0 bottom-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[440px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Product</h2>
               <button type="button" onClick={() => setSelected(null)} className="text-sm text-zinc-400">Close</button>
             </div>
-            <div className="mt-5 overflow-hidden rounded-3xl bg-zinc-950">
+            <div className="mt-5 overflow-hidden rounded-3xl bg-white">
               {selected.image_url ? (
                 <img src={selected.image_url} alt={selected.name} className="aspect-square w-full object-cover" />
               ) : (
@@ -401,7 +401,7 @@ export default function StoreClient({
                 <a
                   href={`https://wa.me/${whatsappNumber(business.phone || "")}?text=${encodeURIComponent(`Hi ${business.name}, I want ${detailQty} x ${selected.name}.`)}`}
                   target="_blank"
-                  className="inline-flex h-10 w-full items-center justify-center rounded-md border border-white/10 text-sm font-medium"
+                  className="inline-flex h-10 w-full items-center justify-center rounded-md border border-zinc-200 text-sm font-medium"
                 >
                   Order via WhatsApp
                 </a>
@@ -413,7 +413,7 @@ export default function StoreClient({
 
       {open ? (
         <div className="fixed inset-0 z-30 bg-black/70" onClick={() => setOpen(false)}>
-          <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-3xl bg-zinc-900 p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[420px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
+          <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[420px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{orderNumber ? "Order sent" : "Your cart"}</h2>
               <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400">Close</button>
@@ -432,7 +432,7 @@ export default function StoreClient({
               <div className="mt-6 space-y-5">
                 {lines.map((line) => (
                   <div key={line.id} className="flex items-center gap-3">
-                    <div className="h-14 w-14 overflow-hidden rounded-2xl bg-zinc-800">
+                    <div className="h-14 w-14 overflow-hidden rounded-2xl bg-zinc-100">
                       {line.image_url ? <img src={line.image_url} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-sm font-semibold">{initial(line.name)}</div>}
                     </div>
                     <div className="min-w-0 flex-1">
@@ -447,7 +447,7 @@ export default function StoreClient({
                     <button type="button" onClick={() => setQty(line.id, 0)} className="h-8 w-8 text-sm text-zinc-500">×</button>
                   </div>
                 ))}
-                <div className="border-t border-white/10 pt-4">
+                <div className="border-t border-zinc-200 pt-4">
                   <div className="mb-4 flex items-center justify-between">
                     <p className="text-sm text-zinc-400">Total</p>
                     <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>

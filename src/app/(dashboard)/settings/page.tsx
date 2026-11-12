@@ -15,11 +15,11 @@ export default async function SettingsPage() {
   return (
     <main className="px-4 py-8 md:px-8">
       <div className="mx-auto max-w-xl">
-        <h1 className="text-2xl font-semibold text-white">Settings</h1>
+        <h1 className="text-2xl font-semibold text-zinc-950">Settings</h1>
         <p className="mt-2 text-sm text-zinc-400">Shop details, store link, and account.</p>
-        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+        <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
           <p className="text-sm text-zinc-400">Signed in as</p>
-          <p className="mt-1 text-sm text-white">{user?.email}</p>
+          <p className="mt-1 text-sm text-zinc-950">{user?.email}</p>
         </div>
         <PlanCard plan={business.plan} trialEnds={business.trial_ends_at} />
         <BusinessEditor business={business} />

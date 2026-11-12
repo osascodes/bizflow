@@ -54,22 +54,25 @@ export default async function AnalyticsPage() {
             <h1 className="text-3xl font-semibold">Analytics</h1>
             <p className="mt-1 text-sm text-zinc-500">Understand your business performance</p>
           </div>
-          <select defaultValue="7" className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700">
-            <option value="7">Last 7 days</option>
-            <option value="30">This month</option>
-          </select>
+          <label className="inline-flex items-center gap-+2 rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700">
+            <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#635BFF]" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+            <select defaultValue="7" className="bg-transparent text-xs font-medium outline-none">
+              <option value="7">Last 7 days</option>
+              <option value="30">This month</option>
+            </select>
+          </label>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           {cards.map((card) => (
-            <div key={card.label} className={`rounded-3xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-4`}>
+            <div key={card.label} className={`rounded-2xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-4`}>
               <p className={`text-sm font-medium ${card.accent}`}>{card.label}</p>
               <p className="mt-2 text-2xl font-semibold">₦{Number(card.value).toLocaleString()}</p>
             </div>
           ))}
         </div>
 
-        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+        <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
           <div className="flex items-center justify-between">
             <h2 className="font-semibold">Sales overview</h2>
             <span className="flex items-center gap-1 text-xs text-zinc-500"><span className="h-2 w-2 rounded-full bg-[#635BFF]" /> Sales</span>
@@ -88,8 +91,8 @@ export default async function AnalyticsPage() {
                     return (
                       <div key={day.label} className="flex h-full flex-1 items-end">
                         {height > 0 ? (
-                          <div className="relative w-full origin-bottom rounded-t-xl bg-[#635BFF]" style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}>
-                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-zinc-500">₦{(day.total / 1000).toFixed(0)}k</span>
+                          <div className="relative w-full origin-bottom rounded-t-lg bg-[#635BFF]" style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}>
+                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] font-medium text-zinc-600">{day.total >= 1000 ? `${Math.round(day.total / 1000)}k` : day.total}</span>
                           </div>
                         ) : null}
                       </div>
@@ -99,7 +102,10 @@ export default async function AnalyticsPage() {
               </div>
               <div className="mt-2 flex pl-8 text-center text-[11px] text-zinc-500">
                 {analytics.days.map((day) => (
-                  <span key={day.label} className="flex-1">{day.label}</span>
+                  <span key={day.label} className="flex-1">
+                    <span className="block">{day.label}</span>
+                    <span className="block text-zinc-400">{day.date}</span>
+                  </span>
                 ))}
               </div>
             </div>
@@ -108,7 +114,7 @@ export default async function AnalyticsPage() {
           )}
         </section>
 
-        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+        <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
           <h2 className="font-semibold">Top-selling products</h2>
           <div className="mt-4 space-y-4">
             {analytics.topProducts.length === 0 ? (
@@ -127,7 +133,7 @@ export default async function AnalyticsPage() {
                       <p className="shrink-0 text-zinc-500">{product.quantity} sold</p>
                     </div>
                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
-                      <div className="h-full rounded-full bg-[#635BFF]" style={{ width: `${Math.max(12, Math.min(100, (product.amount / Math.max(...analytics.topProducts.map((item) => item.amount), 1)) * 100))}%` }} />
+                      <div className="h-full rounded-full bg-[#635BFF]" style={{ width: `${Math.max(8, Math.round((product.quantity / Math.max(...analytics.topProducts.map((item) => item.quantity), 1)) * 100))}%` }} />
                     </div>
                   </div>
                 </div>
@@ -136,7 +142,7 @@ export default async function AnalyticsPage() {
           </div>
         </section>
 
-<section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+<section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
           <h2 className="font-semibold">Low stock</h2>
           <div className="mt-4 space-y-3">
             {analytics.lowStock.length === 0 ? (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Box, Receipt, ShoppingBag, Store, TrendingDown, TrendingUp, Wallet } from "lucide-react";
+import { Bell, Box, Receipt, ShoppingBag, Store, TrendingUp, Wallet } from "lucide-react";
 
 type Need = { id: string; title: string; detail: string; status: string };
 type Low = { id: string; name: string; stock: number };
@@ -63,7 +63,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
   if (!saved) {
     return (
       <main className="px-4 py-8 pb-28 md:px-8">
-        <div className="mx-auto max-w-xl rounded-3xl border border-zinc-200 bg-white p-6">
+        <div className="mx-auto max-w-xl rounded-2xl border border-zinc-200 bg-white p-6">
           <h1 className="text-xl font-semibold">You are offline</h1>
           <p className="mt-2 text-sm text-zinc-600">Open Home once while online. After that, the last numbers stay here.</p>
         </div>
@@ -81,9 +81,19 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
   return (
     <main className="px-4 py-6 pb-28 md:px-8">
       <div className="mx-auto max-w-5xl">
-        <p className="text-sm text-zinc-500">{saved.welcome}</p>
-        <h1 className="mt-1 text-2xl font-semibold">{saved.name}</h1>
-        <p className="mt-1 text-sm text-zinc-500">{saved.category} · {saved.role}</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/brinset-logo.png" alt="Brinset" className="h-10 w-10 object-contain" />
+            <div>
+              <h1 className="text-lg font-semibold">{saved.name}</h1>
+              <p className="text-sm text-zinc-500">{saved.category} · {saved.welcome.replace("Welcome, ", "")}</p>
+            </div>
+          </div>
+          <Link href="/notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white">
+            <Bell className="h-5 w-5 text-[#635BFF]" />
+            {saved.needs && saved.needs.length > 0 ? <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /> : null}
+          </Link>
+        </div>
         {offline ? <p className="mt-2 text-xs text-amber-600">Last saved numbers</p> : null}
 
         <div className="mt-5 flex gap-2">
@@ -115,7 +125,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
                 <p className="mt-3 text-2xl font-semibold">{value}</p>
               </>
             );
-            const klass = `rounded-3xl border border-white/70 ${tone.wrap} p-4`;
+            const klass = `rounded-2xl border border-white/70 ${tone.wrap} p-4`;
             return href ? (
               <Link key={label} href={href} className={klass}>{body}</Link>
             ) : (

@@ -10,7 +10,7 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
         <Link href="/" className="flex items-center gap-3">
-          <img src="/brinset-logo.jpg" alt="Brinset" className="h-9 w-auto rounded-md bg-black object-contain" />
+          <img src="/brinset-logo.png" alt="Brinset" className="h-9 w-auto object-contain" />
         </Link>
 
         <div className="hidden items-center gap-8 text-sm text-zinc-600 md:flex">

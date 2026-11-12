@@ -60,6 +60,7 @@ export async function getAnalytics() {
       .reduce((sum, sale) => sum + Number(sale.total), 0);
     return {
       label: date.toLocaleDateString("en-NG", { weekday: "short" }),
+      date: date.getDate(),
       total,
     };
   });

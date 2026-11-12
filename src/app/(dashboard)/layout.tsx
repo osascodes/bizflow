@@ -41,7 +41,7 @@ export default async function DashboardLayout({
       <SyncStock />
       <header className="hidden items-center justify-between border-b border-zinc-200 px-4 py-4 md:flex md:px-6">
         <div className="flex items-center gap-3">
-          <img src="/brinset-logo.jpg" alt="Brinset" className="h-8 w-auto rounded-md bg-black object-contain" />
+          <img src="/brinset-logo.png" alt="Brinset" className="h-8 w-auto object-contain" />
         </div>
         <form action={logoutAction}>
           <button type="submit" className="text-sm text-zinc-600 hover:text-zinc-950">

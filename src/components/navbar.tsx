@@ -24,13 +24,15 @@ export default function Navbar() {
 
         <button
           type="button"
-          className="relative h-10 w-10 md:hidden"
+          className="relative flex h-10 w-10 items-center justify-center md:hidden"
           onClick={() => setOpen((value) => !value)}
           aria-label={open ? "Close menu" : "Open menu"}
         >
-          <span className={`absolute left-2 top-3 h-[2px] w-6 bg-zinc-950 transition ${open ? "translate-y-[6px] rotate-45" : ""}`} />
-          <span className={`absolute left-2 top-[18px] h-[2px] w-6 bg-zinc-950 transition ${open ? "opacity-0" : ""}`} />
-          <span className={`absolute left-2 top-[26px] h-[2px] w-6 bg-zinc-950 transition ${open ? "-translate-y-[8px] -rotate-45" : ""}`} />
+          <span className="flex w-6 flex-col items-end gap-[5px]">
+            <span className={`h-[2px] w-full origin-right bg-zinc-950 transition ${open ? "translate-y-[7px] -rotate-45" : ""}`} />
+            <span className={`h-[2px] w-3.5 bg-zinc-950 transition ${open ? "opacity-0" : ""}`} />
+            <span className={`h-[2px] w-full origin-right bg-zinc-950 transition ${open ? "-translate-y-[7px] rotate-45" : ""}`} />
+          </span>
         </button>
       </nav>
 

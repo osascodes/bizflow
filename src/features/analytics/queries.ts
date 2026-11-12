@@ -64,10 +64,11 @@ export async function getAnalytics() {
     };
   });
 
-  const productTotals = new Map<string, { name: string; quantity: number; amount: number }>();
+  const productTotals = new Map<string, { name: string; quantity: number; amount: number; image: string }>();
   for (const sale of sales ?? []) {
     for (const item of sale.sale_items ?? []) {
-      const current = productTotals.get(item.name) || { name: item.name, quantity: 0, amount: 0 };
+      const product = products.find((row) => row.name === item.name);
+      const current = productTotals.get(item.name) || { name: item.name, quantity: 0, amount: 0, image: product?.image_url || "" };
       current.quantity += Number(item.quantity);
       current.amount += Number(item.quantity) * Number(item.price);
       productTotals.set(item.name, current);

@@ -106,17 +106,20 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
             const href = hrefFor(label);
             const body = (
               <>
-                <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${tone.wrap} ${tone.icon}`}>
-                  <Icon className="h-4 w-4" />
-                </span>
-                <p className="mt-3 text-sm text-zinc-500">{label}</p>
-                <p className="mt-1 text-xl font-semibold">{value}</p>
+                <div className="flex items-center gap-2">
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-lg ${tone.icon} bg-white/70`}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <p className="text-sm text-zinc-600">{label}</p>
+                </div>
+                <p className="mt-3 text-2xl font-semibold">{value}</p>
               </>
             );
+            const klass = `rounded-3xl border border-white/70 ${tone.wrap} p-4`;
             return href ? (
-              <Link key={label} href={href} className="rounded-3xl border border-zinc-200 bg-white p-4">{body}</Link>
+              <Link key={label} href={href} className={klass}>{body}</Link>
             ) : (
-              <div key={label} className="rounded-3xl border border-zinc-200 bg-white p-4">{body}</div>
+              <div key={label} className={klass}>{body}</div>
             );
           })}
         </div>

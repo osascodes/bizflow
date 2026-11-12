@@ -28,10 +28,10 @@ export default async function AnalyticsPage() {
   const hasWeekSales = analytics.weekSales > 0;
 
   const cards = [
-    { label: "This week", value: analytics.weekSales, tone: "from-[#635BFF]/20 to-[#635BFF]/5", accent: "text-indigo-300" },
-    { label: "This month", value: analytics.monthSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-indigo-300" },
-    { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-300" },
-    { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-300" : "text-rose-300" },
+    { label: "This week", value: analytics.weekSales, tone: "from-[#635BFF]/20 to-[#635BFF]/5", accent: "text-[#635BFF]" },
+    { label: "This month", value: analytics.monthSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-[#635BFF]" },
+    { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-700" },
+    { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-700" : "text-rose-700" },
   ];
 
   return (
@@ -54,14 +54,17 @@ export default async function AnalyticsPage() {
             <h1 className="text-3xl font-semibold">Analytics</h1>
             <p className="mt-1 text-sm text-zinc-500">Understand your business performance</p>
           </div>
-          <span className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-600">Last 7 days</span>
+          <select defaultValue="7" className="rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700">
+            <option value="7">Last 7 days</option>
+            <option value="30">This month</option>
+          </select>
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
           {cards.map((card) => (
             <div key={card.label} className={`rounded-3xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-4`}>
               <p className={`text-sm font-medium ${card.accent}`}>{card.label}</p>
-              <p className="mt-2 text-2xl font-semibold">N{Number(card.value).toLocaleString()}</p>
+              <p className="mt-2 text-2xl font-semibold">₦{Number(card.value).toLocaleString()}</p>
             </div>
           ))}
         </div>
@@ -72,23 +75,36 @@ export default async function AnalyticsPage() {
             <span className="flex items-center gap-1 text-xs text-zinc-500"><span className="h-2 w-2 rounded-full bg-[#635BFF]" /> Sales</span>
           </div>
           {hasWeekSales ? (
-            <div className="mt-6 flex h-52 items-end gap-2">
-              {analytics.days.map((day, index) => {
-                const height = day.total === 0 ? 0 : Math.max(18, (day.total / max) * 100);
-                return (
-                  <div key={day.label} className="flex flex-1 flex-col items-center gap-2">
-                    <div className="flex h-40 w-full items-end">
-                      {height > 0 ? (
-                        <div className="w-full origin-bottom rounded-t-xl bg-[#635BFF]" style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }} />
-                      ) : null}
-                    </div>
-                    <p className="text-[11px] text-zinc-500">{day.label}</p>
-                  </div>
-                );
-              })}
+            <div className="mt-6">
+              <div className="relative h-52">
+                <div className="absolute inset-0 flex flex-col justify-between text-[11px] text-zinc-400">
+                  <span>High</span>
+                  <span>Mid</span>
+                  <span>0</span>
+                </div>
+                <div className="absolute inset-y-0 left-8 right-0 flex items-end gap-2 border-b border-zinc-200">
+                  {analytics.days.map((day, index) => {
+                    const height = day.total === 0 ? 0 : Math.max(16, (day.total / max) * 100);
+                    return (
+                      <div key={day.label} className="flex h-full flex-1 items-end">
+                        {height > 0 ? (
+                          <div className="relative w-full origin-bottom rounded-t-xl bg-[#635BFF]" style={{ height: `${height}%`, animation: `barRise 700ms ease ${index * 70}ms both` }}>
+                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-zinc-500">₦{(day.total / 1000).toFixed(0)}k</span>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="mt-2 flex pl-8 text-center text-[11px] text-zinc-500">
+                {analytics.days.map((day) => (
+                  <span key={day.label} className="flex-1">{day.label}</span>
+                ))}
+              </div>
             </div>
           ) : (
-            <p className="mt-6 text-sm text-zinc-500">No sales in the last 7 days. This month is N{analytics.monthSales.toLocaleString()}.</p>
+            <p className="mt-6 text-sm text-zinc-500">No sales in the last 7 days. This month is ₦{analytics.monthSales.toLocaleString()}.</p>
           )}
         </section>
 
@@ -99,13 +115,20 @@ export default async function AnalyticsPage() {
               <p className="text-sm text-zinc-500">No sales yet.</p>
             ) : (
               analytics.topProducts.map((product) => (
-                <div key={product.name}>
-                  <div className="flex items-center justify-between text-sm">
-                    <p className="font-medium">{product.name}</p>
-                    <p className="text-zinc-500">{product.quantity} sold</p>
-                  </div>
-                  <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
-                    <div className="h-full rounded-full bg-[#635BFF]" style={{ width: `${Math.max(12, Math.min(100, (product.amount / Math.max(...analytics.topProducts.map((item) => item.amount), 1)) * 100))}%` }} />
+                <div key={product.name} className="flex items-center gap-3">
+                  {product.image ? (
+                    <img src={product.image} alt="" className="h-10 w-10 rounded-xl object-cover" />
+                  ) : (
+                    <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#635BFF]/10 text-xs font-semibold text-[#635BFF]">{product.name.slice(0, 1)}</span>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-3 text-sm">
+                      <p className="truncate font-medium">{product.name}</p>
+                      <p className="shrink-0 text-zinc-500">{product.quantity} sold</p>
+                    </div>
+                    <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-100">
+                      <div className="h-full rounded-full bg-[#635BFF]" style={{ width: `${Math.max(12, Math.min(100, (product.amount / Math.max(...analytics.topProducts.map((item) => item.amount), 1)) * 100))}%` }} />
+                    </div>
                   </div>
                 </div>
               ))
@@ -113,7 +136,7 @@ export default async function AnalyticsPage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
+<section className="mt-6 rounded-3xl border border-zinc-200 bg-white p-5">
           <h2 className="font-semibold">Low stock</h2>
           <div className="mt-4 space-y-3">
             {analytics.lowStock.length === 0 ? (

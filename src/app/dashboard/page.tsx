@@ -10,7 +10,7 @@ import SavedHome from "@/features/dashboard/components/SavedHome";
 
 function money(value: number) {
   const amount = Number(value) || 0;
-  return `NGN ${amount.toLocaleString()}`;
+  return `₦${amount.toLocaleString()}`;
 }
 
 export default async function DashboardPage() {

@@ -41,7 +41,6 @@ export default function LoginPage() {
 
   return (
     <AuthCard title="Log in">
-      <p className="mb-4 text-sm text-zinc-400">Owners and staff use this same page.</p>
       <GoogleButton label="Continue with Google" />
       <div className="my-4 flex items-center gap-3 text-xs text-zinc-500">
         <span className="h-px flex-1 bg-zinc-100" />

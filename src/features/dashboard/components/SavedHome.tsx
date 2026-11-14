@@ -127,7 +127,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
               <p className="text-sm text-zinc-500">{saved.category} · {saved.welcome.replace("Welcome, ", "")}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
             <Link href="/notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white">
               <Bell className="h-5 w-5 text-zinc-700" />
               {(saved.needs?.length || 0) > 0 ? <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /> : null}
@@ -135,10 +135,8 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
             <button type="button" onClick={() => setMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200" aria-label="Account">
               <User className="h-5 w-5 text-zinc-700" />
             </button>
-          </div>
-        </div>
-        {menu ? (
-          <div className="relative mt-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-lg">
+            {menu ? (
+          <div className="absolute right-0 top-12 z-50 w-72 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
             <div className="flex items-center justify-between">
               <p className="font-semibold">Profile menu</p>
               <button type="button" onClick={() => setMenu(false)} aria-label="Close"><X className="h-4 w-4" /></button>
@@ -167,6 +165,8 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
             </form>
           </div>
         ) : null}
+          </div>
+        </div>
         {offline ? <p className="mt-2 text-xs text-amber-600">Last saved numbers</p> : null}
 
         <div className="mt-5 flex gap-2">

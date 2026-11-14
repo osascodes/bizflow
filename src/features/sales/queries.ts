@@ -16,34 +16,40 @@ export async function getRecentSales() {
   return data ?? [];
 }
 
-export async function getTodaySalesTotal() {
+export async function getTodaySalesTotal(day = new Date()) {
   const business = await getCurrentBusiness();
   if (!business) return 0;
 
-  const start = new Date();
+  const start = new Date(day);
   start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
 
   const supabase = await createServerSupabase();
   const { data } = await supabase
     .from("sales")
     .select("total")
     .eq("business_id", business.id)
-    .gte("created_at", start.toISOString());
+    .gte("created_at", start.toISOString())
+    .lt("created_at", end.toISOString());
 
   return (data ?? []).reduce((sum, sale) => sum + Number(sale.total), 0);
 }
 
-export async function getTodaySales() {
+export async function getTodaySales(day = new Date()) {
   const business = await getCurrentBusiness();
   if (!business) return [];
-  const start = new Date();
+  const start = new Date(day);
   start.setHours(0, 0, 0, 0);
+  const end = new Date(start);
+  end.setDate(end.getDate() + 1);
   const supabase = await createServerSupabase();
   const { data } = await supabase
     .from("sales")
     .select("id, total, sale_items(name, quantity)")
     .eq("business_id", business.id)
     .gte("created_at", start.toISOString())
+    .lt("created_at", end.toISOString())
     .order("created_at", { ascending: false })
     .limit(8);
   return (data ?? []).map((sale) => ({

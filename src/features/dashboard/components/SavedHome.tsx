@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell, Box, ChevronRight, Lock, LogOut, Receipt, ShoppingBag, Store, TrendingUp, User, Wallet, X } from "lucide-react";
+import { Bell, Box, Calendar, ChevronRight, Lock, LogOut, Receipt, ShoppingBag, Store, TrendingUp, User, Wallet, X } from "lucide-react";
 import { logoutAction } from "@/features/auth/actions";
 
 type Need = { id: string; title: string; detail: string; status: string };
@@ -17,6 +17,8 @@ type Snapshot = {
   role: string;
   logoUrl?: string;
   email?: string;
+  dateValue?: string;
+  dateLabel?: string;
   stats: [string, string][];
   needs?: Need[];
   low?: Low[];
@@ -33,7 +35,7 @@ const tones: Record<string, { wrap: string; icon: string; Icon: typeof Receipt }
   "Left today": { wrap: "bg-emerald-100", icon: "text-emerald-600", Icon: TrendingUp },
   "Debts due": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: ShoppingBag },
   "Low stock": { wrap: "bg-rose-100", icon: "text-rose-600", Icon: Box },
-  "Orders to do": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: Store },
+  "Orders to do": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: ShoppingBag },
 };
 
 function hrefFor(label: string) {
@@ -142,7 +144,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
               <button type="button" onClick={() => setMenu(false)} aria-label="Close"><X className="h-4 w-4" /></button>
             </div>
             <div className="mt-3 flex items-center gap-3 border-b border-zinc-100 pb-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#635BFF] font-semibold text-white">{(saved.welcome.replace("Welcome, ", "") || "A").slice(0, 1).toUpperCase()}</span>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">{(saved.welcome.replace("Welcome, ", "") || "A").slice(0, 1).toUpperCase()}</span>
               <div>
                 <p className="font-medium">{saved.welcome.replace("Welcome, ", "")}</p>
                 <p className="text-sm text-zinc-500">{saved.email}</p>
@@ -181,7 +183,15 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
 
         <div className="mt-7 flex items-center justify-between">
           <h2 className="text-lg font-semibold">Business overview</h2>
-          <span className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-zinc-600">Today</span>
+          <label className="inline-flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-[#635BFF]">
+            <Calendar className="h-3.5 w-3.5" />
+            <input
+              type="date"
+              defaultValue={saved.dateValue || new Date().toISOString().slice(0, 10)}
+              onChange={(event) => { window.location.href = `/dashboard?date=${event.target.value}`; }}
+              className="bg-transparent text-[#635BFF] outline-none"
+            />
+          </label>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
           {saved.stats.map(([label, value]) => {

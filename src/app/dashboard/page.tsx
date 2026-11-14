@@ -13,7 +13,12 @@ function money(value: number) {
   return `₦${amount.toLocaleString()}`;
 }
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ date?: string }> }) {
+  const params = await searchParams;
+  const selected = params.date && /^\d{4}-\d{2}-\d{2}$/.test(params.date) ? new Date(`${params.date}T00:00:00`) : new Date();
+  const isToday = new Date().toDateString() === selected.toDateString();
+  const dateLabel = isToday ? "Today" : selected.toLocaleDateString("en-NG", { day: "numeric", month: "short" });
+  const dateValue = selected.toISOString().slice(0, 10);
   const user = await getCurrentUser();
   let business = null;
   try {
@@ -40,14 +45,14 @@ export default async function DashboardPage() {
   try {
     const [stock, sales, debts, costs, orders, lows, due, todays, costItems] = await Promise.all([
       getLowStockCount(),
-      getTodaySalesTotal(),
+      getTodaySalesTotal(selected),
       getDebtsDue(),
-      isOwner ? getTodayExpenses() : Promise.resolve(0),
+      isOwner ? getTodayExpenses(selected) : Promise.resolve(0),
       getOrdersToDo(),
       getLowStock(),
       getDebtsOwed(),
-      getTodaySales(),
-      isOwner ? getTodayCosts() : Promise.resolve([]),
+      getTodaySales(selected),
+      isOwner ? getTodayCosts(selected) : Promise.resolve([]),
     ]);
     lowStock = stock;
     salesToday = sales;
@@ -72,17 +77,20 @@ export default async function DashboardPage() {
 
   const leftToday = salesToday - costsToday;
   const name = (user?.user_metadata?.full_name as string | undefined) || user?.email || "there";
+  const salesLabel = isToday ? "Sales today" : `Sales ${dateLabel}`;
+  const costsLabel = isToday ? "Costs today" : `Costs ${dateLabel}`;
+  const leftLabel = isToday ? "Left today" : `Left ${dateLabel}`;
   const stats = isOwner
     ? [
-        ["Sales today", money(salesToday)],
-        ["Costs today", money(costsToday)],
-        ["Left today", money(leftToday)],
+        [salesLabel, money(salesToday)],
+        [costsLabel, money(costsToday)],
+        [leftLabel, money(leftToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", lowStock === 1 ? "1 item" : `${lowStock} items`],
         ["Orders to do", String(ordersToDo.length)],
       ]
     : [
-        ["Sales today", money(salesToday)],
+        [salesLabel, money(salesToday)],
         ["Debts due", money(debtsDue)],
         ["Low stock", lowStock === 1 ? "1 item" : `${lowStock} items`],
         ["Orders to do", String(ordersToDo.length)],
@@ -97,6 +105,8 @@ export default async function DashboardPage() {
         role: business.role || "unknown",
         logoUrl: business.logo_url || "",
         email: user?.email || "",
+        dateValue,
+        dateLabel,
         stats: stats as [string, string][],
         needs: ordersToDo.map((order) => ({
           id: order.id,

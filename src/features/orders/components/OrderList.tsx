@@ -11,6 +11,7 @@ type Order = {
   phone: string;
   status: string;
   number: string;
+  created?: string;
 };
 
 type Group = {
@@ -19,6 +20,7 @@ type Group = {
   customer: string;
   phone: string;
   status: string;
+  created?: string;
   items: Order[];
 };
 
@@ -37,6 +39,7 @@ function groupOrders(orders: Order[]): Group[] {
       customer: order.customer,
       phone: order.phone,
       status: order.status,
+      created: order.created,
       items: [order],
     });
   }
@@ -85,11 +88,15 @@ export default function OrderList({ orders }: { orders: Order[] }) {
   return (
     <div className="mt-8 space-y-3">
       <div className="flex gap-2">
-        <button type="button" onClick={() => setTab("todo")} className={`h-10 rounded-full px-4 text-sm font-semibold ${tab === "todo" ? "bg-white text-zinc-950" : "border border-zinc-300 text-zinc-950"}`}>
-          To do{todoCount ? ` · ${todoCount}` : ""}
+        <button type="button" onClick={() => setTab("todo")} className={`rounded-2xl border p-4 text-left ${tab === "todo" ? "border-[#635BFF] bg-[#635BFF]/10" : "border-zinc-200 bg-white"}`}>
+          <p className="text-sm text-zinc-500">To Do</p>
+          <p className="mt-1 text-2xl font-semibold text-[#635BFF]">{todoCount}</p>
+          <p className="mt-1 text-xs text-zinc-500">Pending orders</p>
         </button>
-        <button type="button" onClick={() => setTab("done")} className={`h-10 rounded-full px-4 text-sm font-semibold ${tab === "done" ? "bg-white text-zinc-950" : "border border-zinc-300 text-zinc-950"}`}>
-          Done
+        <button type="button" onClick={() => setTab("done")} className={`rounded-2xl border p-4 text-left ${tab === "done" ? "border-emerald-400 bg-emerald-50" : "border-zinc-200 bg-white"}`}>
+          <p className="text-sm text-zinc-500">Done</p>
+          <p className="mt-1 text-2xl font-semibold">{items.filter((order) => order.status === "done" || order.status === "cancelled").length}</p>
+          <p className="mt-1 text-xs text-zinc-500">Completed and cancelled</p>
         </button>
       </div>
       <input
@@ -108,13 +115,20 @@ export default function OrderList({ orders }: { orders: Order[] }) {
           <div key={group.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
             <div className="flex items-start justify-between gap-3">
               <div>
-                {group.items.map((item) => (
-                  <h2 key={item.id} className="font-semibold text-zinc-950">{item.title}</h2>
-                ))}
-                <p className="mt-1 text-sm text-zinc-400">{group.customer} · {group.phone}</p>
-                <p className="mt-1 text-xs text-zinc-500">{group.number || group.status} · {group.status}</p>
+                <p className="font-semibold">Order #{group.number || group.key.slice(0, 6)}</p>
+                <p className="mt-1 text-xs text-zinc-500">{group.created ? new Date(group.created).toLocaleString("en-NG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : ""}</p>
               </div>
-              <a className="text-sm text-violet-300" href={`https://wa.me/${(group.phone || "").replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
+              <span className={`rounded-full px-3 py-1 text-xs font-medium ${group.status === "done" ? "bg-emerald-100 text-emerald-700" : group.status === "cancelled" ? "bg-zinc-100 text-zinc-500" : "bg-amber-100 text-amber-700"}`}>{group.status}</span>
+            </div>
+            <div className="mt-3 flex items-center justify-between">
+              <div>
+                <p className="font-medium">{group.customer}</p>
+                <p className="text-sm text-zinc-500">{group.phone}</p>
+              </div>
+              <a className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-white" href={`https://wa.me/${(group.phone || "").replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
+            </div>
+            <div className="mt-3 text-sm text-zinc-700">
+              {group.items.map((item) => <p key={item.id}>{item.title}</p>)}
             </div>
             {group.status === "pending" || group.status === "packed" || group.status === "out" ? (
               <div className="mt-3 flex gap-2">

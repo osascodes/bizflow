@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Copy, Store } from "lucide-react";
 
 export default function ShareStoreLink({ name, slug }: { name: string; slug: string }) {
   const [copied, setCopied] = useState(false);
@@ -20,16 +21,19 @@ export default function ShareStoreLink({ name, slug }: { name: string; slug: str
   };
 
   return (
-    <div className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
-      <p className="text-sm text-zinc-400">Store link</p>
-      <p className="mt-1 font-semibold text-zinc-950">{name}</p>
-      <p className="mt-1 text-sm text-violet-300">{path}</p>
+    <div className="mt-5 rounded-2xl border border-zinc-200 bg-white p-4">
+      <div className="flex items-center justify-between">
+        <p className="text-sm text-zinc-500">Store link</p>
+        <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[11px] font-medium text-emerald-700">Active</span>
+      </div>
+      <p className="mt-1 text-lg font-semibold">{name}</p>
+      <p className="mt-1 text-sm text-zinc-500">{path}</p>
       <div className="mt-4 grid grid-cols-2 gap-2">
-        <button type="button" onClick={copy} className="h-11 rounded-full bg-white text-sm font-semibold text-zinc-950">
-          {copied ? "Copied" : "Copy link"}
+        <button type="button" onClick={copy} className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-zinc-200 text-sm font-semibold">
+          <Copy className="h-4 w-4" /> {copied ? "Copied" : "Copy"}
         </button>
-        <button type="button" onClick={share} className="h-11 rounded-full bg-[#635BFF] text-sm font-semibold text-white">
-          Send on WhatsApp
+        <button type="button" onClick={share} className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-emerald-500 text-sm font-semibold text-white">
+          WhatsApp
         </button>
       </div>
     </div>

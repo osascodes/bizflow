@@ -57,3 +57,26 @@ export async function forgotPasswordAction(formData: FormData) {
   if (error) throw new Error(error.message);
   return { success: true, message: 'Check your email for a reset link' };
 }
+
+export async function updateAccountAction(formData: FormData) {
+  const supabase = await createServerSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not signed in");
+  const fullName = String(formData.get("full_name") || "").trim();
+  const phone = String(formData.get("phone") || "").trim();
+  const photo = formData.get("photo");
+  let avatar = (user.user_metadata?.avatar_url as string | undefined) || "";
+  if (photo instanceof File && photo.size > 0) {
+    const safeName = photo.name.replace(/[^a-zA-Z0-9.]/g, "-");
+    const path = `${user.id}/avatar-${Date.now()}-${safeName}`;
+    const { error: uploadError } = await supabase.storage.from("product-images").upload(path, photo, { contentType: photo.type || "image/jpeg" });
+    if (uploadError) throw new Error(uploadError.message);
+    avatar = supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl;
+  }
+  const { error } = await supabase.auth.updateUser({
+    data: { full_name: fullName, phone, avatar_url: avatar },
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/account");
+  revalidatePath("/dashboard");
+}

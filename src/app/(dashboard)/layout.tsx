@@ -1,6 +1,5 @@
 import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
-import { logoutAction } from "@/features/auth/actions";
 import { redirect } from "next/navigation";
 import AppNav from "@/components/dashboard/AppNav";
 import { getAlertCount } from "@/features/notifications/queries";
@@ -39,16 +38,6 @@ export default async function DashboardLayout({
       <SyncCosts />
       <SyncPayments />
       <SyncStock />
-      <header className="hidden items-center justify-between border-b border-zinc-200 px-4 py-4 md:flex md:px-6">
-        <div className="flex items-center gap-3">
-          <img src="/brinset-logo.png" alt="Brinset" className="h-8 w-auto object-contain" />
-        </div>
-        <form action={logoutAction}>
-          <button type="submit" className="text-sm text-zinc-600 hover:text-zinc-950">
-            Log out
-          </button>
-        </form>
-      </header>
       <div className="md:flex">
         <AppNav role={business?.role === "owner" ? "owner" : "staff"} alertCount={alertCount} />
         <div className="min-w-0 flex-1 pb-20 md:pb-0">{children}</div>

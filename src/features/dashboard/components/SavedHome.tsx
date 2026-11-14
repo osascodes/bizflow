@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell, Box, LogOut, Receipt, ShoppingBag, Store, TrendingUp, User, Wallet } from "lucide-react";
+import { Bell, Box, ChevronRight, Lock, LogOut, Receipt, ShoppingBag, Store, TrendingUp, User, Wallet, X } from "lucide-react";
 import { logoutAction } from "@/features/auth/actions";
 
 type Need = { id: string; title: string; detail: string; status: string };
@@ -138,13 +138,31 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
           </div>
         </div>
         {menu ? (
-          <div className="mt-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg">
-            <p className="text-sm font-semibold">{saved.name}</p>
-            <p className="mt-1 text-sm text-zinc-500">{saved.email || saved.welcome.replace("Welcome, ", "")}</p>
-            <Link href="/forgot-password" className="mt-3 block rounded-xl px-3 py-2 text-sm font-medium text-zinc-700">Change password</Link>
-            <form action={logoutAction} className="mt-1">
-              <button type="submit" className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-rose-600">
-                <LogOut className="h-4 w-4" /> Log out
+          <div className="relative mt-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-lg">
+            <div className="flex items-center justify-between">
+              <p className="font-semibold">Profile menu</p>
+              <button type="button" onClick={() => setMenu(false)} aria-label="Close"><X className="h-4 w-4" /></button>
+            </div>
+            <div className="mt-3 flex items-center gap-3 border-b border-zinc-100 pb-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#635BFF] font-semibold text-white">{(saved.welcome.replace("Welcome, ", "") || "A").slice(0, 1).toUpperCase()}</span>
+              <div>
+                <p className="font-medium">{saved.welcome.replace("Welcome, ", "")}</p>
+                <p className="text-sm text-zinc-500">{saved.email}</p>
+              </div>
+            </div>
+            <Link href="/account" onClick={() => setMenu(false)} className="mt-3 flex items-center gap-3 py-2">
+              <User className="h-4 w-4 text-zinc-500" />
+              <span className="flex-1"><span className="block font-medium">Account Details</span><span className="text-sm text-zinc-500">View and edit your personal information</span></span>
+              <ChevronRight className="h-4 w-4 text-zinc-400" />
+            </Link>
+            <Link href="/forgot-password" onClick={() => setMenu(false)} className="flex items-center gap-3 border-t border-zinc-100 py-3">
+              <Lock className="h-4 w-4 text-zinc-500" />
+              <span className="flex-1 font-medium">Change Password</span>
+              <ChevronRight className="h-4 w-4 text-zinc-400" />
+            </Link>
+            <form action={logoutAction} className="border-t border-zinc-100 pt-2">
+              <button type="submit" className="flex items-center gap-2 py-2 text-sm font-medium text-rose-600">
+                <LogOut className="h-4 w-4" /> Log Out
               </button>
             </form>
           </div>

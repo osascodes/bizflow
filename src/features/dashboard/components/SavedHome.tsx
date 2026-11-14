@@ -33,7 +33,7 @@ const tones: Record<string, { wrap: string; icon: string; Icon: typeof Receipt }
   "Sales today": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: Receipt },
   "Costs today": { wrap: "bg-amber-100", icon: "text-amber-600", Icon: Wallet },
   "Left today": { wrap: "bg-emerald-100", icon: "text-emerald-600", Icon: TrendingUp },
-  "Debts due": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: ShoppingBag },
+  "Debts due": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: Wallet },
   "Low stock": { wrap: "bg-rose-100", icon: "text-rose-600", Icon: Box },
   "Orders to do": { wrap: "bg-[#635BFF]/10", icon: "text-[#635BFF]", Icon: ShoppingBag },
 };
@@ -85,7 +85,16 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
   };
 
   const activity = [
-    ...(saved.today || []).slice(0, 3).map((sale) => ({
+    ...(saved.needs || []).slice(0, 2).map((order) => ({
+      id: order.id,
+      title: "New order",
+      detail: order.detail || order.title,
+      amount: order.status,
+      tone: "text-[#635BFF]",
+      Icon: ShoppingBag,
+      iconWrap: "bg-[#635BFF]/10 text-[#635BFF]",
+    })),
+    ...(saved.today || []).slice(0, 2).map((sale) => ({
       id: sale.id,
       title: "New sale",
       detail: sale.items || "Sale recorded",
@@ -94,22 +103,13 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
       Icon: Receipt,
       iconWrap: "bg-emerald-100 text-emerald-600",
     })),
-    ...(saved.costs || []).slice(0, 2).map((cost) => ({
+    ...(saved.costs || []).slice(0, 1).map((cost) => ({
       id: cost.id,
       title: "Expense added",
       detail: cost.title,
       amount: `-₦${cost.amount.toLocaleString()}`,
       tone: "text-zinc-700",
       Icon: Wallet,
-      iconWrap: "bg-[#635BFF]/10 text-[#635BFF]",
-    })),
-    ...(saved.needs || []).slice(0, 2).map((order) => ({
-      id: order.id,
-      title: "New order",
-      detail: order.title,
-      amount: order.status,
-      tone: "text-[#635BFF]",
-      Icon: ShoppingBag,
       iconWrap: "bg-[#635BFF]/10 text-[#635BFF]",
     })),
   ].slice(0, 4);

@@ -31,7 +31,7 @@ export default async function SalesPage({ searchParams }: { searchParams: Promis
         <main className="px-4 py-8 md:px-8">
           <div className="mx-auto max-w-5xl">
             <h1 className="text-2xl font-semibold text-zinc-950">Sales</h1>
-            <p className="mt-2 text-sm text-amber-300">Offline. New sales stay on this phone until the network returns.</p>
+            <p className="mt-2 text-sm text-zinc-500">Offline. New sales stay on this phone until the network returns.</p>
             <OfflineSales />
             <div className="mt-8">
               <SavedList storageKey="bizflow-sales" title="Last sales" subtitle="Saved sales." offline />

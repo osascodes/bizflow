@@ -31,7 +31,7 @@ export default function OfflineStock({ products }: { products?: SavedProduct[] }
 
   return (
     <div className="mt-6 space-y-3">
-      {waiting > 0 ? <p className="text-sm text-amber-300">{waiting} stock change(s) waiting to send.</p> : null}
+      {waiting > 0 ? <p className="text-sm text-zinc-500">{waiting} stock change(s) waiting to send.</p> : null}
       {notice ? <p className="text-sm text-amber-300">{notice}</p> : null}
       {saved.length === 0 ? (
         <p className="text-sm text-zinc-500">Open Stock once while online.</p>

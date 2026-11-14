@@ -28,7 +28,7 @@ export default function OfflineDebts({ debts }: { debts?: SavedDebt[] }) {
 
   return (
     <div className="mt-6 space-y-3">
-      {waiting > 0 ? <p className="text-sm text-amber-300">{waiting} payment(s) waiting to send.</p> : null}
+      {waiting > 0 ? <p className="text-sm text-zinc-500">{waiting} payment(s) waiting to send.</p> : null}
       {saved.length === 0 ? (
         <p className="text-sm text-zinc-500">Open Debts once while online.</p>
       ) : (

@@ -57,7 +57,7 @@ export default function ExpenseForm({ offlineMode = false, onQueued }: { offline
       }}
     >
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
-      {notice ? <p className="text-sm text-amber-300">{notice}</p> : null}
+      {notice ? <p className="text-sm text-zinc-500">{notice}</p> : null}
       <div className="space-y-1.5">
         <Label className="text-zinc-600">What did you spend on?</Label>
         <Input name="title" placeholder="Fabric" required />

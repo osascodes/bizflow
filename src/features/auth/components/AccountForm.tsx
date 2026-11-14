@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { updateAccountAction } from "@/features/auth/actions";
+import { createBrowserSupabase } from "@/lib/supabase/client";
 
 export default function AccountForm({ name, email, phone, avatar }: { name: string; email: string; phone: string; avatar: string }) {
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState("");
   const [preview, setPreview] = useState(avatar);
+  const [file, setFile] = useState<File | null>(null);
   const letter = (name || email || "A").slice(0, 1).toUpperCase();
 
   return (
@@ -17,13 +19,25 @@ export default function AccountForm({ name, email, phone, avatar }: { name: stri
         setSaving(true);
         setDone("");
         try {
-          await updateAccountAction(new FormData(event.currentTarget));
+          const form = new FormData(event.currentTarget);
+          if (file) {
+            const supabase = createBrowserSupabase();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("Not signed in");
+            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
+            const path = `${user.id}/avatar-${Date.now()}-${safeName}`;
+            const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type || "image/jpeg" });
+            if (error) throw new Error(error.message);
+            form.set("avatar_url", supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl);
+          }
+          await updateAccountAction(form);
           setDone("Saved");
+          setFile(null);
         } catch (error) {
           setDone(error instanceof Error ? error.message : "Could not save");
         } finally {
           setSaving(false);
-          setTimeout(() => setDone(""), 1600);
+          setTimeout(() => setDone(""), 2500);
         }
       }}
     >
@@ -35,13 +49,14 @@ export default function AccountForm({ name, email, phone, avatar }: { name: stri
         )}
         <span className="text-sm text-zinc-500">Change profile photo</span>
         <input
-          name="photo"
           type="file"
           accept="image/*"
           className="hidden"
           onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) setPreview(URL.createObjectURL(file));
+            const next = event.target.files?.[0];
+            if (!next) return;
+            setFile(next);
+            setPreview(URL.createObjectURL(next));
           }}
         />
       </label>

@@ -169,7 +169,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
         ) : null}
           </div>
         </div>
-        {offline ? <p className="mt-2 text-xs text-amber-600">Last saved numbers</p> : null}
+        {offline ? <p className="mt-2 text-xs text-zinc-500">Last saved numbers</p> : null}
 
         <div className="mt-5 flex gap-2">
           <button type="button" onClick={share} className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-2xl bg-[#635BFF] px-4 text-sm font-semibold text-white">

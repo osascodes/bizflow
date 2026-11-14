@@ -58,7 +58,7 @@ export default function SavedStats({ snapshot, offline = false }: { snapshot?: S
       <div className="mx-auto max-w-5xl">
         <p className="text-sm text-violet-300">{saved.name}</p>
         <h1 className="mt-2 text-3xl font-semibold text-zinc-950">Stats</h1>
-        {offline ? <p className="mt-2 text-xs text-amber-300">Last saved numbers</p> : null}
+        {offline ? <p className="mt-2 text-xs text-zinc-500">Last saved numbers</p> : null}
         <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {cards.map(([label, value]) => (
             <div key={String(label)} className="rounded-3xl border border-zinc-200 bg-white p-5">

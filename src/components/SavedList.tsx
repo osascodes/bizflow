@@ -47,7 +47,7 @@ export default function SavedList({
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-zinc-950">{title}</h1>
         <p className="mt-2 text-sm text-zinc-400">{subtitle}</p>
-        {offline ? <p className="mt-3 text-xs text-amber-300">Last saved list. Adding or editing needs the network.</p> : null}
+        {offline ? <p className="mt-3 text-xs text-zinc-500">Last saved list. Adding or editing needs the network.</p> : null}
         <div className="mt-6 space-y-3">
           {!saved ? (
             <p className="text-sm text-zinc-500">Open this page once while online.</p>

@@ -35,7 +35,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
         <button type="button" onClick={() => setOpen((value) => !value)} className="mt-2 text-xs text-violet-300">
           {open ? "Close" : "Edit"}
         </button>
-        {notice ? <p className="mt-1 text-xs text-amber-300">{notice}</p> : null}
+        {notice ? <p className="mt-1 text-xs text-zinc-500">{notice}</p> : null}
       </div>
       <div className="text-right">
         <p className={shownStock <= product.low_stock_at ? "text-sm text-amber-300" : "text-sm text-zinc-600"}>
@@ -135,7 +135,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
           >
             <input type="hidden" name="id" value={product.id} />
             {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
-            {notice ? <p className="text-xs text-amber-300">{notice}</p> : null}
+            {notice ? <p className="text-xs text-zinc-500">{notice}</p> : null}
             <Input name="name" defaultValue={product.name} />
             <Input name="description" defaultValue={product.description || ""} placeholder="Description" />
             <div className="grid grid-cols-2 gap-2">

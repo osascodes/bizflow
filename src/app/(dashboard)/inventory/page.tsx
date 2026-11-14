@@ -30,7 +30,7 @@ export default async function InventoryPage({
         <main className="px-4 py-8 md:px-8">
           <div className="mx-auto max-w-3xl">
             <h1 className="text-2xl font-semibold text-zinc-950">Stock</h1>
-            <p className="mt-2 text-sm text-amber-300">Offline. Stock changes stay on this phone until the network returns.</p>
+            <p className="mt-2 text-sm text-zinc-500">Offline. Stock changes stay on this phone until the network returns.</p>
             <OfflineStock />
           </div>
         </main>

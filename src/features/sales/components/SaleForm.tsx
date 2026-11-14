@@ -95,7 +95,7 @@ export default function SaleForm({ products, customers = [], offlineMode = false
   return (
     <form action={onSubmit} className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5">
       {errorMessage ? (
-        <div className="rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400">{errorMessage}</div>
+        <div className={errorMessage.startsWith("Saved on this phone") ? "rounded-md border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-600" : "rounded-md border border-red-500 bg-red-500/10 p-3 text-sm text-red-400"}>{errorMessage}</div>
       ) : null}
       <input type="hidden" name="items" value={JSON.stringify(lines.map((line) => ({ product_id: line.productId, quantity: line.quantity })))} />
       <div className="space-y-1.5">

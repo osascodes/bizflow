@@ -129,7 +129,7 @@ export function PaymentForm({ debtId, name = "Customer", balance, onPaid }: { de
       <input type="hidden" name="debt_id" value={debtId} />
       <Input name="payment" type="number" min="1" step="0.01" placeholder="Payment" className="h-9" />
       <Button type="submit" className="h-9 bg-[#635BFF] text-white" disabled={balance <= 0 || pending}>{pending ? "Saving..." : paid ? "Paid" : "Pay"}</Button>
-      {notice ? <span className="text-xs text-amber-300">{notice}</span> : null}
+      {notice ? <span className="text-xs text-zinc-500">{notice}</span> : null}
     </form>
   );
 }

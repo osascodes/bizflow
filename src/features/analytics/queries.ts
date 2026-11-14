@@ -19,6 +19,7 @@ export async function getAnalytics() {
       weekSales: 0,
       monthSales: 0,
       weekCosts: 0,
+      prevWeekSales: 0,
       days: [],
       topProducts: [],
       lowStock: [],
@@ -28,7 +29,10 @@ export async function getAnalytics() {
   const now = new Date();
   const weekStart = startOfDay(now);
   weekStart.setDate(weekStart.getDate() - 6);
+  const prevStart = new Date(weekStart);
+  prevStart.setDate(prevStart.getDate() - 7);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const fetchStart = prevStart < monthStart ? prevStart : monthStart;
 
   const supabase = await createServerSupabase();
   const [{ data: sales }, { data: expenses }, products] = await Promise.all([
@@ -36,7 +40,7 @@ export async function getAnalytics() {
       .from("sales")
       .select("id, total, created_at, sale_items(name, quantity, price)")
       .eq("business_id", business.id)
-      .gte("created_at", monthStart.toISOString()),
+      .gte("created_at", fetchStart.toISOString()),
     supabase
       .from("expenses")
       .select("amount, created_at")
@@ -45,9 +49,17 @@ export async function getAnalytics() {
     getProducts(),
   ]);
 
-  const monthSales = (sales ?? []).reduce((sum, sale) => sum + Number(sale.total), 0);
+  const monthSales = (sales ?? [])
+    .filter((sale) => new Date(sale.created_at) >= monthStart)
+    .reduce((sum, sale) => sum + Number(sale.total), 0);
   const weekSales = (sales ?? [])
     .filter((sale) => new Date(sale.created_at) >= weekStart)
+    .reduce((sum, sale) => sum + Number(sale.total), 0);
+  const prevWeekSales = (sales ?? [])
+    .filter((sale) => {
+      const created = new Date(sale.created_at);
+      return created >= prevStart && created < weekStart;
+    })
     .reduce((sum, sale) => sum + Number(sale.total), 0);
   const weekCosts = (expenses ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
 
@@ -85,5 +97,5 @@ export async function getAnalytics() {
     .slice(0, 5)
     .map((product) => ({ name: product.name, stock: product.stock }));
 
-  return { weekSales, monthSales, weekCosts, days, topProducts, lowStock };
+  return { weekSales, monthSales, weekCosts, prevWeekSales, days, topProducts, lowStock };
 }

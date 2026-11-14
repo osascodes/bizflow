@@ -78,14 +78,14 @@ export default async function DashboardPage() {
         ["Costs today", money(costsToday)],
         ["Left today", money(leftToday)],
         ["Debts due", money(debtsDue)],
-        ["Low stock", String(lowStock)],
-        ...(ordersToDo.length > 0 ? [["Orders to do", String(ordersToDo.length)]] : []),
+        ["Low stock", lowStock === 1 ? "1 item" : `${lowStock} items`],
+        ["Orders to do", String(ordersToDo.length)],
       ]
     : [
         ["Sales today", money(salesToday)],
         ["Debts due", money(debtsDue)],
-        ["Low stock", String(lowStock)],
-        ...(ordersToDo.length > 0 ? [["Orders to do", String(ordersToDo.length)]] : []),
+        ["Low stock", lowStock === 1 ? "1 item" : `${lowStock} items`],
+        ["Orders to do", String(ordersToDo.length)],
       ];
 
   return (

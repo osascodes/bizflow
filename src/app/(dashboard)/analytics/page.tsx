@@ -27,12 +27,14 @@ export default async function AnalyticsPage() {
   const left = analytics.weekSales - analytics.weekCosts;
   const hasWeekSales = analytics.weekSales > 0;
 
+  const change = analytics.prevWeekSales === 0 ? null : Math.round(((analytics.weekSales - analytics.prevWeekSales) / analytics.prevWeekSales) * 100);
   const cards = [
-    { label: "This week", value: analytics.weekSales, tone: "from-[#635BFF]/20 to-[#635BFF]/5", accent: "text-[#635BFF]" },
-    { label: "This month", value: analytics.monthSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-[#635BFF]" },
-    { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-500/20 to-amber-500/5", accent: "text-amber-700" },
-    { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-500/20 to-emerald-500/5" : "from-rose-500/20 to-rose-500/5", accent: left >= 0 ? "text-emerald-700" : "text-rose-700" },
+    { label: "Sales this week", value: analytics.weekSales, tone: "from-[#635BFF]/15 to-[#635BFF]/5", accent: "text-[#635BFF]", change },
+    { label: "Sales this month", value: analytics.monthSales, tone: "from-[#635BFF]/10 to-[#635BFF]/5", accent: "text-[#635BFF]", change: null },
+    { label: "Costs this week", value: analytics.weekCosts, tone: "from-amber-100 to-amber-50", accent: "text-amber-700", change: null },
+    { label: "Left this week", value: left, tone: left >= 0 ? "from-emerald-100 to-emerald-50" : "from-rose-100 to-rose-50", accent: left >= 0 ? "text-emerald-700" : "text-rose-700", change: null },
   ];
+  const bestDay = analytics.days.reduce((best, day) => day.total > best.total ? day : best, analytics.days[0] || { label: "", total: 0 });
 
   return (
     <>
@@ -68,6 +70,7 @@ export default async function AnalyticsPage() {
             <div key={card.label} className={`rounded-2xl border border-zinc-200 bg-gradient-to-br ${card.tone} p-4`}>
               <p className={`text-sm font-medium ${card.accent}`}>{card.label}</p>
               <p className="mt-2 text-2xl font-semibold">₦{Number(card.value).toLocaleString()}</p>
+              {card.change !== null ? <p className={`mt-1 text-xs font-medium ${card.change >= 0 ? "text-emerald-600" : "text-rose-600"}`}>{card.change >= 0 ? "↑" : "↓"} {Math.abs(card.change)}% vs last week</p> : null}
             </div>
           ))}
         </div>
@@ -142,7 +145,12 @@ export default async function AnalyticsPage() {
           </div>
         </section>
 
-<section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
+<section className="mt-6 rounded-2xl bg-[#635BFF]/10 p-4">
+          <p className="font-semibold">Recent insights</p>
+          <p className="mt-1 text-sm text-zinc-600">{bestDay.total > 0 ? `Your strongest day this week is ${bestDay.label}, with ₦${bestDay.total.toLocaleString()} in sales.` : "Record a few sales and the strongest day will show here."}</p>
+        </section>
+
+        <section className="mt-6 rounded-2xl border border-zinc-200 bg-white p-5">
           <h2 className="font-semibold">Low stock</h2>
           <div className="mt-4 space-y-3">
             {analytics.lowStock.length === 0 ? (

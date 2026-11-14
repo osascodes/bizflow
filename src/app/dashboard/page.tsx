@@ -104,6 +104,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         welcome: `Welcome, ${name}`,
         role: business.role || "unknown",
         logoUrl: business.logo_url || "",
+        avatarUrl: (user?.user_metadata?.avatar_url as string | undefined) || "",
         email: user?.email || "",
         dateValue,
         dateLabel,

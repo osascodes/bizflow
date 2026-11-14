@@ -16,6 +16,7 @@ type Snapshot = {
   welcome: string;
   role: string;
   logoUrl?: string;
+  avatarUrl?: string;
   email?: string;
   dateValue?: string;
   dateLabel?: string;
@@ -134,8 +135,8 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
               <Bell className="h-5 w-5 text-zinc-700" />
               {(saved.needs?.length || 0) > 0 ? <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /> : null}
             </Link>
-            <button type="button" onClick={() => setMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200" aria-label="Account">
-              <User className="h-5 w-5 text-zinc-700" />
+            <button type="button" onClick={() => setMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200" aria-label="Account">
+              {saved.avatarUrl ? <img src={saved.avatarUrl} alt="" className="h-full w-full object-cover" /> : <User className="h-5 w-5 text-zinc-700" />}
             </button>
             {menu ? (
           <div className="absolute right-0 top-12 z-50 w-72 rounded-2xl border border-zinc-200 bg-white p-4 shadow-xl">
@@ -144,7 +145,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
               <button type="button" onClick={() => setMenu(false)} aria-label="Close"><X className="h-4 w-4" /></button>
             </div>
             <div className="mt-3 flex items-center gap-3 border-b border-zinc-100 pb-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">{(saved.welcome.replace("Welcome, ", "") || "A").slice(0, 1).toUpperCase()}</span>
+              {saved.avatarUrl ? <img src={saved.avatarUrl} alt="" className="h-10 w-10 shrink-0 rounded-full object-cover" /> : <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#635BFF] text-sm font-semibold text-white">{(saved.welcome.replace("Welcome, ", "") || "A").slice(0, 1).toUpperCase()}</span>}
               <div>
                 <p className="font-medium">{saved.welcome.replace("Welcome, ", "")}</p>
                 <p className="text-sm text-zinc-500">{saved.email}</p>

@@ -1,10 +1,33 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { updateAccountAction } from "@/features/auth/actions";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
+function shrink(file: File) {
+  return new Promise<File>((resolve) => {
+    const image = new Image();
+    const url = URL.createObjectURL(file);
+    image.onload = () => {
+      const size = 400;
+      const scale = Math.min(1, size / Math.max(image.width, image.height));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(image.width * scale);
+      canvas.height = Math.round(image.height * scale);
+      canvas.getContext("2d")?.drawImage(image, 0, 0, canvas.width, canvas.height);
+      canvas.toBlob((blob) => {
+        URL.revokeObjectURL(url);
+        resolve(blob ? new File([blob], "avatar.jpg", { type: "image/jpeg" }) : file);
+      }, "image/jpeg", 0.8);
+    };
+    image.onerror = () => resolve(file);
+    image.src = url;
+  });
+}
+
 export default function AccountForm({ name, email, phone, avatar }: { name: string; email: string; phone: string; avatar: string }) {
+  const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState("");
   const [preview, setPreview] = useState(avatar);
@@ -21,18 +44,19 @@ export default function AccountForm({ name, email, phone, avatar }: { name: stri
         try {
           const form = new FormData(event.currentTarget);
           if (file) {
+            const small = await shrink(file);
             const supabase = createBrowserSupabase();
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("Not signed in");
-            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, "-");
-            const path = `${user.id}/avatar-${Date.now()}-${safeName}`;
-            const { error } = await supabase.storage.from("product-images").upload(path, file, { contentType: file.type || "image/jpeg" });
+            const path = `${user.id}/avatar-${Date.now()}.jpg`;
+            const { error } = await supabase.storage.from("product-images").upload(path, small, { contentType: "image/jpeg" });
             if (error) throw new Error(error.message);
             form.set("avatar_url", supabase.storage.from("product-images").getPublicUrl(path).data.publicUrl);
           }
           await updateAccountAction(form);
           setDone("Saved");
           setFile(null);
+          router.refresh();
         } catch (error) {
           setDone(error instanceof Error ? error.message : "Could not save");
         } finally {

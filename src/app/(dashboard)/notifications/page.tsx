@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getNotifications } from "@/features/notifications/queries";
@@ -52,9 +53,12 @@ export default async function NotificationsPage() {
             <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">Nothing needs attention.</div>
           ) : (
             items.map((item) => (
-              <Link key={item.id} href={item.href} className="block rounded-2xl border border-zinc-200 bg-white p-4">
-                <h2 className="font-semibold text-zinc-950">{item.title}</h2>
-                <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+              <Link key={item.id} href={item.href} className="flex items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-4">
+                {item.id.startsWith("order-") ? <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#635BFF]/10 text-[#635BFF]"><ShoppingBag className="h-4 w-4" /></span> : null}
+                <div>
+                  <h2 className="font-semibold text-zinc-950">{item.title}</h2>
+                  <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+                </div>
               </Link>
             ))
           )}

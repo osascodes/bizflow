@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 import { updateOrderStatusAction } from "@/features/orders/actions";
-import { Button } from "@/components/ui/button";
 
 type Order = {
   id: string;
@@ -12,6 +11,7 @@ type Order = {
   status: string;
   number: string;
   created?: string;
+  amount?: number;
 };
 
 type Group = {
@@ -22,6 +22,7 @@ type Group = {
   status: string;
   created?: string;
   items: Order[];
+  total: number;
 };
 
 function groupOrders(orders: Order[]): Group[] {
@@ -31,6 +32,7 @@ function groupOrders(orders: Order[]): Group[] {
     const existing = groups.find((group) => group.key === key);
     if (existing) {
       existing.items.push(order);
+      existing.total += Number(order.amount || 0);
       continue;
     }
     groups.push({
@@ -41,9 +43,27 @@ function groupOrders(orders: Order[]): Group[] {
       status: order.status,
       created: order.created,
       items: [order],
+      total: Number(order.amount || 0),
     });
   }
   return groups;
+}
+
+function labelFor(status: string) {
+  if (status === "pending") return "Pending";
+  if (status === "packed") return "Packed";
+  if (status === "out") return "Out for Delivery";
+  if (status === "done") return "Delivered";
+  if (status === "cancelled") return "Cancelled";
+  return status;
+}
+
+function toneFor(status: string) {
+  if (status === "pending") return "bg-amber-100 text-amber-700";
+  if (status === "packed") return "bg-sky-100 text-sky-700";
+  if (status === "out") return "bg-[#635BFF]/15 text-[#635BFF]";
+  if (status === "done") return "bg-emerald-100 text-emerald-700";
+  return "bg-zinc-100 text-zinc-500";
 }
 
 export default function OrderList({ orders }: { orders: Order[] }) {
@@ -64,13 +84,15 @@ export default function OrderList({ orders }: { orders: Order[] }) {
     });
     return groupOrders(filtered);
   }, [items, query, tab]);
+
   const todoCount = groupOrders(items.filter((order) => order.status !== "done" && order.status !== "cancelled")).length;
+  const doneCount = groupOrders(items.filter((order) => order.status === "done" || order.status === "cancelled")).length;
 
   const move = async (group: Group, status: string) => {
     setErrorMessage("");
     setPendingKey(group.key);
     const previous = group.status;
-    setItems((current) => current.map((item) => (item.number === group.number && group.number) || item.id === group.items[0].id ? { ...item, status } : item));
+    setItems((current) => current.map((item) => ((item.number === group.number && group.number) || item.id === group.items[0].id ? { ...item, status } : item)));
     try {
       const formData = new FormData();
       formData.set("order_id", group.items[0].id);
@@ -78,7 +100,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
       const result = await updateOrderStatusAction(formData);
       if (result?.error) throw new Error(result.error);
     } catch (error: unknown) {
-      setItems((current) => current.map((item) => (item.number === group.number && group.number) || item.id === group.items[0].id ? { ...item, status: previous } : item));
+      setItems((current) => current.map((item) => ((item.number === group.number && group.number) || item.id === group.items[0].id ? { ...item, status: previous } : item)));
       setErrorMessage(error instanceof Error ? error.message : "Could not update the order");
     } finally {
       setPendingKey("");
@@ -86,65 +108,65 @@ export default function OrderList({ orders }: { orders: Order[] }) {
   };
 
   return (
-    <div className="mt-8 space-y-3">
-      <div className="flex gap-2">
+    <div className="mt-5 space-y-3">
+      <div className="grid grid-cols-2 gap-3">
         <button type="button" onClick={() => setTab("todo")} className={`rounded-2xl border p-4 text-left ${tab === "todo" ? "border-[#635BFF] bg-[#635BFF]/10" : "border-zinc-200 bg-white"}`}>
-          <p className="text-sm text-zinc-500">To Do</p>
-          <p className="mt-1 text-2xl font-semibold text-[#635BFF]">{todoCount}</p>
+          <p className="text-sm font-medium">To Do</p>
+          <p className="mt-1 text-3xl font-semibold text-[#635BFF]">{todoCount}</p>
           <p className="mt-1 text-xs text-zinc-500">Pending orders</p>
         </button>
         <button type="button" onClick={() => setTab("done")} className={`rounded-2xl border p-4 text-left ${tab === "done" ? "border-emerald-400 bg-emerald-50" : "border-zinc-200 bg-white"}`}>
-          <p className="text-sm text-zinc-500">Done</p>
-          <p className="mt-1 text-2xl font-semibold">{items.filter((order) => order.status === "done" || order.status === "cancelled").length}</p>
-          <p className="mt-1 text-xs text-zinc-500">Completed and cancelled</p>
+          <p className="text-sm font-medium">Done</p>
+          <p className="mt-1 text-3xl font-semibold">{doneCount}</p>
+          <p className="mt-1 text-xs text-zinc-500">Delivered and cancelled</p>
         </button>
       </div>
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search orders"
-        className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none"
-      />
-      {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
+
+      <div className="flex items-center justify-between pt-2">
+        <h2 className="font-semibold">{tab === "todo" ? "Pending orders" : "Finished orders"}</h2>
+        <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">{tab === "todo" ? todoCount : doneCount} {tab === "todo" ? "pending" : "done"}</span>
+      </div>
+      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search orders..." className="h-11 w-full rounded-xl border border-zinc-200 bg-white px-3 text-sm outline-none" />
+      {errorMessage ? <p className="text-sm text-rose-600">{errorMessage}</p> : null}
       {groups.length === 0 ? (
-        <p className="text-sm text-zinc-500">
-          {query ? "No matching order." : tab === "todo" ? "Nothing to do." : "No finished orders yet."}
-        </p>
-      ) : (
-        groups.map((group) => (
-          <div key={group.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="font-semibold">Order #{group.number || group.key.slice(0, 6)}</p>
-                <p className="mt-1 text-xs text-zinc-500">{group.created ? new Date(group.created).toLocaleString("en-NG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : ""}</p>
-              </div>
-              <span className={`rounded-full px-3 py-1 text-xs font-medium ${group.status === "done" ? "bg-emerald-100 text-emerald-700" : group.status === "cancelled" ? "bg-zinc-100 text-zinc-500" : "bg-amber-100 text-amber-700"}`}>{group.status}</span>
+        <p className="text-sm text-zinc-500">{query ? "No matching order." : tab === "todo" ? "Nothing to do." : "No finished orders yet."}</p>
+      ) : groups.map((group) => (
+        <div key={group.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="font-semibold">Order #{group.number || group.key.slice(0, 6)}</p>
+              <p className="mt-1 text-xs text-zinc-500">{group.created ? new Date(group.created).toLocaleString("en-NG", { day: "numeric", month: "short", hour: "numeric", minute: "2-digit" }) : ""}</p>
             </div>
-            <div className="mt-3 flex items-center justify-between">
-              <div>
-                <p className="font-medium">{group.customer}</p>
-                <p className="text-sm text-zinc-500">{group.phone}</p>
-              </div>
-              <a className="rounded-full bg-emerald-500 px-3 py-1 text-xs font-semibold text-white" href={`https://wa.me/${(group.phone || "").replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
-            </div>
-            <div className="mt-3 text-sm text-zinc-700">
-              {group.items.map((item) => <p key={item.id}>{item.title}</p>)}
-            </div>
-            {group.status === "pending" || group.status === "packed" || group.status === "out" ? (
-              <div className="mt-3 flex gap-2">
-                {group.status === "pending" ? <Button type="button" onClick={() => move(group, "packed")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Pack"}</Button> : null}
-                {group.status === "packed" ? <Button type="button" onClick={() => move(group, "out")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Out"}</Button> : null}
-                {group.status === "out" ? <Button type="button" onClick={() => move(group, "done")} disabled={pendingKey === group.key} className="h-9 bg-[#635BFF] text-white">{pendingKey === group.key ? "Saving..." : "Delivered"}</Button> : null}
-                <Button type="button" onClick={() => move(group, "cancelled")} disabled={pendingKey === group.key} className="h-9 border border-zinc-600 bg-[#635BFF] text-white">Cancel</Button>
-              </div>
-            ) : (
-              <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold ${group.status === "done" ? "bg-emerald-500 text-zinc-950" : "bg-zinc-700 text-zinc-200"}`}>
-                {group.status === "done" ? "Delivered" : "Cancelled"}
-              </span>
-            )}
+            <span className={`rounded-full px-2 py-1 text-xs font-medium ${toneFor(group.status)}`}>{labelFor(group.status)}</span>
           </div>
-        ))
-      )}
+          <div className="mt-3 flex items-center justify-between">
+            <div>
+              <p className="font-medium">{group.customer}</p>
+              <p className="text-sm text-zinc-500">{group.phone}</p>
+            </div>
+            <a className="inline-flex h-8 items-center rounded-full bg-emerald-500 px-3 text-xs font-semibold text-white" href={`https://wa.me/${(group.phone || "").replace(/\D/g, "")}`} target="_blank">WhatsApp</a>
+          </div>
+          <div className="mt-3 text-sm">
+            {group.items.map((item) => <p key={item.id}>{item.title}</p>)}
+          </div>
+          {group.total > 0 ? (
+            <div className="mt-2 flex items-center justify-between text-sm">
+              <span className="text-zinc-500">Total</span>
+              <span className="font-semibold">₦{group.total.toLocaleString()}</span>
+            </div>
+          ) : null}
+          {group.status === "pending" || group.status === "packed" ? (
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <button type="button" onClick={() => move(group, "cancelled")} disabled={pendingKey === group.key} className="h-10 rounded-full border border-rose-300 text-sm font-semibold text-rose-600">Cancel</button>
+              {group.status === "pending" ? <button type="button" onClick={() => move(group, "packed")} disabled={pendingKey === group.key} className="h-10 rounded-full bg-zinc-950 text-sm font-semibold text-white">{pendingKey === group.key ? "Saving..." : "Pack"}</button> : null}
+              {group.status === "packed" ? <button type="button" onClick={() => move(group, "out")} disabled={pendingKey === group.key} className="h-10 rounded-full bg-zinc-950 text-sm font-semibold text-white">{pendingKey === group.key ? "Saving..." : "Out"}</button> : null}
+            </div>
+          ) : null}
+          {group.status === "out" ? (
+            <button type="button" onClick={() => move(group, "done")} disabled={pendingKey === group.key} className="mt-4 h-10 w-full rounded-full bg-emerald-500 text-sm font-semibold text-white">{pendingKey === group.key ? "Saving..." : "Delivered"}</button>
+          ) : null}
+        </div>
+      ))}
     </div>
   );
 }

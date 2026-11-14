@@ -28,13 +28,13 @@ export default async function StorefrontPage() {
   const supabase = await createServerSupabase();
   const { data: active } = await supabase
     .from("orders")
-    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number")
+    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number, products(price)")
     .eq("business_id", business.id)
     .in("status", ["pending", "packed", "out"])
     .order("created_at", { ascending: false });
   const { data: finished } = await supabase
     .from("orders")
-    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number")
+    .select("id, product_name, quantity, customer_name, customer_phone, status, created_at, order_number, products(price)")
     .eq("business_id", business.id)
     .in("status", ["done", "cancelled"])
     .order("created_at", { ascending: false })
@@ -65,6 +65,7 @@ export default async function StorefrontPage() {
             phone: order.customer_phone,
             status: order.status,
             number: order.order_number || "",
+            amount: Number(order.quantity) * Number((order as { products?: { price?: number } | { price?: number }[] }).products && Array.isArray((order as { products?: { price?: number }[] }).products) ? (order as { products?: { price?: number }[] }).products?.[0]?.price : (order as { products?: { price?: number } }).products?.price) || 0,
           }))}
         />
       </div>

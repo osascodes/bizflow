@@ -95,6 +95,8 @@ export default async function DashboardPage() {
         name: business.name,
         welcome: `Welcome, ${name}`,
         role: business.role || "unknown",
+        logoUrl: business.logo_url || "",
+        email: user?.email || "",
         stats: stats as [string, string][],
         needs: ordersToDo.map((order) => ({
           id: order.id,

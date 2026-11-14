@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell, Box, Receipt, ShoppingBag, Store, TrendingUp, Wallet } from "lucide-react";
+import { Bell, Box, LogOut, Receipt, ShoppingBag, Store, TrendingUp, User, Wallet } from "lucide-react";
+import { logoutAction } from "@/features/auth/actions";
 
 type Need = { id: string; title: string; detail: string; status: string };
 type Low = { id: string; name: string; stock: number };
@@ -14,6 +15,8 @@ type Snapshot = {
   name: string;
   welcome: string;
   role: string;
+  logoUrl?: string;
+  email?: string;
   stats: [string, string][];
   needs?: Need[];
   low?: Low[];
@@ -44,6 +47,7 @@ function hrefFor(label: string) {
 
 export default function SavedHome({ snapshot, offline = false }: { snapshot?: Snapshot | null; offline?: boolean }) {
   const [saved, setSaved] = useState<Snapshot | null>(snapshot || null);
+  const [menu, setMenu] = useState(false);
 
   useEffect(() => {
     if (snapshot) {
@@ -113,17 +117,38 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
       <div className="mx-auto max-w-5xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src="/brinset-logo.png" alt="Brinset" className="h-10 w-10 object-contain" />
+            {saved.logoUrl ? (
+              <img src={saved.logoUrl} alt="" className="h-11 w-11 rounded-2xl object-cover" />
+            ) : (
+              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-lg font-semibold text-white">{(saved.name || "B").slice(0, 1).toUpperCase()}</span>
+            )}
             <div>
               <h1 className="text-lg font-semibold">{saved.name}</h1>
               <p className="text-sm text-zinc-500">{saved.category} · {saved.welcome.replace("Welcome, ", "")}</p>
             </div>
           </div>
-          <Link href="/notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white">
-            <Bell className="h-5 w-5 text-[#635BFF]" />
-            {(saved.needs?.length || 0) > 0 ? <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /> : null}
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link href="/notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white">
+              <Bell className="h-5 w-5 text-zinc-700" />
+              {(saved.needs?.length || 0) > 0 ? <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-rose-500" /> : null}
+            </Link>
+            <button type="button" onClick={() => setMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center rounded-full bg-zinc-200" aria-label="Account">
+              <User className="h-5 w-5 text-zinc-700" />
+            </button>
+          </div>
         </div>
+        {menu ? (
+          <div className="mt-3 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg">
+            <p className="text-sm font-semibold">{saved.name}</p>
+            <p className="mt-1 text-sm text-zinc-500">{saved.email || saved.welcome.replace("Welcome, ", "")}</p>
+            <Link href="/forgot-password" className="mt-3 block rounded-xl px-3 py-2 text-sm font-medium text-zinc-700">Change password</Link>
+            <form action={logoutAction} className="mt-1">
+              <button type="submit" className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-medium text-rose-600">
+                <LogOut className="h-4 w-4" /> Log out
+              </button>
+            </form>
+          </div>
+        ) : null}
         {offline ? <p className="mt-2 text-xs text-amber-600">Last saved numbers</p> : null}
 
         <div className="mt-5 flex gap-2">

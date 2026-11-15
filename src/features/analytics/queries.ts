@@ -20,6 +20,8 @@ export async function getAnalytics() {
       monthSales: 0,
       weekCosts: 0,
       prevWeekSales: 0,
+      prevMonthSales: 0,
+      prevWeekCosts: 0,
       days: [],
       topProducts: [],
       lowStock: [],
@@ -32,10 +34,13 @@ export async function getAnalytics() {
   const prevStart = new Date(weekStart);
   prevStart.setDate(prevStart.getDate() - 7);
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-  const fetchStart = prevStart < monthStart ? prevStart : monthStart;
+  // Previous month: 1st of last month
+  const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  // Fetch from whichever is earliest: prevMonthStart or prevStart
+  const fetchStart = prevMonthStart < prevStart ? prevMonthStart : prevStart;
 
   const supabase = await createServerSupabase();
-  const [{ data: sales }, { data: expenses }, products] = await Promise.all([
+  const [{ data: sales }, { data: expenses }, { data: prevExpenses }, products] = await Promise.all([
     supabase
       .from("sales")
       .select("id, total, created_at, sale_items(name, quantity, price)")
@@ -46,22 +51,40 @@ export async function getAnalytics() {
       .select("amount, created_at")
       .eq("business_id", business.id)
       .gte("created_at", weekStart.toISOString()),
+    // Previous week costs
+    supabase
+      .from("expenses")
+      .select("amount, created_at")
+      .eq("business_id", business.id)
+      .gte("created_at", prevStart.toISOString())
+      .lt("created_at", weekStart.toISOString()),
     getProducts(),
   ]);
 
   const monthSales = (sales ?? [])
     .filter((sale) => new Date(sale.created_at) >= monthStart)
     .reduce((sum, sale) => sum + Number(sale.total), 0);
+
+  const prevMonthSales = (sales ?? [])
+    .filter((sale) => {
+      const created = new Date(sale.created_at);
+      return created >= prevMonthStart && created < monthStart;
+    })
+    .reduce((sum, sale) => sum + Number(sale.total), 0);
+
   const weekSales = (sales ?? [])
     .filter((sale) => new Date(sale.created_at) >= weekStart)
     .reduce((sum, sale) => sum + Number(sale.total), 0);
+
   const prevWeekSales = (sales ?? [])
     .filter((sale) => {
       const created = new Date(sale.created_at);
       return created >= prevStart && created < weekStart;
     })
     .reduce((sum, sale) => sum + Number(sale.total), 0);
+
   const weekCosts = (expenses ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
+  const prevWeekCosts = (prevExpenses ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
 
   const days = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(weekStart);
@@ -97,5 +120,5 @@ export async function getAnalytics() {
     .slice(0, 5)
     .map((product) => ({ name: product.name, stock: product.stock }));
 
-  return { weekSales, monthSales, weekCosts, prevWeekSales, days, topProducts, lowStock };
+  return { weekSales, monthSales, weekCosts, prevWeekSales, prevMonthSales, prevWeekCosts, days, topProducts, lowStock };
 }

@@ -41,11 +41,16 @@ export async function getTodayCosts(day = new Date()) {
   const supabase = await createServerSupabase();
   const { data } = await supabase
     .from("expenses")
-    .select("id, title, amount")
+    .select("id, title, amount, created_at")
     .eq("business_id", business.id)
     .gte("created_at", start.toISOString())
     .lt("created_at", end.toISOString())
     .order("created_at", { ascending: false })
     .limit(8);
-  return (data ?? []).map((row) => ({ id: row.id, title: row.title, amount: Number(row.amount) }));
+  return (data ?? []).map((row) => ({
+    id: row.id,
+    title: row.title,
+    amount: Number(row.amount),
+    createdAt: row.created_at as string,
+  }));
 }

@@ -46,7 +46,7 @@ export async function getTodaySales(day = new Date()) {
   const supabase = await createServerSupabase();
   const { data } = await supabase
     .from("sales")
-    .select("id, total, sale_items(name, quantity)")
+    .select("id, total, created_at, sale_items(name, quantity)")
     .eq("business_id", business.id)
     .gte("created_at", start.toISOString())
     .lt("created_at", end.toISOString())
@@ -56,5 +56,6 @@ export async function getTodaySales(day = new Date()) {
     id: sale.id,
     total: Number(sale.total),
     items: (sale.sale_items ?? []).map((item: { name: string; quantity: number }) => `${item.quantity} x ${item.name}`).join(", ") || "Sale",
+    createdAt: sale.created_at as string,
   }));
 }

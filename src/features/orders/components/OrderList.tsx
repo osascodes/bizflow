@@ -66,7 +66,7 @@ function toneFor(status: string) {
   return "bg-zinc-100 text-zinc-500";
 }
 
-export default function OrderList({ orders }: { orders: Order[] }) {
+export default function OrderList({ orders, focusId = "" }: { orders: Order[]; focusId?: string }) {
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<"todo" | "done">("todo");
   const [items, setItems] = useState(orders);
@@ -131,7 +131,7 @@ export default function OrderList({ orders }: { orders: Order[] }) {
       {groups.length === 0 ? (
         <p className="text-sm text-zinc-500">{query ? "No matching order." : tab === "todo" ? "Nothing to do." : "No finished orders yet."}</p>
       ) : groups.map((group) => (
-        <div key={group.key} className="rounded-2xl border border-zinc-200 bg-white p-4">
+        <div key={group.key} id={`order-${group.key}`} className={`rounded-2xl border bg-white p-4 ${focusId && (group.key === focusId || group.number === focusId) ? "border-[#635BFF]" : "border-zinc-200"}`}>
           <div className="flex items-start justify-between">
             <div>
               <p className="font-semibold">Order #{group.number || group.key.slice(0, 6)}</p>

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Bell, Box, Calendar, ChevronRight, ClipboardList, Lock, LogOut, Receipt, ShoppingBag, ShoppingCart, Store, TrendingUp, User, Wallet, X } from "lucide-react";
 import { logoutAction } from "@/features/auth/actions";
 
-type Need = { id: string; title: string; detail: string; status: string; createdAt?: string };
+type Need = { id: string; title: string; detail: string; status: string; createdAt?: string; number?: string };
 type Low = { id: string; name: string; stock: number };
 type Owed = { id: string; name: string; left: number };
 type Today = { id: string; total: number; items: string; createdAt?: string };
@@ -50,11 +50,13 @@ function hrefFor(label: string) {
   return "";
 }
 
-function getTimeAgo(dateStr?: string, fallback = "Just now") {
-  if (!dateStr) return fallback;
+function getTimeAgo(dateStr?: string) {
+  if (!dateStr) return "";
   const d = new Date(dateStr);
-  const diff = (Date.now() - d.getTime()) / 1000;
-  if (isNaN(diff) || diff < 0) return fallback;
+  const lagosNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+  const lagosThen = new Date(d.toLocaleString("en-US", { timeZone: "Africa/Lagos" }));
+  const diff = (lagosNow.getTime() - lagosThen.getTime()) / 1000;
+  if (isNaN(diff) || diff < 0) return "Just now";
   if (diff < 60) return "Just now";
   const mins = Math.floor(diff / 60);
   if (mins < 60) return `${mins} mins ago`;
@@ -101,88 +103,55 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
     window.open(`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`, "_blank");
   };
 
-  // Upgrade 3 — Soft circular pastel icon badges for recent activity matching mockup 1:
-  // 1. New sale: pastel green circular badge with ShoppingCart icon, "+₦...", "2 mins ago"
-  // 2. Expense added: pastel lavender/purple circular badge with Wallet icon, "-₦...", "12 mins ago"
-  // 3. New order: pastel blue circular badge with ClipboardList icon, "#ORD-...", "20 mins ago"
-  const salesItems = (saved.today || []).map((sale, i) => ({
-    id: sale.id || `sale-${i}`,
+  const salesItems = (saved.today || []).map((sale) => ({
+    id: sale.id,
+    kind: "sale" as const,
     title: "New sale",
-    timeAgo: getTimeAgo(sale.createdAt, i === 0 ? "2 mins ago" : `${(i + 1) * 10} mins ago`),
+    timeAgo: getTimeAgo(sale.createdAt),
     amount: `+₦${Number(sale.total).toLocaleString()}`,
     tone: "text-emerald-600",
     Icon: ShoppingCart,
     iconWrap: "bg-[#EAF8F1] text-[#12B76A]",
+    createdAt: sale.createdAt || "",
+    href: "",
+    badge: "",
   }));
 
-  const costItems = (saved.costs || []).map((cost, i) => ({
-    id: cost.id || `cost-${i}`,
+  const costItems = (saved.costs || []).map((cost) => ({
+    id: cost.id,
+    kind: "cost" as const,
     title: "Expense added",
-    timeAgo: getTimeAgo(cost.createdAt, i === 0 ? "12 mins ago" : `${(i + 2) * 10} mins ago`),
+    timeAgo: getTimeAgo(cost.createdAt),
     amount: `-₦${Number(cost.amount).toLocaleString()}`,
     tone: "text-zinc-900",
     Icon: Wallet,
     iconWrap: "bg-[#F2EFFE] text-[#635BFF]",
+    createdAt: cost.createdAt || "",
+    href: "",
+    badge: "",
   }));
 
-  const orderItems = (saved.needs || []).map((order, i) => {
-    const orderCode = order.id?.startsWith("#")
-      ? order.id
-      : order.id?.startsWith("ORD-")
-      ? `#${order.id}`
-      : `#ORD-${order.id?.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase() || "1042"}`;
+  const orderItems = (saved.needs || []).map((order) => {
+    const raw = order.number || order.id || "";
+    const orderCode = raw.startsWith("#") ? raw : `#ORD-${raw.replace(/^#?ORD-/, "").slice(0, 6).toUpperCase()}`;
     return {
-      id: order.id || `order-${i}`,
+      id: order.id,
+      kind: "order" as const,
       title: "New order",
-      timeAgo: getTimeAgo(order.createdAt, i === 0 ? "20 mins ago" : `${(i + 3) * 10} mins ago`),
+      timeAgo: getTimeAgo(order.createdAt),
       amount: orderCode,
       tone: "text-[#635BFF]",
       Icon: ClipboardList,
       iconWrap: "bg-[#EFF6FF] text-[#2E90FA]",
+      createdAt: order.createdAt || "",
+      href: `/storefront?order=${encodeURIComponent(order.id)}`,
+      badge: order.status === "pending" ? "Pending" : "",
     };
   });
 
-  // Interleave or combine to match mockup 1 (Sale -> Expense -> Order)
-  let activity = [
-    ...salesItems.slice(0, 1),
-    ...costItems.slice(0, 1),
-    ...orderItems.slice(0, 1),
-    ...salesItems.slice(1, 2),
-    ...costItems.slice(1, 2),
-  ].slice(0, 3);
-
-  // If no activity exists yet, display clean mock items matching the target mockup
-  if (activity.length === 0) {
-    activity = [
-      {
-        id: "mock-sale",
-        title: "New sale",
-        timeAgo: "2 mins ago",
-        amount: "+₦12,500",
-        tone: "text-emerald-600",
-        Icon: ShoppingCart,
-        iconWrap: "bg-[#EAF8F1] text-[#12B76A]",
-      },
-      {
-        id: "mock-cost",
-        title: "Expense added",
-        timeAgo: "12 mins ago",
-        amount: "-₦5,000",
-        tone: "text-zinc-900",
-        Icon: Wallet,
-        iconWrap: "bg-[#F2EFFE] text-[#635BFF]",
-      },
-      {
-        id: "mock-order",
-        title: "New order",
-        timeAgo: "20 mins ago",
-        amount: "#ORD-1042",
-        tone: "text-[#635BFF]",
-        Icon: ClipboardList,
-        iconWrap: "bg-[#EFF6FF] text-[#2E90FA]",
-      },
-    ];
-  }
+  const activity = [...salesItems, ...costItems, ...orderItems]
+    .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
+    .slice(0, 5);
 
   return (
     <main className="px-4 py-5 pb-28 md:px-8">
@@ -305,20 +274,28 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
             </Link>
           </div>
           <div className="mt-4 space-y-3.5">
-            {activity.map((item) => (
-              <div key={item.id} className="flex items-center justify-between py-1">
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${item.iconWrap}`}>
-                    <item.Icon className="h-5 w-5" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="font-semibold text-sm text-zinc-900">{item.title}</p>
-                    <p className="text-xs text-zinc-400 mt-0.5">{item.timeAgo}</p>
+            {activity.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">No sales, costs, or orders yet.</div>
+            ) : activity.map((item) => {
+              const row = (
+                <div className="flex items-center justify-between py-1">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${item.iconWrap}`}>
+                      <item.Icon className="h-5 w-5" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm text-zinc-900">{item.title}</p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{item.timeAgo}</p>
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2">
+                    <p className={`text-sm font-semibold ${item.tone}`}>{item.amount}</p>
+                    {item.badge ? <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] font-medium text-amber-700">{item.badge}</span> : null}
                   </div>
                 </div>
-                <p className={`shrink-0 text-sm font-semibold ${item.tone}`}>{item.amount}</p>
-              </div>
-            ))}
+              );
+              return item.href ? <Link key={item.id} href={item.href}>{row}</Link> : <div key={item.id}>{row}</div>;
+            })}
           </div>
         </section>
       </div>

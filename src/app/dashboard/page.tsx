@@ -37,7 +37,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   let salesToday = 0;
   let debtsDue = 0;
   let costsToday = 0;
-  let ordersToDo: { id: string; customer: string; items: string[]; status: string }[] = [];
+  let ordersToDo: { id: string; customer: string; items: string[]; status: string; createdAt: string; number: string }[] = [];
   let lowItems: { id: string; name: string; stock: number }[] = [];
   let owed: { id: string; name: string; left: number }[] = [];
   let todaySales: { id: string; total: number; items: string }[] = [];
@@ -114,6 +114,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           title: order.customer,
           detail: order.items.join(", "),
           status: order.status,
+          createdAt: order.createdAt,
+          number: order.number,
         })),
         low: lowItems,
         owed,

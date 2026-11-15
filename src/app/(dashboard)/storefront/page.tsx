@@ -6,7 +6,8 @@ import { getCurrentBusiness } from "@/features/business/queries";
 import OrderList from "@/features/orders/components/OrderList";
 import ShareStoreLink from "@/features/orders/components/ShareStoreLink";
 
-export default async function StorefrontPage() {
+export default async function StorefrontPage({ searchParams }: { searchParams: Promise<{ order?: string }> }) {
+  const params = await searchParams;
   const { offline } = await getAuthState();
   let business = null;
   try {
@@ -56,7 +57,7 @@ export default async function StorefrontPage() {
           <h1 className="text-2xl font-semibold text-zinc-950">Store</h1>
         </div>
         <ShareStoreLink name={business.name} slug={business.slug} />
-        <OrderList
+        <OrderList focusId={params.order || ""}
           orders={(orders ?? []).map((order) => ({
             id: order.id,
             title: `${order.quantity} x ${order.product_name}`,

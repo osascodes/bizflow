@@ -57,7 +57,7 @@ export default async function NotificationsPage() {
                 {item.id.startsWith("order-") ? <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#635BFF]/10 text-[#635BFF]"><ShoppingBag className="h-4 w-4" /></span> : null}
                 <div>
                   <h2 className="font-semibold text-zinc-950">{item.title}</h2>
-                  <p className="mt-1 text-sm text-zinc-400">{item.detail}</p>
+                  <p className="mt-1 whitespace-pre-line text-sm text-zinc-400">{item.detail}</p>
                 </div>
               </Link>
             ))

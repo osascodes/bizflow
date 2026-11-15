@@ -3,18 +3,17 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getAnalytics } from "@/features/analytics/queries";
 import SavedStats from "@/features/analytics/components/SavedStats";
+import { BarChart2, Coins, Trophy, Wallet } from "lucide-react";
 
 // Helper: compute a capped period-over-period % change.
 // Revenue/profit: green when positive, red when negative.
 // Costs: green when negative (costs fell), red when positive (costs rose).
-// Caps zero-baseline spikes to 999% max to avoid "16400%" noise.
+// Caps zero-baseline spikes cleanly.
 function pct(current: number, previous: number): number | null {
   if (previous === 0) {
-    // No baseline — return null to avoid misleading ∞ or capped spikes
     return null;
   }
   const raw = Math.round(((current - previous) / previous) * 100);
-  // Cap at ±999 for display sanity
   return Math.max(-999, Math.min(999, raw));
 }
 
@@ -49,56 +48,53 @@ export default async function AnalyticsPage() {
   const weekCostsPct = pct(analytics.weekCosts, analytics.prevWeekCosts);
   const leftPct = pct(left, prevLeft);
 
-  // Icon appearance config per card
+  // Appearance config per card (Natural case title, matching icons from mockup 1)
   const cards = [
     {
       label: "Sales this week",
       value: analytics.weekSales,
       tone: "from-[#635BFF]/15 to-[#635BFF]/5",
       accent: "text-[#635BFF]",
+      Icon: BarChart2,
       pct: weekSalesPct,
-      // Revenue: ↑ = green, ↓ = red
       pctColor: (v: number) => (v >= 0 ? "text-emerald-600" : "text-rose-600"),
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
-      pctLabel: "vs last week",
     },
     {
       label: "Sales this month",
       value: analytics.monthSales,
       tone: "from-[#635BFF]/10 to-[#635BFF]/5",
       accent: "text-[#635BFF]",
+      Icon: Wallet,
       pct: monthSalesPct,
       pctColor: (v: number) => (v >= 0 ? "text-emerald-600" : "text-rose-600"),
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
-      pctLabel: "vs last month",
     },
     {
       label: "Costs this week",
       value: analytics.weekCosts,
       tone: "from-amber-100 to-amber-50",
-      accent: "text-amber-700",
+      accent: "text-amber-600",
+      Icon: Coins,
       pct: weekCostsPct,
-      // Costs: ↑ = red (bad), ↓ = green (good)
       pctColor: (v: number) => (v <= 0 ? "text-emerald-600" : "text-rose-600"),
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
-      pctLabel: "vs last week",
     },
     {
       label: "Left this week",
       value: left,
       tone: left >= 0 ? "from-emerald-100 to-emerald-50" : "from-rose-100 to-rose-50",
-      accent: left >= 0 ? "text-emerald-700" : "text-rose-700",
+      accent: left >= 0 ? "text-emerald-600" : "text-rose-600",
+      Icon: Trophy,
       pct: leftPct,
       pctColor: (v: number) => (v >= 0 ? "text-emerald-600" : "text-rose-600"),
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
-      pctLabel: "vs last week",
     },
   ];
 
   const bestDay = analytics.days.reduce((best, day) => day.total > best.total ? day : best, analytics.days[0] || { label: "", total: 0 });
 
   // Upgrade 5 — Numeric Y-axis labels (K-formatted), grid lines, tighter spacing
-  // Compute 4 clean Y-axis ticks: 0, low-mid, mid, high
   const yMax = max;
   const yTicks = [
     yMax,
@@ -143,23 +139,28 @@ export default async function AnalyticsPage() {
           </label>
         </div>
 
-        {/* Upgrade 4 — 4 summary cards with real period-over-period % indicators */}
+        {/* Upgrade 4 — 4 summary cards with real period-over-period % indicators (natural case, matching mockup 1) */}
         <div className="mt-5 grid grid-cols-2 gap-3">
-          {cards.map((card) => (
-            <div key={card.label} className={`rounded-2xl border border-zinc-100 bg-gradient-to-br ${card.tone} p-4`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${card.accent}`}>{card.label}</p>
-              <p className="mt-2 text-xl font-bold text-zinc-900">₦{Number(card.value).toLocaleString()}</p>
-              {card.pct !== null ? (
-                <p className={`mt-1 flex items-center gap-0.5 text-xs font-semibold ${card.pctColor(card.pct)}`}>
-                  <span className="text-sm leading-none">{card.pctArrow(card.pct)}</span>
-                  <span>{Math.abs(card.pct)}%</span>
-                  <span className="ml-0.5 font-normal text-zinc-500">{card.pctLabel}</span>
-                </p>
-              ) : (
-                <p className="mt-1 text-xs text-zinc-400">No prior period data</p>
-              )}
-            </div>
-          ))}
+          {cards.map((card) => {
+            const Icon = card.Icon;
+            return (
+              <div key={card.label} className={`rounded-2xl border border-zinc-100 bg-gradient-to-br ${card.tone} p-4`}>
+                <div className="flex items-center gap-1.5">
+                  <Icon className={`h-4 w-4 ${card.accent}`} />
+                  <p className="text-xs font-medium text-zinc-600">{card.label}</p>
+                </div>
+                <p className="mt-2 text-xl font-bold text-zinc-900">₦{Number(card.value).toLocaleString()}</p>
+                {card.pct !== null ? (
+                  <p className={`mt-1.5 flex items-center gap-0.5 text-xs font-semibold ${card.pctColor(card.pct)}`}>
+                    <span className="text-sm leading-none">{card.pctArrow(card.pct)}</span>
+                    <span>{Math.abs(card.pct)}%</span>
+                  </p>
+                ) : (
+                  <p className="mt-1.5 text-xs text-zinc-400">No prior data</p>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Upgrade 5 — Sales overview chart: #635BFF bars, grid lines, numeric K-labels */}
@@ -192,7 +193,7 @@ export default async function AnalyticsPage() {
                   {analytics.days.map((day, index) => {
                     const height = day.total === 0 ? 0 : Math.max(14, (day.total / max) * 100);
                     return (
-                      <div key={day.label} className="flex h-full flex-1 flex-col items-center justify-end">
+                      <div key={day.label} className="flex h-full flex-1 flex-col items-end justify-end">
                         {height > 0 ? (
                           <div
                             className="relative w-full origin-bottom rounded-t-md bg-[#635BFF]"

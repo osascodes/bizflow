@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Bell, Box, Calendar, ChevronRight, ClipboardList, Lock, LogOut, Receipt, ShoppingBag, ShoppingCart, Store, TrendingUp, User, Wallet, X } from "lucide-react";
+import { Banknote, Bell, Box, Calendar, ChevronRight, ClipboardList, Lock, LogOut, Receipt, ShoppingBag, ShoppingCart, Store, TrendingUp, User, Wallet, X } from "lucide-react";
 import { logoutAction } from "@/features/auth/actions";
 
 type Need = { id: string; title: string; detail: string; status: string; createdAt?: string; number?: string };
@@ -10,6 +10,7 @@ type Low = { id: string; name: string; stock: number };
 type Owed = { id: string; name: string; left: number };
 type Today = { id: string; total: number; items: string; createdAt?: string };
 type Cost = { id: string; title: string; amount: number; createdAt?: string };
+type DebtEvent = { id: string; name: string; amount: number; createdAt: string };
 type Snapshot = {
   category: string;
   name: string;
@@ -26,6 +27,8 @@ type Snapshot = {
   owed?: Owed[];
   today?: Today[];
   costs?: Cost[];
+  debts?: DebtEvent[];
+  payments?: DebtEvent[];
 };
 
 const KEY = "brinset-home";
@@ -115,6 +118,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
     createdAt: sale.createdAt || "",
     href: "",
     badge: "",
+    detail: "",
   }));
 
   const costItems = (saved.costs || []).map((cost) => ({
@@ -129,6 +133,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
     createdAt: cost.createdAt || "",
     href: "",
     badge: "",
+    detail: "",
   }));
 
   const orderItems = (saved.needs || []).map((order) => {
@@ -146,12 +151,43 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
       createdAt: order.createdAt || "",
       href: `/storefront?order=${encodeURIComponent(order.id)}`,
       badge: order.status === "pending" ? "Pending" : "",
+      detail: "",
     };
   });
 
-  const activity = [...salesItems, ...costItems, ...orderItems]
+  const debtItems = (saved.debts || []).map((debt) => ({
+    id: debt.id,
+    kind: "debt" as const,
+    title: "Debt recorded",
+    timeAgo: getTimeAgo(debt.createdAt),
+    amount: `₦${Number(debt.amount).toLocaleString()}`,
+    tone: "text-zinc-900",
+    Icon: Wallet,
+    iconWrap: "bg-[#F2EFFE] text-[#635BFF]",
+    createdAt: debt.createdAt || "",
+    href: "",
+    badge: "",
+    detail: debt.name,
+  }));
+
+  const paymentItems = (saved.payments || []).map((payment) => ({
+    id: payment.id,
+    kind: "payment" as const,
+    title: "Debt payment received",
+    timeAgo: getTimeAgo(payment.createdAt),
+    amount: `₦${Number(payment.amount).toLocaleString()}`,
+    tone: "text-emerald-600",
+    Icon: Banknote,
+    iconWrap: "bg-[#EAF8F1] text-[#12B76A]",
+    createdAt: payment.createdAt || "",
+    href: "",
+    badge: "",
+    detail: payment.name,
+  }));
+
+  const activity = [...salesItems, ...costItems, ...orderItems, ...debtItems, ...paymentItems]
     .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)))
-    .slice(0, 5);
+    .slice(0, 6);
 
   return (
     <main className="px-4 py-5 pb-28 md:px-8">
@@ -285,7 +321,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
                     </span>
                     <div className="min-w-0">
                       <p className="font-semibold text-sm text-zinc-900">{item.title}</p>
-                      <p className="text-xs text-zinc-400 mt-0.5">{item.timeAgo}</p>
+                      <p className="text-xs text-zinc-400 mt-0.5">{item.detail ? `${item.detail} · ${item.timeAgo}` : item.timeAgo}</p>
                     </div>
                   </div>
                   <div className="flex shrink-0 items-center gap-2">

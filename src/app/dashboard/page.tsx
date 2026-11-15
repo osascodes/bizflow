@@ -2,7 +2,7 @@ import { getCurrentUser } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getLowStockCount, getLowStock } from "@/features/inventory/queries";
 import { getTodaySalesTotal, getTodaySales } from "@/features/sales/queries";
-import { getDebtsDue, getDebtsOwed } from "@/features/debts/queries";
+import { getDebtsDue, getDebtsOwed, getRecentDebts, getRecentDebtPayments } from "@/features/debts/queries";
 import { getTodayExpenses, getTodayCosts } from "@/features/expenses/queries";
 import { getOrdersToDo } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
@@ -40,10 +40,12 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   let ordersToDo: { id: string; customer: string; items: string[]; status: string; createdAt: string; number: string }[] = [];
   let lowItems: { id: string; name: string; stock: number }[] = [];
   let owed: { id: string; name: string; left: number }[] = [];
-  let todaySales: { id: string; total: number; items: string }[] = [];
-  let todayCosts: { id: string; title: string; amount: number }[] = [];
+  let todaySales: { id: string; total: number; items: string; createdAt?: string }[] = [];
+  let todayCosts: { id: string; title: string; amount: number; createdAt?: string }[] = [];
+  let recentDebts: { id: string; name: string; amount: number; createdAt: string }[] = [];
+  let recentPayments: { id: string; name: string; amount: number; createdAt: string }[] = [];
   try {
-    const [stock, sales, debts, costs, orders, lows, due, todays, costItems] = await Promise.all([
+    const [stock, sales, debts, costs, orders, lows, due, todays, costItems, debtItems, paymentItems] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(selected),
       getDebtsDue(),
@@ -53,6 +55,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       getDebtsOwed(),
       getTodaySales(selected),
       isOwner ? getTodayCosts(selected) : Promise.resolve([]),
+      getRecentDebts(),
+      getRecentDebtPayments(),
     ]);
     lowStock = stock;
     salesToday = sales;
@@ -63,6 +67,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     owed = due;
     todaySales = todays;
     todayCosts = costItems;
+    recentDebts = debtItems;
+    recentPayments = paymentItems;
   } catch {
     lowStock = 0;
     salesToday = 0;
@@ -121,8 +127,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         owed,
         today: todaySales,
         costs: todayCosts,
-
-
+        debts: recentDebts,
+        payments: recentPayments,
       }}
     />
   );

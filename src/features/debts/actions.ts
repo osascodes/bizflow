@@ -66,6 +66,12 @@ export async function recordPaymentAction(formData: FormData) {
   const nextPaid = Math.min(Number(debt.amount), Number(debt.paid) + payment);
   const { error } = await supabase.from("debts").update({ paid: nextPaid }).eq("id", debt.id);
   if (error) throw new Error(error.message);
+  await supabase.from("debt_payments").insert({
+    business_id: business.id,
+    debt_id: debt.id,
+    amount: payment,
+  });
   revalidatePath("/debts");
   revalidatePath("/dashboard");
+  revalidatePath("/activity");
 }

@@ -66,12 +66,12 @@ export async function updateOrderStatusAction(formData: FormData) {
   if (status === "done") {
       for (const row of rows) {
         if (!row.product_id) continue;
-        const { data: product } = await supabase.from("products").select("name, price, stock").eq("id", row.product_id).eq("business_id", business.id).single();
+        const { data: product } = await supabase.from("products").select("name, price, stock, cost_price").eq("id", row.product_id).eq("business_id", business.id).single();
         if (!product) continue;
         if (Number(product.stock) < Number(row.quantity)) return { error: `Not enough stock for ${product.name}` };
         const { data: sale, error: saleError } = await supabase.from("sales").insert({ business_id: business.id, total: Number(product.price) * Number(row.quantity) }).select("id").single();
         if (saleError || !sale) return { error: saleError?.message || "Could not record the sale" };
-        const { error: itemError } = await supabase.from("sale_items").insert({ sale_id: sale.id, product_id: row.product_id, name: product.name, quantity: row.quantity, price: product.price });
+        const { error: itemError } = await supabase.from("sale_items").insert({ sale_id: sale.id, product_id: row.product_id, name: product.name, quantity: row.quantity, price: product.price, cost_price: product.cost_price ?? null });
         if (itemError) return { error: itemError.message };
         const { error: stockError } = await supabase.from("products").update({ stock: Number(product.stock) - Number(row.quantity) }).eq("id", row.product_id);
         if (stockError) return { error: stockError.message };

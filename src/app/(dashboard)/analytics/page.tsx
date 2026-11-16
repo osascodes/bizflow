@@ -39,7 +39,8 @@ export default async function AnalyticsPage() {
   const max = Math.max(...analytics.days.map((day) => day.total), 1);
   const left = analytics.netProfit;
   const prevLeft = analytics.prevNetProfit;
-  const hasWeekSales = analytics.weekSales > 0;
+  const chartTotal = analytics.days.reduce((sum, day) => sum + Number(day.total), 0);
+  const hasChartSales = chartTotal > 0;
 
   // Upgrade 4 — Real period-over-period % on all 4 cards
   // For costs: green = cost decreased (good), red = cost increased (bad)
@@ -171,8 +172,7 @@ export default async function AnalyticsPage() {
             <h2 className="font-semibold">Sales overview</h2>
             <span className="flex items-center gap-1 text-xs text-zinc-500"><span className="h-2 w-2 rounded-full bg-[#635BFF]" /> Sales</span>
           </div>
-          {hasWeekSales ? (
-            <div className="mt-4">
+          <div className="mt-4">
               {/* Chart area */}
               <div className="relative" style={{ height: "180px" }}>
                 {/* Y-axis labels + horizontal grid lines */}
@@ -195,17 +195,17 @@ export default async function AnalyticsPage() {
                   {analytics.days.map((day, index) => {
                     const height = day.total === 0 ? 0 : Math.max(14, (day.total / max) * 100);
                     return (
-                      <div key={day.label} className="flex h-full flex-1 flex-col items-end justify-end">
-                        {height > 0 ? (
-                          <div
-                            className="relative w-full origin-bottom rounded-t-md bg-[#635BFF]"
-                            style={{ height: `calc(${height}% - 1px)`, animation: `barRise 600ms ease ${index * 60}ms both` }}
-                          >
+                      <div key={`${day.label}-${day.date}`} className="flex h-full flex-1 flex-col items-end justify-end">
+                        <div
+                          className={`relative w-full origin-bottom rounded-t-md ${height > 0 ? "bg-[#635BFF]" : "bg-zinc-200"}`}
+                          style={{ height: height > 0 ? `calc(${height}% - 1px)` : "2px", animation: `barRise 600ms ease ${index * 60}ms both` }}
+                        >
+                          {height > 0 ? (
                             <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-semibold text-zinc-600">
                               {fmtK(day.total)}
                             </span>
-                          </div>
-                        ) : null}
+                          ) : null}
+                        </div>
                       </div>
                     );
                   })}
@@ -221,8 +221,8 @@ export default async function AnalyticsPage() {
                 ))}
               </div>
             </div>
-          ) : (
-            <p className="mt-4 text-sm text-zinc-500">No sales in the last 7 days. This month is ₦{analytics.monthSales.toLocaleString()}.</p>
+          {hasChartSales ? null : (
+            <p className="mt-3 text-xs text-zinc-500">No sales recorded yet. Your sales activity will appear here.</p>
           )}
         </section>
 

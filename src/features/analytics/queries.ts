@@ -126,16 +126,20 @@ export async function getAnalytics() {
   const netProfit = weekSales - weekProfit.cogs - weekCosts;
   const prevNetProfit = prevWeekSales - prevProfit.cogs - prevWeekCosts;
 
+  const lagosToday = lagosDate(now);
   const days = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(chartStart);
-    date.setDate(chartStart.getDate() + index);
-    const key = dayKey(date);
+    const day = new Date(Date.UTC(
+      lagosToday.getUTCFullYear(),
+      lagosToday.getUTCMonth(),
+      lagosToday.getUTCDate() - 6 + index
+    ));
+    const key = day.toISOString().slice(0, 10);
     const total = rows
       .filter((sale) => dayKey(new Date(sale.created_at)) === key)
       .reduce((sum, sale) => sum + Number(sale.total), 0);
     return {
-      label: date.toLocaleDateString("en-NG", { weekday: "short", timeZone: "Africa/Lagos" }),
-      date: date.getDate(),
+      label: day.toLocaleDateString("en-NG", { weekday: "short", timeZone: "UTC" }),
+      date: day.getUTCDate(),
       total,
     };
   });

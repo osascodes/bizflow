@@ -33,7 +33,7 @@ export default function CostList({ costs, todayOnly = false }: { costs: Cost[]; 
       <input
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Search costs"
+        placeholder="Search expenses"
         className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none"
       />
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}

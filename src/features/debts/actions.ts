@@ -13,13 +13,27 @@ export async function createCustomerAction(formData: FormData) {
   if (!business) throw new Error("Create your business first");
 
   const supabase = await createServerSupabase();
-  const { error } = await supabase.from("customers").insert({
+  const { data: existing } = await supabase
+    .from("customers")
+    .select("id, name")
+    .eq("business_id", business.id)
+    .ilike("name", name)
+    .limit(1)
+    .maybeSingle();
+  if (existing) {
+    revalidatePath("/debts");
+    revalidatePath("/customers");
+    return existing;
+  }
+  const { data, error } = await supabase.from("customers").insert({
     business_id: business.id,
     name,
     phone: phone || null,
-  });
+  }).select("id, name").single();
   if (error) throw new Error(error.message);
   revalidatePath("/debts");
+  revalidatePath("/customers");
+  return data;
 }
 
 export async function createDebtAction(formData: FormData) {

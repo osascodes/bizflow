@@ -152,7 +152,7 @@ export default async function AnalyticsPage() {
                 </div>
                 <p className="mt-2 text-xl font-bold text-zinc-900">₦{Number(card.value).toLocaleString()}</p>
                 {card.label === "Net Profit This Week" && analytics.missingCostUnits > 0 ? (
-                  <p className="mt-1.5 text-xs font-medium text-amber-700">⚠ {analytics.missingCostUnits} items missing cost</p>
+                  <p className="mt-1.5 text-xs font-medium text-amber-700">⚠ {analytics.missingCostUnits === 1 ? "1 item missing cost" : `${analytics.missingCostUnits} items missing cost`}</p>
                 ) : card.pct !== null ? (
                   <p className={`mt-1.5 flex items-center gap-0.5 text-xs font-semibold ${card.pctColor(card.pct)}`}>
                     <span className="text-sm leading-none">{card.pctArrow(card.pct)}</span>

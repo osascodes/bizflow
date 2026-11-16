@@ -9,48 +9,36 @@ import { Label } from "@/components/ui/label";
 
 type Customer = { id: string; name: string; phone: string | null };
 
-export function CustomerForm() {
-  const [errorMessage, setErrorMessage] = useState("");
-  const [pending, setPending] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  return (
-    <form
-      className="space-y-3 rounded-2xl border border-zinc-200 bg-white p-5"
-      action={async (formData) => {
-        setErrorMessage("");
-        setSaved(false);
-        setPending(true);
-        try {
-          await createCustomerAction(formData);
-          setSaved(true);
-          window.setTimeout(() => setSaved(false), 2000);
-        } catch (error: unknown) {
-          setErrorMessage(error instanceof Error ? error.message : "Could not save customer.");
-        } finally {
-          setPending(false);
-        }
-      }}
-    >
-      <h2 className="font-semibold text-zinc-950">Add customer</h2>
-      {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
-      <div className="space-y-1.5">
-        <Label className="text-zinc-600">Name</Label>
-        <Input name="name" placeholder="Ada" required />
-      </div>
-      <div className="space-y-1.5">
-        <Label className="text-zinc-600">Phone</Label>
-        <Input name="phone" placeholder="0801 234 5678" />
-      </div>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : saved ? "Saved" : "Save customer"}</Button>
-    </form>
-  );
-}
-
 export function DebtForm({ customers }: { customers: Customer[] }) {
   const [errorMessage, setErrorMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [adding, setAdding] = useState(false);
+  const [list, setList] = useState(customers);
+  const [selected, setSelected] = useState("");
+  const [newName, setNewName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
+
+  const addCustomer = async () => {
+    setErrorMessage("");
+    setPending(true);
+    try {
+      const form = new FormData();
+      form.set("name", newName);
+      form.set("phone", newPhone);
+      const created = await createCustomerAction(form);
+      if (!created?.id) throw new Error("Could not save customer.");
+      setList((current) => current.some((item) => item.id === created.id) ? current : [...current, { id: created.id, name: created.name, phone: newPhone || null }]);
+      setSelected(created.id);
+      setNewName("");
+      setNewPhone("");
+      setAdding(false);
+    } catch (error: unknown) {
+      setErrorMessage(error instanceof Error ? error.message : "Could not save customer.");
+    } finally {
+      setPending(false);
+    }
+  };
 
   return (
     <form
@@ -73,10 +61,20 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
       <h2 className="font-semibold text-zinc-950">Record debt</h2>
       {errorMessage ? <p className="text-sm text-red-400">{errorMessage}</p> : null}
       <div className="space-y-1.5">
-        <Label className="text-zinc-600">Customer</Label>
-        <select name="customer_id" required className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
+        <div className="flex items-center justify-between">
+          <Label className="text-zinc-600">Customer</Label>
+          <button type="button" onClick={() => setAdding((value) => !value)} className="text-xs font-medium text-[#635BFF]">{adding ? "Cancel" : "Add new"}</button>
+        </div>
+        {adding ? (
+          <div className="space-y-2 rounded-xl border border-zinc-200 p-3">
+            <Input value={newName} onChange={(event) => setNewName(event.target.value)} placeholder="Customer name" />
+            <Input value={newPhone} onChange={(event) => setNewPhone(event.target.value)} placeholder="Phone, optional" />
+            <Button type="button" onClick={addCustomer} className="h-9 w-full bg-[#635BFF] text-white" disabled={pending}>{pending ? "Saving..." : "Save customer"}</Button>
+          </div>
+        ) : null}
+        <select name="customer_id" required value={selected} onChange={(event) => setSelected(event.target.value)} className="h-10 w-full rounded-lg border border-zinc-300 bg-white px-3 text-sm text-zinc-950">
           <option value="">Select a customer</option>
-          {customers.map((customer) => (
+          {list.map((customer) => (
             <option key={customer.id} value={customer.id}>{customer.name}</option>
           ))}
         </select>
@@ -89,7 +87,7 @@ export function DebtForm({ customers }: { customers: Customer[] }) {
         <Label className="text-zinc-600">Note</Label>
         <Input name="note" placeholder="2 gowns, pay Friday" />
       </div>
-      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending || customers.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>
+      <Button type="submit" className="w-full bg-[#635BFF] text-white" disabled={pending || list.length === 0}>{pending ? "Saving..." : saved ? "Saved" : "Save debt"}</Button>
     </form>
   );
 }

@@ -59,3 +59,30 @@ export async function getTodaySales(day = new Date()) {
     createdAt: sale.created_at as string,
   }));
 }
+
+export async function getTodayProfit(day = new Date()) {
+  const business = await getCurrentBusiness();
+  if (!business) return { revenue: 0, cogs: 0, missingUnits: 0 };
+  const lagos = new Date(day.getTime() + 60 * 60 * 1000);
+  const start = new Date(Date.UTC(lagos.getUTCFullYear(), lagos.getUTCMonth(), lagos.getUTCDate()) - 60 * 60 * 1000);
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+  const supabase = await createServerSupabase();
+  const { data } = await supabase
+    .from("sales")
+    .select("total, sale_items(quantity, cost_price)")
+    .eq("business_id", business.id)
+    .gte("created_at", start.toISOString())
+    .lt("created_at", end.toISOString());
+  let revenue = 0;
+  let cogs = 0;
+  let missingUnits = 0;
+  for (const sale of data ?? []) {
+    revenue += Number(sale.total);
+    for (const item of sale.sale_items ?? []) {
+      if (item.cost_price == null) missingUnits += Number(item.quantity);
+      else cogs += Number(item.cost_price) * Number(item.quantity);
+    }
+  }
+  return { revenue, cogs, missingUnits };
+}

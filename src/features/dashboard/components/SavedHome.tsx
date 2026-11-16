@@ -21,7 +21,7 @@ type Snapshot = {
   email?: string;
   dateValue?: string;
   dateLabel?: string;
-  stats: [string, string][];
+  stats: [string, string, string?][];
   needs?: Need[];
   low?: Low[];
   owed?: Owed[];
@@ -35,8 +35,8 @@ const KEY = "brinset-home";
 
 // Upgrade 1 — Uniform soft lavender-gray (#F4F4F9) background with crisp #635BFF icons on all 6 KPI cards
 function getTone(label: string): { wrap: string; icon: string; Icon: typeof Receipt } {
-  if (label.startsWith("Costs")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: Wallet };
-  if (label.startsWith("Left")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: TrendingUp };
+  if (label.startsWith("Expenses")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: Wallet };
+  if (label.startsWith("Net profit")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: TrendingUp };
   if (label.startsWith("Low stock")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: Box };
   if (label.startsWith("Orders")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: ShoppingBag };
   if (label.startsWith("Debts")) return { wrap: "bg-[#F4F4F9]", icon: "text-[#635BFF]", Icon: Wallet };
@@ -49,7 +49,7 @@ function hrefFor(label: string) {
   if (label === "Low stock") return "/inventory?focus=low";
   if (label === "Debts due") return "/debts";
   if (label.startsWith("Sales")) return "/sales?today=1";
-  if (label.startsWith("Costs")) return "/expenses?today=1";
+  if (label.startsWith("Expenses")) return "/expenses?today=1";
   return "";
 }
 
@@ -281,7 +281,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
 
         {/* Upgrade 1 — Uniform #F4F4F9 KPI cards with crisp #635BFF icons */}
         <div className="mt-3 grid grid-cols-2 gap-3 lg:grid-cols-3">
-          {saved.stats.map(([label, value]) => {
+          {saved.stats.map(([label, value, note]) => {
             const tone = getTone(label);
             const Icon = tone.Icon;
             const href = hrefFor(label);
@@ -294,6 +294,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
                   <p className="text-sm text-zinc-500">{label}</p>
                 </div>
                 <p className="mt-3 text-2xl font-semibold text-zinc-900">{value}</p>
+                {note ? <p className="mt-1 text-xs font-medium text-amber-700">{note}</p> : null}
               </>
             );
             const klass = `rounded-2xl ${tone.wrap} p-4 border border-zinc-100`;

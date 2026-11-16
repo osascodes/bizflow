@@ -3,7 +3,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import SavedList from "@/components/SavedList";
 import { getCustomers, getDebts } from "@/features/debts/queries";
-import { CustomerForm, DebtForm } from "@/features/debts/components/DebtForms";
+import { DebtForm } from "@/features/debts/components/DebtForms";
 import DebtList from "@/features/debts/components/DebtList";
 import OfflineDebts from "@/features/debts/components/OfflineDebts";
 
@@ -68,8 +68,7 @@ export default async function DebtsPage() {
       <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
         <div className="space-y-4">
           <h1 className="text-2xl font-semibold text-zinc-950">Debts</h1>
-          <p className="text-sm text-zinc-400">Add the customer, then record what they owe.</p>
-          <CustomerForm />
+          <p className="text-sm text-zinc-400">Pick a customer, or add one here, then record what they owe.</p>
           <DebtForm customers={customers} />
         </div>
         <DebtList

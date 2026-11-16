@@ -27,11 +27,11 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
     return (
       <main className="px-4 py-8 md:px-8">
         <div className="mx-auto max-w-5xl">
-          <h1 className="text-2xl font-semibold text-zinc-950">Costs</h1>
-          <p className="mt-2 text-sm text-zinc-500">Offline. New costs stay on this phone until the network returns.</p>
+          <h1 className="text-2xl font-semibold text-zinc-950">Expenses</h1>
+          <p className="mt-2 text-sm text-zinc-500">Offline. New expenses stay on this phone until the network returns.</p>
           <OfflineCosts />
           <div className="mt-8">
-            <SavedList storageKey="bizflow-costs" title="Last costs" subtitle="Saved costs." offline />
+            <SavedList storageKey="bizflow-costs" title="Last expenses" subtitle="Saved expenses." offline />
           </div>
         </div>
       </main>
@@ -47,11 +47,11 @@ export default async function ExpensesPage({ searchParams }: { searchParams: Pro
 
   return (
     <>
-      <SavedList storageKey="bizflow-costs" title="Costs" subtitle="Saved for offline." items={saved} />
+      <SavedList storageKey="bizflow-costs" title="Expenses" subtitle="Saved for offline." items={saved} />
       <main className="px-4 py-8 md:px-8">
         <div className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[320px_1fr]">
           <div>
-            <h1 className="text-2xl font-semibold text-zinc-950">Costs</h1>
+            <h1 className="text-2xl font-semibold text-zinc-950">Expenses</h1>
             <p className="mt-2 text-sm text-zinc-400">Money that left the shop today and earlier.</p>
             <div className="mt-6">
               <ExpenseForm />

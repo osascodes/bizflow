@@ -1,7 +1,7 @@
 import { getCurrentUser } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getLowStockCount, getLowStock } from "@/features/inventory/queries";
-import { getTodaySalesTotal, getTodaySales } from "@/features/sales/queries";
+import { getTodaySalesTotal, getTodaySales, getTodayProfit } from "@/features/sales/queries";
 import { getDebtsDue, getDebtsOwed, getRecentDebts, getRecentDebtPayments } from "@/features/debts/queries";
 import { getTodayExpenses, getTodayCosts } from "@/features/expenses/queries";
 import { getOrdersToDo } from "@/features/orders/queries";
@@ -37,6 +37,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   let salesToday = 0;
   let debtsDue = 0;
   let costsToday = 0;
+  let todayProfit = { revenue: 0, cogs: 0, missingUnits: 0 };
   let ordersToDo: { id: string; customer: string; items: string[]; status: string; createdAt: string; number: string }[] = [];
   let lowItems: { id: string; name: string; stock: number }[] = [];
   let owed: { id: string; name: string; left: number }[] = [];
@@ -45,7 +46,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
   let recentDebts: { id: string; name: string; amount: number; createdAt: string }[] = [];
   let recentPayments: { id: string; name: string; amount: number; createdAt: string }[] = [];
   try {
-    const [stock, sales, debts, costs, orders, lows, due, todays, costItems, debtItems, paymentItems] = await Promise.all([
+    const [stock, sales, debts, costs, orders, lows, due, todays, costItems, debtItems, paymentItems, profit] = await Promise.all([
       getLowStockCount(),
       getTodaySalesTotal(selected),
       getDebtsDue(),
@@ -57,7 +58,9 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
       isOwner ? getTodayCosts(selected) : Promise.resolve([]),
       getRecentDebts(),
       getRecentDebtPayments(),
+      getTodayProfit(selected),
     ]);
+    todayProfit = profit;
     lowStock = stock;
     salesToday = sales;
     debtsDue = debts;
@@ -81,16 +84,18 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
     todayCosts = [];
   }
 
-  const leftToday = salesToday - costsToday;
+  const leftToday = todayProfit.revenue - todayProfit.cogs - costsToday;
+  const missingToday = todayProfit.missingUnits;
   const name = (user?.user_metadata?.full_name as string | undefined) || user?.email || "there";
   const salesLabel = isToday ? "Sales today" : `Sales ${dateLabel}`;
-  const costsLabel = isToday ? "Costs today" : `Costs ${dateLabel}`;
-  const leftLabel = isToday ? "Left today" : `Left ${dateLabel}`;
+  const costsLabel = isToday ? "Expenses today" : `Expenses ${dateLabel}`;
+  const leftLabel = isToday ? "Net profit today" : `Net profit ${dateLabel}`;
+  const missingNote = missingToday === 1 ? "⚠ 1 item missing cost" : missingToday > 1 ? `⚠ ${missingToday} items missing cost` : "";
   const stats = isOwner
     ? [
         [salesLabel, money(salesToday)],
         [costsLabel, money(costsToday)],
-        [leftLabel, money(leftToday)],
+        [leftLabel, money(leftToday), missingNote],
         ["Debts due", money(debtsDue)],
         ["Low stock", lowStock === 1 ? "1 item" : `${lowStock} items`],
         ["Orders to do", String(ordersToDo.length)],
@@ -114,7 +119,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         email: user?.email || "",
         dateValue,
         dateLabel,
-        stats: stats as [string, string][],
+        stats: stats as [string, string, string?][],
         needs: ordersToDo.map((order) => ({
           id: order.id,
           title: order.customer,

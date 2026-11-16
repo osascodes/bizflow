@@ -11,6 +11,7 @@ type Product = {
   id: string;
   name: string;
   price: number;
+  cost_price?: number | null;
   stock: number;
   image_url?: string | null;
   description?: string | null;
@@ -139,9 +140,16 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
             <Input name="name" defaultValue={product.name} />
             <Input name="description" defaultValue={product.description || ""} placeholder="Description" />
             <div className="grid grid-cols-2 gap-2">
-              <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
-              <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-400">Selling Price</Label>
+                <Input name="price" type="number" min="0" step="0.01" defaultValue={product.price} />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-zinc-400">Cost Price</Label>
+                <Input name="cost_price" type="number" min="0" step="0.01" defaultValue={product.cost_price ?? ""} placeholder="Optional" />
+              </div>
             </div>
+            <Input name="stock" type="number" min="0" step="1" defaultValue={product.stock} />
             <div className="space-y-1">
               <Label className="text-xs text-zinc-400">Warn me when stock is</Label>
               <Input name="low_stock_at" type="number" min="0" step="1" defaultValue={product.low_stock_at} />

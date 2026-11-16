@@ -37,8 +37,8 @@ export default async function AnalyticsPage() {
 
   const analytics = await getAnalytics();
   const max = Math.max(...analytics.days.map((day) => day.total), 1);
-  const left = analytics.weekSales - analytics.weekCosts;
-  const prevLeft = analytics.prevWeekSales - analytics.prevWeekCosts;
+  const left = analytics.netProfit;
+  const prevLeft = analytics.prevNetProfit;
   const hasWeekSales = analytics.weekSales > 0;
 
   // Upgrade 4 — Real period-over-period % on all 4 cards
@@ -51,7 +51,7 @@ export default async function AnalyticsPage() {
   // Appearance config per card (Natural case title, matching icons from mockup 1)
   const cards = [
     {
-      label: "Sales this week",
+      label: "Sales This Week",
       value: analytics.weekSales,
       tone: "from-[#635BFF]/15 to-[#635BFF]/5",
       accent: "text-[#635BFF]",
@@ -61,7 +61,7 @@ export default async function AnalyticsPage() {
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
     },
     {
-      label: "Sales this month",
+      label: "Sales This Month",
       value: analytics.monthSales,
       tone: "from-[#635BFF]/10 to-[#635BFF]/5",
       accent: "text-[#635BFF]",
@@ -71,7 +71,7 @@ export default async function AnalyticsPage() {
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
     },
     {
-      label: "Costs this week",
+      label: "Expenses This Week",
       value: analytics.weekCosts,
       tone: "from-amber-100 to-amber-50",
       accent: "text-amber-600",
@@ -81,7 +81,7 @@ export default async function AnalyticsPage() {
       pctArrow: (v: number) => (v >= 0 ? "↑" : "↓"),
     },
     {
-      label: "Left this week",
+      label: "Net Profit This Week",
       value: left,
       tone: left >= 0 ? "from-emerald-100 to-emerald-50" : "from-rose-100 to-rose-50",
       accent: left >= 0 ? "text-emerald-600" : "text-rose-600",
@@ -150,7 +150,9 @@ export default async function AnalyticsPage() {
                   <p className="text-xs font-medium text-zinc-600">{card.label}</p>
                 </div>
                 <p className="mt-2 text-xl font-bold text-zinc-900">₦{Number(card.value).toLocaleString()}</p>
-                {card.pct !== null ? (
+                {card.label === "Net Profit This Week" && analytics.missingCostUnits > 0 ? (
+                  <p className="mt-1.5 text-xs font-medium text-amber-700">⚠ {analytics.missingCostUnits} items missing cost</p>
+                ) : card.pct !== null ? (
                   <p className={`mt-1.5 flex items-center gap-0.5 text-xs font-semibold ${card.pctColor(card.pct)}`}>
                     <span className="text-sm leading-none">{card.pctArrow(card.pct)}</span>
                     <span>{Math.abs(card.pct)}%</span>

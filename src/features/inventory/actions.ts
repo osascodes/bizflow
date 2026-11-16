@@ -19,6 +19,7 @@ export async function createProductAction(formData: FormData) {
   const parsed = productSchema.safeParse({
     name: formData.get("name"),
     price: formData.get("price"),
+    cost_price: formData.get("cost_price"),
     stock: formData.get("stock"),
     description: formData.get("description") || undefined,
   });
@@ -40,6 +41,7 @@ export async function createProductAction(formData: FormData) {
     business_id: business.id,
     name: parsed.data.name,
     price: parsed.data.price,
+    cost_price: parsed.data.cost_price ?? null,
     stock: parsed.data.stock,
     description: parsed.data.description || null,
     image_url: imageUrl,
@@ -56,6 +58,7 @@ export async function updateProductAction(formData: FormData) {
   const parsed = productSchema.safeParse({
     name: formData.get("name"),
     price: formData.get("price"),
+    cost_price: formData.get("cost_price"),
     stock: formData.get("stock"),
     description: formData.get("description") || undefined,
     low_stock_at: formData.get("low_stock_at") || undefined,
@@ -68,9 +71,10 @@ export async function updateProductAction(formData: FormData) {
 
   const supabase = await createServerSupabase();
   const file = formData.get("image");
-  const updates: { name: string; price: number; stock: number; description: string | null; low_stock_at?: number; image_url?: string } = {
+  const updates: { name: string; price: number; cost_price: number | null; stock: number; description: string | null; low_stock_at?: number; image_url?: string } = {
     name: parsed.data.name,
     price: parsed.data.price,
+    cost_price: parsed.data.cost_price ?? null,
     stock: parsed.data.stock,
     description: parsed.data.description || null,
     ...(parsed.data.low_stock_at !== undefined ? { low_stock_at: parsed.data.low_stock_at } : {}),

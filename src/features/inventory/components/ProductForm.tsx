@@ -19,7 +19,7 @@ export default function ProductForm() {
 
   const form = useForm<z.input<typeof productSchema>, unknown, FormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: { name: "", price: 0, stock: 0, description: "" },
+    defaultValues: { name: "", price: 0, cost_price: undefined, stock: 0, description: "" },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -29,11 +29,12 @@ export default function ProductForm() {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("price", String(data.price));
+      if (data.cost_price !== undefined) formData.append("cost_price", String(data.cost_price));
       formData.append("stock", String(data.stock));
       formData.append("description", data.description || "");
       if (image) formData.append("image", image);
       await createProductAction(formData);
-      form.reset({ name: "", price: 0, stock: 0, description: "" });
+      form.reset({ name: "", price: 0, cost_price: undefined, stock: 0, description: "" });
       setImage(null);
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Could not save product.");
@@ -58,8 +59,12 @@ export default function ProductForm() {
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-1.5">
-          <Label className="text-zinc-600">Price</Label>
-          <Input {...form.register("price")} type="number" min="0" step="0.01" />
+          <Label className="text-zinc-600">Selling Price</Label>
+          <Input {...form.register("price")} type="number" min="0" step="0.01" placeholder="Sell for" />
+        </div>
+        <div className="space-y-1.5">
+          <Label className="text-zinc-600">Cost Price</Label>
+          <Input {...form.register("cost_price")} type="number" min="0" step="0.01" placeholder="Optional" />
         </div>
         <div className="space-y-1.5">
           <Label className="text-zinc-600">Stock</Label>

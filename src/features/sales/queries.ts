@@ -86,3 +86,68 @@ export async function getTodayProfit(day = new Date()) {
   }
   return { revenue, cogs, missingUnits };
 }
+
+export async function getDayClose(day = new Date()) {
+  const business = await getCurrentBusiness();
+  if (!business) return null;
+  const lagos = new Date(day.getTime() + 60 * 60 * 1000);
+  const start = new Date(Date.UTC(lagos.getUTCFullYear(), lagos.getUTCMonth(), lagos.getUTCDate()) - 60 * 60 * 1000);
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+  const supabase = await createServerSupabase();
+  const [{ data: sales }, { data: expenses }, { data: payments }] = await Promise.all([
+    supabase
+      .from("sales")
+      .select("id, total, created_at, sale_items(name, quantity)")
+      .eq("business_id", business.id)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString())
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("expenses")
+      .select("title, amount")
+      .eq("business_id", business.id)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString()),
+    supabase
+      .from("debt_payments")
+      .select("amount")
+      .eq("business_id", business.id)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString()),
+  ]);
+
+  const saleIds = (sales ?? []).map((sale) => sale.id);
+  const { data: debts } = saleIds.length
+    ? await supabase.from("debts").select("sale_id, amount, paid").eq("business_id", business.id).in("sale_id", saleIds)
+    : { data: [] };
+
+  const outstandingBySale = new Map<string, number>();
+  for (const debt of debts ?? []) {
+    if (!debt.sale_id) continue;
+    const left = Math.max(0, Number(debt.amount) - Number(debt.paid));
+    outstandingBySale.set(debt.sale_id, (outstandingBySale.get(debt.sale_id) || 0) + left);
+  }
+
+  let salesTotal = 0;
+  let outstanding = 0;
+  for (const sale of sales ?? []) {
+    salesTotal += Number(sale.total);
+    outstanding += outstandingBySale.get(sale.id) || 0;
+  }
+  const collectedOnSales = Math.max(0, salesTotal - outstanding);
+  const debtPayments = (payments ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
+  const expenseTotal = (expenses ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
+
+  return {
+    shop: business.name,
+    salesCount: (sales ?? []).length,
+    salesTotal,
+    collectedOnSales,
+    debtPayments,
+    collected: collectedOnSales + debtPayments,
+    outstanding,
+    expenses: expenseTotal,
+    expenseRows: (expenses ?? []).map((row) => ({ title: row.title, amount: Number(row.amount) })),
+  };
+}

@@ -34,6 +34,7 @@ const moreOwner = [
   { href: "/debts", label: "Debts", icon: ShoppingBag },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/close", label: "Close of day", icon: Receipt },
+  { href: "/restock", label: "Restock", icon: Box },
   { href: "/staff", label: "Staff", icon: Users },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
@@ -42,6 +43,7 @@ const moreStaff = [
   { href: "/storefront", label: "Store", icon: Store },
   { href: "/customers", label: "Customers", icon: Users },
   { href: "/debts", label: "Debts", icon: ShoppingBag },
+  { href: "/restock", label: "Restock", icon: Box },
 ];
 
 function isActive(pathname: string, href: string) {

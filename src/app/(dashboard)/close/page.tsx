@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getDayClose } from "@/features/sales/queries";
-import PrintButton from "@/features/sales/components/PrintButton";
+import PrintReportButton from "@/features/sales/components/PrintReportButton";
 
 function money(value: number) {
   return `₦${Number(value).toLocaleString()}`;
@@ -36,7 +36,7 @@ export default async function ClosePage({ searchParams }: { searchParams: Promis
     <main className="px-4 py-8 pb-28 md:px-8">
       <div className="mx-auto max-w-xl">
         <h1 className="text-2xl font-semibold text-zinc-950">Close of day</h1>
-        <p className="mt-2 text-sm text-zinc-500">Review the day. This does not lock sales or expenses.</p>
+        <p className="mt-2 text-sm text-zinc-500">See what you sold, what you collected, and what is still owed.</p>
         <form className="mt-5 flex items-center gap-2">
           <input type="date" name="date" defaultValue={dateValue} className="h-11 rounded-xl border border-zinc-200 bg-white px-3 text-sm text-zinc-950" />
           <button className="h-11 rounded-xl bg-[#635BFF] px-4 text-sm font-semibold text-white">View</button>
@@ -59,7 +59,7 @@ export default async function ClosePage({ searchParams }: { searchParams: Promis
             <div className="flex justify-between gap-3"><span className="text-zinc-500">Debt payments received</span><span className="font-semibold">{money(close.debtPayments)}</span></div>
             <div className="flex justify-between gap-3 border-t border-zinc-100 pt-3"><span className="text-zinc-950">Total collected</span><span className="font-semibold text-[#635BFF]">{money(close.collected)}</span></div>
           </div>
-          <p className="mt-3 text-xs text-zinc-500">Unpaid credit is not counted as collected. Brinset does not split cash and bank yet.</p>
+          <p className="mt-3 text-xs text-zinc-500">Credit still owed is not included in collected.</p>
         </section>
 
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -84,9 +84,9 @@ export default async function ClosePage({ searchParams }: { searchParams: Promis
           </div>
         </section>
 
-        <div className="mt-5 flex gap-2">
-          <a href={`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`} target="_blank" className="flex h-12 flex-1 items-center justify-center rounded-xl bg-[#635BFF] text-sm font-semibold text-white">Share on WhatsApp</a>
-          <PrintButton />
+        <div className="mt-5 space-y-3">
+          <a href={`https://wa.me/?text=${encodeURIComponent(lines.join("\n"))}`} target="_blank" className="flex h-12 w-full items-center justify-center rounded-xl border border-[#635BFF] bg-white text-sm font-semibold text-[#635BFF]">Share on WhatsApp</a>
+          <PrintReportButton />
         </div>
       </div>
     </main>

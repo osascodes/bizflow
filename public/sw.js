@@ -26,8 +26,6 @@ function isAppPath(url) {
     "/staff",
     "/notifications",
     "/settings",
-    "/close",
-    "/restock",
   ].some((path) => url.pathname === path || url.pathname.startsWith(path + "/"));
 }
 

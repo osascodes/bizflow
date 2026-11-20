@@ -34,7 +34,6 @@ const moreOwner = [
   { href: "/debts", label: "Debts", icon: ShoppingBag },
   { href: "/activity", label: "Activity", icon: Activity },
   { href: "/staff", label: "Staff", icon: Users },
-  { href: "/export", label: "Export", icon: Wallet },
   { href: "/settings", label: "Settings", icon: Settings },
 ];
 

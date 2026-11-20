@@ -3,6 +3,7 @@ import { getAuthState } from "@/lib/auth/utils";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getAnalytics } from "@/features/analytics/queries";
 import SavedStats from "@/features/analytics/components/SavedStats";
+import SalesOverview from "@/features/analytics/components/SalesOverview";
 import { BarChart2, Coins, Trophy, Wallet } from "lucide-react";
 
 // Helper: compute a capped period-over-period % change.
@@ -17,7 +18,7 @@ function pct(current: number, previous: number): number | null {
   return Math.max(-999, Math.min(999, raw));
 }
 
-export default async function AnalyticsPage() {
+export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ from?: string; to?: string }> }) {
   const { offline } = await getAuthState();
   let business = null;
   try {
@@ -35,12 +36,10 @@ export default async function AnalyticsPage() {
   }
   if (business.role !== "owner") redirect("/dashboard");
 
-  const analytics = await getAnalytics();
-  const max = Math.max(...analytics.days.map((day) => day.total), 1);
+  const params = await searchParams;
+  const analytics = await getAnalytics(params.from, params.to);
   const left = analytics.netProfit;
   const prevLeft = analytics.prevNetProfit;
-  const chartTotal = analytics.days.reduce((sum, day) => sum + Number(day.total), 0);
-  const hasChartSales = chartTotal > 0;
 
   // Upgrade 4 — Real period-over-period % on all 4 cards
   // For costs: green = cost decreased (good), red = cost increased (bad)
@@ -95,21 +94,6 @@ export default async function AnalyticsPage() {
 
   const bestDay = analytics.days.reduce((best, day) => day.total > best.total ? day : best, analytics.days[0] || { label: "", total: 0 });
 
-  // Upgrade 5 — Numeric Y-axis labels (K-formatted), grid lines, tighter spacing
-  const yMax = max;
-  const yTicks = [
-    yMax,
-    Math.round(yMax * 0.66),
-    Math.round(yMax * 0.33),
-    0,
-  ];
-
-  function fmtK(n: number): string {
-    if (n === 0) return "0";
-    if (n >= 1000) return `${Math.round(n / 1000)}k`;
-    return String(n);
-  }
-
   return (
     <>
       <SavedStats
@@ -131,13 +115,7 @@ export default async function AnalyticsPage() {
             <h1 className="text-3xl font-semibold">Analytics</h1>
             <p className="mt-1 text-sm text-zinc-500">Understand your business performance</p>
           </div>
-          <label className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 py-1.5 text-xs font-medium text-zinc-700 shadow-sm">
-            <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#635BFF]" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-            <select defaultValue="7" className="bg-transparent text-xs font-medium outline-none">
-              <option value="7">Last 7 days</option>
-              <option value="30">This month</option>
-            </select>
-          </label>
+
         </div>
 
         {/* Upgrade 4 — 4 summary cards with real period-over-period % indicators (natural case, matching mockup 1) */}
@@ -166,65 +144,7 @@ export default async function AnalyticsPage() {
           })}
         </div>
 
-        {/* Upgrade 5 — Sales overview chart: #635BFF bars, grid lines, numeric K-labels */}
-        <section className="mt-5 rounded-2xl border border-zinc-200 bg-white p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-semibold">Sales overview</h2>
-            <span className="flex items-center gap-1 text-xs text-zinc-500"><span className="h-2 w-2 rounded-full bg-[#635BFF]" /> Sales</span>
-          </div>
-          <div className="mt-4">
-              {/* Chart area */}
-              <div className="relative" style={{ height: "180px" }}>
-                {/* Y-axis labels + horizontal grid lines */}
-                {yTicks.map((tick, i) => {
-                  const topPct = i === 0 ? 0 : i === 1 ? 34 : i === 2 ? 67 : 100;
-                  return (
-                    <div
-                      key={tick}
-                      className="absolute left-0 right-0 flex items-center gap-1"
-                      style={{ top: `${topPct}%` }}
-                    >
-                      <span className="w-7 shrink-0 text-right text-[10px] leading-none text-zinc-400">{fmtK(tick)}</span>
-                      {/* Horizontal grid line */}
-                      <div className="flex-1 border-t border-zinc-100" />
-                    </div>
-                  );
-                })}
-                {/* Bars container — sits on top of grid */}
-                <div className="absolute inset-y-0 left-8 right-0 flex items-end gap-1.5">
-                  {analytics.days.map((day, index) => {
-                    const height = day.total === 0 ? 0 : Math.max(14, (day.total / max) * 100);
-                    return (
-                      <div key={`${day.label}-${day.date}`} className="flex h-full flex-1 flex-col items-end justify-end">
-                        <div
-                          className={`relative w-full origin-bottom rounded-t-md ${height > 0 ? "bg-[#635BFF]" : "bg-zinc-200"}`}
-                          style={{ height: height > 0 ? `calc(${height}% - 1px)` : "2px", animation: `barRise 600ms ease ${index * 60}ms both` }}
-                        >
-                          {height > 0 ? (
-                            <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-semibold text-zinc-600">
-                              {fmtK(day.total)}
-                            </span>
-                          ) : null}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-              {/* X-axis day labels */}
-              <div className="mt-1.5 flex pl-8 text-center text-[10px] text-zinc-500">
-                {analytics.days.map((day) => (
-                  <span key={day.label} className="flex-1">
-                    <span className="block font-medium">{day.label}</span>
-                    <span className="block text-zinc-400">{day.date}</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          {hasChartSales ? null : (
-            <p className="mt-3 text-xs text-zinc-500">No sales recorded yet. Your sales activity will appear here.</p>
-          )}
-        </section>
+        <SalesOverview days={analytics.chartDays} from={analytics.chartFrom} to={analytics.chartTo} />
 
         {/* Top-selling products — immediately visible after compact chart */}
         <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">

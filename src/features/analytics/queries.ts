@@ -37,7 +37,15 @@ function dayKey(date: Date) {
 type SaleItem = { name: string; quantity: number; price: number; cost_price: number | null };
 type Sale = { id: string; total: number; created_at: string; sale_items: SaleItem[] | null };
 
-export async function getAnalytics() {
+function parseRequestedStart(value?: string) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+  return lagosStartUtc(year, month - 1, day);
+}
+
+export async function getAnalytics(from?: string, to?: string) {
   const business = await getCurrentBusiness();
   if (!business) {
     return {
@@ -51,6 +59,9 @@ export async function getAnalytics() {
       prevWeekCosts: 0,
       prevNetProfit: 0,
       days: [],
+      chartDays: [],
+      chartFrom: "",
+      chartTo: "",
       topProducts: [],
       lowStock: [],
     };
@@ -64,7 +75,8 @@ export async function getAnalytics() {
   const prevMonthStart = previousMonthStart(now);
   const chartStart = new Date(now);
   chartStart.setDate(chartStart.getDate() - 6);
-  const fetchStart = [prevMonthStart, prevWeekStart, chartStart].sort((a, b) => a.getTime() - b.getTime())[0];
+  const requestedStart = parseRequestedStart(from);
+  const fetchStart = [prevMonthStart, prevWeekStart, chartStart, requestedStart].filter((date): date is Date => Boolean(date)).sort((a, b) => a.getTime() - b.getTime())[0];
 
   const supabase = await createServerSupabase();
   const [{ data: sales }, { data: expenses }, products] = await Promise.all([
@@ -127,6 +139,25 @@ export async function getAnalytics() {
   const prevNetProfit = prevWeekSales - prevProfit.cogs - prevWeekCosts;
 
   const lagosToday = lagosDate(now);
+  const todayKey = new Date(Date.UTC(lagosToday.getUTCFullYear(), lagosToday.getUTCMonth(), lagosToday.getUTCDate()));
+  const parseDay = (value?: string) => {
+    if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return null;
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+    if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
+    return date;
+  };
+  let rangeStart = parseDay(from);
+  let rangeEnd = parseDay(to);
+  if (!rangeStart || !rangeEnd) {
+    rangeEnd = todayKey;
+    rangeStart = new Date(Date.UTC(todayKey.getUTCFullYear(), todayKey.getUTCMonth(), todayKey.getUTCDate() - 6));
+  }
+  if (rangeEnd < rangeStart) [rangeStart, rangeEnd] = [rangeEnd, rangeStart];
+  if (rangeEnd > todayKey) rangeEnd = todayKey;
+  const span = Math.round((rangeEnd.getTime() - rangeStart.getTime()) / 86400000);
+  if (span > 61) rangeStart = new Date(Date.UTC(rangeEnd.getUTCFullYear(), rangeEnd.getUTCMonth(), rangeEnd.getUTCDate() - 61));
+
   const days = Array.from({ length: 7 }, (_, index) => {
     const day = new Date(Date.UTC(
       lagosToday.getUTCFullYear(),
@@ -143,6 +174,19 @@ export async function getAnalytics() {
       total,
     };
   });
+  const chartDays = [];
+  for (let cursor = new Date(rangeStart); cursor <= rangeEnd; cursor = new Date(Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth(), cursor.getUTCDate() + 1))) {
+    const key = cursor.toISOString().slice(0, 10);
+    const total = rows
+      .filter((sale) => dayKey(new Date(sale.created_at)) === key)
+      .reduce((sum, sale) => sum + Number(sale.total), 0);
+    chartDays.push({
+      key,
+      label: cursor.toLocaleDateString("en-NG", { weekday: "short", timeZone: "UTC" }),
+      date: cursor.getUTCDate(),
+      total,
+    });
+  }
 
   const productTotals = new Map<string, { name: string; quantity: number; amount: number; image: string }>();
   for (const sale of rows) {
@@ -173,6 +217,9 @@ export async function getAnalytics() {
     prevWeekCosts,
     prevNetProfit,
     days,
+    chartDays,
+    chartFrom: rangeStart.toISOString().slice(0, 10),
+    chartTo: rangeEnd.toISOString().slice(0, 10),
     topProducts,
     lowStock,
   };

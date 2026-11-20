@@ -10,4 +10,5 @@ export const productSchema = z.object({
   stock: z.coerce.number().int().min(0, "Stock cannot be negative"),
   low_stock_at: z.coerce.number().int().min(0).optional(),
   description: z.string().max(500).optional(),
+  category: z.string().max(40).optional(),
 });

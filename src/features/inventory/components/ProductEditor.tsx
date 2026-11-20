@@ -15,6 +15,7 @@ type Product = {
   stock: number;
   image_url?: string | null;
   description?: string | null;
+  category?: string | null;
   low_stock_at: number;
 };
 
@@ -138,6 +139,7 @@ export default function ProductEditor({ product, onStock }: { product: Product; 
             {errorMessage ? <p className="text-xs text-red-400">{errorMessage}</p> : null}
             {notice ? <p className="text-xs text-zinc-500">{notice}</p> : null}
             <Input name="name" defaultValue={product.name} />
+            <Input name="category" defaultValue={product.category || ""} placeholder="Category, optional" />
             <Input name="description" defaultValue={product.description || ""} placeholder="Description" />
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">

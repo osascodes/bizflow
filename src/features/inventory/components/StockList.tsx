@@ -10,18 +10,25 @@ type Product = {
   stock: number;
   image_url?: string | null;
   description?: string | null;
+  category?: string | null;
   low_stock_at: number;
 };
 
 export default function StockList({ products, highlightLow = false }: { products: Product[]; highlightLow?: boolean }) {
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
   const [items, setItems] = useState(products);
+  const categories = ["All", ...Array.from(new Set(items.map((product) => product.category).filter(Boolean) as string[]))];
   const filtered = useMemo(() => {
     const value = query.trim().toLowerCase();
-    const list = !value ? items : items.filter((product) => product.name.toLowerCase().includes(value));
+    const list = items.filter((product) => {
+      const matchesName = !value || product.name.toLowerCase().includes(value);
+      const matchesCategory = category === "All" || (product.category || "Uncategorized") === category;
+      return matchesName && matchesCategory;
+    });
     if (!highlightLow) return list;
     return [...list].sort((a, b) => Number(a.stock <= a.low_stock_at) === Number(b.stock <= b.low_stock_at) ? 0 : a.stock <= a.low_stock_at ? -1 : 1);
-  }, [items, query, highlightLow]);
+  }, [items, query, category, highlightLow]);
 
   useEffect(() => {
     if (!highlightLow) return;
@@ -36,6 +43,13 @@ export default function StockList({ products, highlightLow = false }: { products
         placeholder="Search stock"
         className="h-11 w-full rounded-xl border border-zinc-300 bg-white px-3 text-sm text-zinc-950 outline-none"
       />
+      {categories.length > 1 ? (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {categories.map((item) => (
+            <button key={item} type="button" onClick={() => setCategory(item)} className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${category === item ? "bg-[#635BFF] text-white" : "bg-zinc-100 text-zinc-600"}`}>{item}</button>
+          ))}
+        </div>
+      ) : null}
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-200 p-6 text-sm text-zinc-500">No matching product.</div>
       ) : (

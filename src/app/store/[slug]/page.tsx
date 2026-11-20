@@ -6,6 +6,7 @@ type Product = {
   name: string;
   price: number;
   stock: number;
+  category?: string | null;
   image_url?: string | null;
   description?: string | null;
   created_at?: string | null;
@@ -39,7 +40,7 @@ export default async function PublicStorePage({
 
   const { data: products } = await supabase
     .from("products")
-    .select("id, name, price, stock, image_url, description, created_at")
+    .select("id, name, price, stock, image_url, description, created_at, category")
     .eq("business_id", business.id)
     .order("name");
 

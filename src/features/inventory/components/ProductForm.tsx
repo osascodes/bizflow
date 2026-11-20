@@ -19,7 +19,7 @@ export default function ProductForm() {
 
   const form = useForm<z.input<typeof productSchema>, unknown, FormData>({
     resolver: zodResolver(productSchema),
-    defaultValues: { name: "", price: 0, cost_price: undefined, stock: 0, description: "" },
+    defaultValues: { name: "", price: 0, cost_price: undefined, stock: 0, description: "", category: "" },
   });
 
   const onSubmit = async (data: FormData) => {
@@ -32,9 +32,10 @@ export default function ProductForm() {
       if (data.cost_price !== undefined) formData.append("cost_price", String(data.cost_price));
       formData.append("stock", String(data.stock));
       formData.append("description", data.description || "");
+      formData.append("category", data.category || "");
       if (image) formData.append("image", image);
       await createProductAction(formData);
-      form.reset({ name: "", price: 0, cost_price: undefined, stock: 0, description: "" });
+      form.reset({ name: "", price: 0, cost_price: undefined, stock: 0, description: "", category: "" });
       setImage(null);
     } catch (error: unknown) {
       setErrorMessage(error instanceof Error ? error.message : "Could not save product.");
@@ -52,6 +53,20 @@ export default function ProductForm() {
         <Label className="text-zinc-600">Product</Label>
         <Input {...form.register("name")} placeholder="Ankara gown" />
         {form.formState.errors.name ? <p className="text-xs text-red-400">{form.formState.errors.name.message}</p> : null}
+      </div>
+      <div className="space-y-1.5">
+        <Label className="text-zinc-600">Category</Label>
+        <Input {...form.register("category")} list="product-categories" placeholder="Dresses, Phones, Food" />
+        <datalist id="product-categories">
+          <option value="Dresses" />
+          <option value="Shoes" />
+          <option value="Bags" />
+          <option value="Phones" />
+          <option value="Accessories" />
+          <option value="Cosmetics" />
+          <option value="Food" />
+          <option value="Drinks" />
+        </datalist>
       </div>
       <div className="space-y-1.5">
         <Label className="text-zinc-600">Description</Label>

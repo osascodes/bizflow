@@ -12,6 +12,7 @@ type Product = {
   stock: number;
   image_url?: string | null;
   description?: string | null;
+  category?: string | null;
 };
 type Business = {
   id: string;
@@ -75,6 +76,7 @@ export default function StoreClient({
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("All");
   const [selected, setSelected] = useState<Product | null>(null);
   const [waPos, setWaPos] = useState<{ x: number; y: number } | null>(null);
   const waDrag = useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
@@ -86,8 +88,13 @@ export default function StoreClient({
   const [pending, setPending] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const categories = ["All", ...Array.from(new Set(products.map((product) => product.category).filter(Boolean) as string[]))];
   const search = query.trim().toLowerCase();
-  const match = (product: Product) => !search || product.name.toLowerCase().includes(search);
+  const match = (product: Product) => {
+    const matchesName = !search || product.name.toLowerCase().includes(search);
+    const matchesCategory = category === "All" || (product.category || "") === category;
+    return matchesName && matchesCategory;
+  };
   const visible = products.filter(match);
   const visibleFresh = fresh.filter(match);
   const visibleBest = best.filter(match);
@@ -273,6 +280,13 @@ export default function StoreClient({
 
       <section id="products" className="relative mx-auto max-w-6xl px-4 py-6">
         <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-12 rounded-full bg-white" />
+        {categories.length > 1 ? (
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            {categories.map((item) => (
+              <button key={item} type="button" onClick={() => setCategory(item)} className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${category === item ? "bg-[#635BFF] text-white" : "bg-white text-zinc-600"}`}>{item}</button>
+            ))}
+          </div>
+        ) : null}
       </section>
 
       {row("New", visibleFresh, "New")}

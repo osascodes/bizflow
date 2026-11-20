@@ -86,3 +86,55 @@ export async function getTodayProfit(day = new Date()) {
   }
   return { revenue, cogs, missingUnits };
 }
+
+export async function getDayClose(day = new Date()) {
+  const business = await getCurrentBusiness();
+  if (!business) return null;
+  const lagos = new Date(day.getTime() + 60 * 60 * 1000);
+  const start = new Date(Date.UTC(lagos.getUTCFullYear(), lagos.getUTCMonth(), lagos.getUTCDate()) - 60 * 60 * 1000);
+  const end = new Date(start);
+  end.setUTCDate(end.getUTCDate() + 1);
+  const supabase = await createServerSupabase();
+  const [{ data: sales }, { data: expenses }] = await Promise.all([
+    supabase
+      .from("sales")
+      .select("total, created_at, sale_items(name, quantity, price, cost_price)")
+      .eq("business_id", business.id)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString())
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("expenses")
+      .select("title, amount")
+      .eq("business_id", business.id)
+      .gte("created_at", start.toISOString())
+      .lt("created_at", end.toISOString()),
+  ]);
+
+  let revenue = 0;
+  let cogs = 0;
+  let missingUnits = 0;
+  const products = new Map<string, { name: string; quantity: number; amount: number }>();
+  for (const sale of sales ?? []) {
+    revenue += Number(sale.total);
+    for (const item of sale.sale_items ?? []) {
+      if (item.cost_price == null) missingUnits += Number(item.quantity);
+      else cogs += Number(item.cost_price) * Number(item.quantity);
+      const current = products.get(item.name) || { name: item.name, quantity: 0, amount: 0 };
+      current.quantity += Number(item.quantity);
+      current.amount += Number(item.quantity) * Number(item.price);
+      products.set(item.name, current);
+    }
+  }
+  const expenseTotal = (expenses ?? []).reduce((sum, row) => sum + Number(row.amount), 0);
+  return {
+    shop: business.name,
+    salesCount: (sales ?? []).length,
+    revenue,
+    cogs,
+    expenses: expenseTotal,
+    net: revenue - cogs - expenseTotal,
+    missingUnits,
+    top: [...products.values()].sort((a, b) => b.amount - a.amount).slice(0, 5),
+  };
+}

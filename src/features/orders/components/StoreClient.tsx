@@ -77,6 +77,8 @@ export default function StoreClient({
   const [address, setAddress] = useState("");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const [view, setView] = useState<"all" | "new" | "best">("all");
+  const [searchOpen, setSearchOpen] = useState(false);
   const [selected, setSelected] = useState<Product | null>(null);
   const [waPos, setWaPos] = useState<{ x: number; y: number } | null>(null);
   const waDrag = useRef<{ x: number; y: number; left: number; top: number; moved: boolean } | null>(null);
@@ -174,212 +176,135 @@ export default function StoreClient({
     }
   };
 
-  const card = (product: Product, badge?: string) => {
-    const qty = cart[product.id] || 0;
+  const card = (product: Product) => {
     const stock = stockState(product.stock);
     return (
-      <article key={`${badge || "all"}-${product.id}`} className="overflow-hidden rounded-[28px] border border-zinc-200 bg-white">
-        <button type="button" onClick={() => openProduct(product)} className="block w-full text-left">
-          <div className="relative aspect-square bg-white">
-            {product.image_url ? (
-              <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_top,_rgba(99,91,255,0.35),_transparent_55%),linear-gradient(180deg,#18181b,#09090b)]">
-                <span className="text-4xl font-semibold text-zinc-950/80">{initial(product.name)}</span>
-              </div>
-            )}
-            {badge ? <span className="absolute left-3 top-3 rounded-full bg-black/70 px-2 py-1 text-[11px] text-zinc-950">{badge}</span> : null}
-          </div>
-          <div className="p-4 pb-0">
-            <h2 className="truncate text-sm font-medium sm:text-base">{product.name}</h2>
-            <div className="mt-2 flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold text-zinc-900">₦{Number(product.price).toLocaleString()}</p>
-              <span className={`rounded-full px-2 py-1 text-[11px] ${stock.className}`}>{stock.label}</span>
-            </div>
-          </div>
-        </button>
-        <div className="p-4">
-          {product.stock <= 0 ? (
-            <button type="button" disabled className="h-10 w-full rounded-full bg-zinc-100 text-sm font-semibold text-zinc-500">Out of stock</button>
-          ) : qty === 0 ? (
-            <button type="button" onClick={() => setQty(product.id, 1)} className="h-10 w-full rounded-full bg-white text-sm font-semibold text-zinc-950">Add to cart</button>
+      <button key={product.id} type="button" onClick={() => openProduct(product)} className="text-left">
+        <div className="aspect-square overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50">
+          {product.image_url ? (
+            <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
           ) : (
-            <div className="flex h-10 items-center justify-between rounded-full bg-white px-2 text-zinc-950">
-              <button type="button" onClick={() => setQty(product.id, qty - 1)} className="h-8 w-8 text-lg">−</button>
-              <span className="text-sm font-semibold">{qty}</span>
-              <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="h-8 w-8 text-lg">+</button>
-            </div>
+            <div className="flex h-full w-full items-center justify-center bg-zinc-100 text-2xl font-semibold text-zinc-400">{initial(product.name)}</div>
           )}
         </div>
-      </article>
+        <h2 className="mt-3 line-clamp-2 text-sm font-semibold text-zinc-900">{product.name}</h2>
+        <p className="mt-1 text-base font-bold text-zinc-950">₦{Number(product.price).toLocaleString()}</p>
+        <p className="mt-0.5 text-xs text-zinc-500">{stock.label}</p>
+      </button>
     );
   };
 
-  const row = (title: string, items: Product[], badge: string) => {
-    if (items.length === 0) return null;
-    return (
-      <section className="relative mx-auto max-w-6xl px-4 pb-8">
-        <h2 className="mb-4 text-lg font-semibold">{title}</h2>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">{items.map((product) => card(product, badge))}</div>
-      </section>
-    );
-  };
-
-  const headline = business.store_headline || `Shop ${business.name}`;
-  const description = business.store_description || "Add what you want, then send the order on WhatsApp. The shop gets it instantly.";
+  const headline = business.store_headline || "Style that speaks.";
+  const description = business.store_description || "Discover pieces made for your everyday.";
+  const categoryCards = categories
+    .filter((item) => item !== "All")
+    .map((item) => ({
+      name: item,
+      image: products.find((product) => product.category === item && product.image_url)?.image_url || "",
+    }));
+  const shown = view === "new" ? visibleFresh : view === "best" ? visibleBest : visible;
+  const social = [
+    href(business.instagram) ? ["Instagram", href(business.instagram), "ig"] : null,
+    href(business.tiktok) ? ["TikTok", href(business.tiktok), "tt"] : null,
+    href(business.website) ? ["Website", href(business.website), "web"] : null,
+  ].filter(Boolean) as [string, string, string][];
 
   return (
-    <main className="min-h-screen bg-zinc-50 text-zinc-950">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top_left,rgba(99,91,255,0.18),transparent_32%),radial-gradient(circle_at_top_right,rgba(99,91,255,0.10),transparent_28%)]" />
-      <header className="sticky top-0 z-20 border-b border-zinc-200 bg-zinc-50/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-3">
-            {business.logo_url ? (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white p-1.5">
-                <img src={business.logo_url} alt="" className="h-full w-full object-contain" />
-              </span>
-            ) : (
-              <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[#635BFF] text-sm font-semibold text-white">{initial(business.name)}</span>
-            )}
-            <p className="font-semibold">{business.name}</p>
-          </div>
-          <button type="button" onClick={() => setOpen(true)} className="relative flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white/5 text-zinc-950" aria-label="Cart">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8">
-              <path d="M6 6h15l-1.5 9h-12z" />
-              <path d="M6 6 5 3H2" />
-              <circle cx="9" cy="20" r="1" />
-              <circle cx="18" cy="20" r="1" />
-            </svg>
-            {count > 0 ? <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] font-semibold">{count}</span> : null}
-          </button>
+    <main className="min-h-screen bg-white text-zinc-950">
+      <div className="mx-auto max-w-lg sm:max-w-3xl">
+        <div className="bg-[#635BFF] px-4 py-3 text-center text-sm font-medium text-white">
+          Welcome to our store — Shop with us today
         </div>
-      </header>
 
-      {business.hero_url ? (
-        <section className="relative">
-          <div className="relative h-[420px] overflow-hidden sm:h-[480px]">
-            <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/45 to-black/15" />
-            <div className="absolute inset-0 flex items-center px-5 sm:px-10">
-              <div className="max-w-xl">
-                <h1 className="text-3xl font-semibold sm:text-5xl">{headline}</h1>
-                <p className="mt-3 text-sm leading-6 text-zinc-200">{description}</p>
-                <button type="button" onClick={shopNow} className="mt-5 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
-              </div>
+        <header className="flex items-center justify-between px-4 py-4">
+          <div className="flex min-w-0 items-center gap-3">
+            {business.logo_url ? (
+              <img src={business.logo_url} alt="" className="h-12 w-12 rounded-2xl object-cover" />
+            ) : (
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#635BFF]/10 text-lg font-semibold text-[#635BFF]">{initial(business.name)}</span>
+            )}
+            <div className="min-w-0">
+              <p className="truncate text-lg font-bold uppercase tracking-wide">{business.name}</p>
+              <p className="truncate text-sm text-zinc-500">{titleCase(business.category) || "Shop"}</p>
             </div>
           </div>
-        </section>
-      ) : (
-        <section className="relative mx-auto max-w-6xl px-4 py-12">
-          <p className="text-sm text-violet-300">In stock now</p>
-          <h1 className="mt-2 max-w-2xl text-4xl font-semibold tracking-tight sm:text-6xl">{headline}</h1>
-          <p className="mt-4 max-w-xl text-sm leading-6 text-zinc-400">{description}</p>
-          <button type="button" onClick={shopNow} className="mt-6 h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">Shop now</button>
-        </section>
-      )}
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={() => setSearchOpen((value) => !value)} className="flex h-10 w-10 items-center justify-center text-zinc-800" aria-label="Search">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="11" cy="11" r="7" /><path d="m20 20-3-3" /></svg>
+            </button>
+            <button type="button" onClick={() => setOpen(true)} className="relative flex h-10 w-10 items-center justify-center text-zinc-800" aria-label="Cart">
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 6h15l-1.5 9h-12z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></svg>
+              {count > 0 ? <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#635BFF] px-1 text-[10px] font-semibold text-white">{count}</span> : null}
+            </button>
+          </div>
+        </header>
 
-      <section id="products" className="relative mx-auto max-w-6xl px-4 py-6">
-        <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-12 rounded-full bg-white" />
-        {categories.length > 1 ? (
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-            {categories.map((item) => (
-              <button key={item} type="button" onClick={() => setCategory(item)} className={`shrink-0 rounded-full px-3 py-1 text-xs font-medium ${category === item ? "bg-[#635BFF] text-white" : "bg-white text-zinc-600"}`}>{item}</button>
-            ))}
+        {searchOpen ? (
+          <div className="px-4 pb-3">
+            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search products" className="h-11 w-full rounded-full border border-zinc-200 px-4 text-sm outline-none focus:border-[#635BFF]" />
           </div>
         ) : null}
-      </section>
 
-      {row("New", visibleFresh, "New")}
-      {row("Best sellers", visibleBest, "Best")}
-
-      <section className="relative mx-auto max-w-6xl px-4 pb-10">
-        <h2 className="mb-4 text-lg font-semibold">All products</h2>
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-5">
-          {visible.length === 0 ? (
-            <div className="col-span-2 rounded-3xl border border-dashed border-zinc-200 p-8 text-sm text-zinc-500 lg:col-span-3">{search ? "No product matches that search." : "Nothing in the shop yet."}</div>
-          ) : (
-            visible.map((product) => card(product))
-          )}
-        </div>
-      </section>
-
-      {links.length > 0 || business.address ? (
-        <footer className={`relative mx-auto max-w-6xl px-4 ${count > 0 ? "pb-28" : "pb-8"}`}>
-          <div className="rounded-3xl border border-zinc-200 p-5">
-            {business.address ? (
-              <div>
-                <p className="text-sm text-zinc-400">Visit</p>
-                <p className="mt-1 text-sm text-zinc-950">{titleCase(business.address)}</p>
-              </div>
-            ) : null}
-            {links.length > 0 ? (
-              <div className={business.address ? "mt-4" : ""}>
-                <p className="text-sm text-zinc-400">Connect with {business.name}</p>
-                <div className="mt-3 flex gap-3">
-                  {links.map(([label, link]) => (
-                    <a key={label} href={link} target="_blank" aria-label={label} className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 text-zinc-950">
-                      {label === "WhatsApp" ? (
-                        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"/></svg>
-                      ) : label === "Instagram" ? (
-                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zm10 2H7a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-5 3.2A3.8 3.8 0 1 1 8.2 12 3.8 3.8 0 0 1 12 8.2zm0 1.6A2.2 2.2 0 1 0 14.2 12 2.2 2.2 0 0 0 12 9.8zM17.4 6.6a1 1 0 1 1-1 1 1 1 0 0 1 1-1z"/></svg>
-                      ) : label === "TikTok" ? (
-                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor"><path d="M14 3h2.2a5.2 5.2 0 0 0 3.6 3.4v2.3a7.4 7.4 0 0 1-3.6-1v6.6a5.7 5.7 0 1 1-5.7-5.7c.2 0 .5 0 .7.1v2.4a3.3 3.3 0 1 0 2.3 3.2V3z"/></svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-                      )}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
-          <p className="mt-4 text-center text-xs text-zinc-500">Powered by Brinset</p>
-        </footer>
-      ) : null}
-
-      {shopWhatsapp ? (
-        <button
-          type="button"
-          aria-label="WhatsApp"
-          style={waPos ? { left: waPos.x, top: waPos.y, right: "auto", bottom: "auto" } : undefined}
-          className={`fixed z-30 flex h-14 w-14 touch-none items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-black/30 ${waPos ? "" : count > 0 && !orderNumber && !selected ? "bottom-24 right-4" : "bottom-6 right-4"}`}
-          onPointerDown={(event) => {
-            const rect = event.currentTarget.getBoundingClientRect();
-            waDrag.current = { x: event.clientX, y: event.clientY, left: rect.left, top: rect.top, moved: false };
-            event.currentTarget.setPointerCapture(event.pointerId);
-          }}
-          onPointerMove={(event) => {
-            const drag = waDrag.current;
-            if (!drag) return;
-            const dx = event.clientX - drag.x;
-            const dy = event.clientY - drag.y;
-            if (Math.abs(dx) + Math.abs(dy) > 6) drag.moved = true;
-            setWaPos({
-              x: Math.min(window.innerWidth - 64, Math.max(8, drag.left + dx)),
-              y: Math.min(window.innerHeight - 64, Math.max(8, drag.top + dy)),
-            });
-          }}
-          onPointerUp={() => {
-            const drag = waDrag.current;
-            waDrag.current = null;
-            if (drag && !drag.moved) window.open(shopWhatsapp, "_blank");
-          }}
-        >
-          <svg viewBox="0 0 24 24" className="h-8 w-8" aria-hidden="true"><path fill="#fff" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413"/></svg>
-        </button>
-      ) : null}
-
-      {count > 0 && !orderNumber && !selected ? (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-zinc-200 bg-zinc-50/95 p-4 backdrop-blur">
-          <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
-            <div>
-              <p className="text-sm text-zinc-400">{count} item{count === 1 ? "" : "s"}</p>
-              <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>
+        <section className="px-4">
+          <div className="relative h-72 overflow-hidden rounded-3xl bg-zinc-900 sm:h-80">
+            {business.hero_url ? <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10" />
+            <div className="relative flex h-full flex-col justify-center px-6 text-white">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">{titleCase(business.category) || "The new collection"}</p>
+              <h1 className="mt-2 max-w-[14rem] text-4xl font-bold leading-tight">{headline}</h1>
+              <p className="mt-3 max-w-[16rem] text-sm text-white/80">{description}</p>
+              <button type="button" onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })} className="mt-5 h-11 w-fit rounded-xl bg-white px-6 text-sm font-semibold text-zinc-950">SHOP NOW</button>
             </div>
-            <button type="button" onClick={() => setOpen(true)} className="h-11 rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">View cart</button>
           </div>
-        </div>
-      ) : null}
+        </section>
+
+        {categoryCards.length > 0 ? (
+          <section className="px-4 pt-8">
+            <h2 className="text-2xl font-bold">Shop by Category</h2>
+            <p className="mt-1 text-sm text-zinc-500">Explore our collections</p>
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              {categoryCards.map((item) => (
+                <button key={item.name} type="button" onClick={() => { setCategory(item.name); setView("all"); document.getElementById("products")?.scrollIntoView({ behavior: "smooth" }); }} className="text-left">
+                  <div className="aspect-square overflow-hidden rounded-2xl bg-zinc-100">
+                    {item.image ? <img src={item.image} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full w-full items-center justify-center text-lg font-semibold text-zinc-400">{initial(item.name)}</div>}
+                  </div>
+                  <p className="mt-2 text-base font-semibold">{titleCase(item.name)}</p>
+                </button>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        <section id="products" className="px-4 pt-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">{category === "All" ? "Our Products" : titleCase(category)}</h2>
+            <button type="button" onClick={() => { setCategory("All"); setView("all"); setQuery(""); }} className="text-sm font-medium text-[#635BFF]">View all →</button>
+          </div>
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            {([["all", "All"], ["new", "New Products"], ["best", "Best Sellers"]] as const).map(([id, label]) => (
+              <button key={id} type="button" onClick={() => setView(id)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium ${view === id ? "bg-[#635BFF] text-white" : "bg-zinc-100 text-zinc-700"}`}>{label}</button>
+            ))}
+          </div>
+          {shown.length === 0 ? (
+            <p className="mt-6 text-sm text-zinc-500">No products in this view yet.</p>
+          ) : (
+            <div className="mt-4 grid grid-cols-2 gap-4">{shown.map((product) => card(product))}</div>
+          )}
+        </section>
+
+        <footer className="mt-10 bg-zinc-900 px-6 py-10 text-center text-white">
+          <p className="text-lg font-semibold uppercase tracking-wide">{business.name}</p>
+          <p className="mt-6 text-sm text-white/70">Follow us on social media</p>
+          <div className="mt-4 flex items-center justify-center gap-5">
+            {social.length === 0 ? <span className="text-sm text-white/40">No social links yet</span> : social.map(([label, url]) => (
+              <a key={label} href={url} target="_blank" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm" aria-label={label}>{label.slice(0, 1)}</a>
+            ))}
+          </div>
+          <div className="mx-auto mt-8 h-px w-full max-w-xs bg-white/15" />
+          <p className="mt-6 text-xs text-white/60">© {new Date().getFullYear()} {business.name.toUpperCase()}. All rights reserved.</p>
+          <p className="mt-3 text-sm text-[#A5A0FF]">Powered by Brinset</p>
+        </footer>
+      </div>
 
       {selected ? (
         <div className="fixed inset-0 z-40 bg-black/70" onClick={() => setSelected(null)}>

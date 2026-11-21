@@ -1,3 +1,4 @@
+import { cookies } from "next/headers";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getProducts } from "@/features/inventory/queries";
@@ -110,5 +111,8 @@ export async function getNotifications() {
 
 export async function getAlertCount() {
   const items = await getNotifications();
-  return items.length;
+  const store = await cookies();
+  const seen = store.get("brinset_alerts_seen")?.value || "";
+  if (!seen) return items.length;
+  return items.filter((item) => item.at && item.at > seen).length;
 }

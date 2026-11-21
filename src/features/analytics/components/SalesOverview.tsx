@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar } from "lucide-react";
 
@@ -54,23 +54,23 @@ function formatRange(from: string, to: string) {
 
 export default function SalesOverview({ days, from, to, range }: { days: ChartDay[]; from: string; to: string; range: string }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [open, setOpen] = useState(false);
+  const [activeRange, setActiveRange] = useState(range);
   const [step, setStep] = useState<"start" | "end" | null>(null);
   const [draftStart, setDraftStart] = useState(from);
   const startRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLInputElement>(null);
   const scale = useMemo(() => niceScale(Math.max(...days.map((day) => day.total), 0)), [days]);
   const hasSales = days.some((day) => day.total > 0);
-  const label = range === "custom" ? formatRange(from, to) : OPTIONS.find((option) => option.id === range)?.label || "Last 7 days";
+  const label = activeRange === "custom" ? formatRange(from, to) : OPTIONS.find((option) => option.id === activeRange)?.label || "Last 7 days";
 
   useEffect(() => {
     if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previous;
-    };
-  }, [open]);
+    OPTIONS.forEach((option) => {
+      if (option.id !== "custom") router.prefetch(`/analytics?range=${option.id}`);
+    });
+  }, [open, router]);
 
   function openPicker(input: HTMLInputElement | null) {
     if (!input) return;
@@ -85,8 +85,11 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
       openPicker(startRef.current);
       return;
     }
+    setActiveRange(id);
     setOpen(false);
-    router.push(`/analytics?range=${id}`);
+    startTransition(() => {
+      router.replace(`/analytics?range=${id}`, { scroll: false });
+    });
   }
 
   function apply(start: string, end: string) {
@@ -94,12 +97,14 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
     const fromDate = start <= end ? start : end;
     const toDate = start <= end ? end : start;
     setStep(null);
-    window.scrollTo({ left: 0 });
-    router.push(`/analytics?range=custom&from=${fromDate}&to=${toDate}`);
+    setActiveRange("custom");
+    startTransition(() => {
+      router.replace(`/analytics?range=custom&from=${fromDate}&to=${toDate}`, { scroll: false });
+    });
   }
 
   return (
-    <section className="mt-5 w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4">
+    <section className="relative mt-5 w-full min-w-0 overflow-visible rounded-2xl border border-zinc-200 bg-white p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">Sales overview</h2>
         <div className="relative">
@@ -113,7 +118,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
           </button>
           {open ? (
             <div
-              className="absolute right-0 z-30 mt-2 max-h-72 w-52 max-w-[calc(100vw-2.5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg"
+              className="absolute right-0 top-11 z-40 max-h-56 w-52 max-w-[calc(100vw-2.5rem)] touch-pan-y overflow-y-auto overscroll-contain rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg"
               onTouchMove={(event) => event.stopPropagation()}
             >
               {OPTIONS.map((option) => (
@@ -121,7 +126,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
                   key={option.id}
                   type="button"
                   onClick={() => choose(option.id)}
-                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm ${option.id === range ? "bg-[#635BFF]/10 font-semibold text-[#635BFF]" : "text-zinc-700"}`}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm ${option.id === activeRange ? "bg-[#635BFF]/10 font-semibold text-[#635BFF]" : "text-zinc-700"}`}
                 >
                   {option.label}
                 </button>
@@ -160,7 +165,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
           </label>
         </div>
       </div>
-      <div className="mt-4 min-w-0 overflow-hidden">
+      <div className={`mt-4 min-w-0 overflow-hidden ${isPending ? "opacity-60" : ""}`}>
         <div className="relative" style={{ height: "180px" }}>
           {scale.ticks.map((tick) => (
             <div key={tick} className="absolute left-0 right-0 flex items-center gap-1" style={{ top: `${((scale.max - tick) / scale.max) * 100}%` }}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar } from "lucide-react";
 
@@ -63,9 +63,18 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
   const hasSales = days.some((day) => day.total > 0);
   const label = range === "custom" ? formatRange(from, to) : OPTIONS.find((option) => option.id === range)?.label || "Last 7 days";
 
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
   function openPicker(input: HTMLInputElement | null) {
     if (!input) return;
-    input.focus();
+    input.focus({ preventScroll: true });
     if (typeof input.showPicker === "function") input.showPicker();
   }
 
@@ -85,6 +94,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
     const fromDate = start <= end ? start : end;
     const toDate = start <= end ? end : start;
     setStep(null);
+    window.scrollTo({ left: 0 });
     router.push(`/analytics?range=custom&from=${fromDate}&to=${toDate}`);
   }
 
@@ -102,7 +112,10 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
             <span className="truncate">{label}</span>
           </button>
           {open ? (
-            <div className="absolute right-0 z-20 mt-2 w-52 max-w-[calc(100vw-2.5rem)] rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg">
+            <div
+              className="absolute right-0 z-30 mt-2 max-h-72 w-52 max-w-[calc(100vw-2.5rem)] overflow-y-auto overscroll-contain rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg"
+              onTouchMove={(event) => event.stopPropagation()}
+            >
               {OPTIONS.map((option) => (
                 <button
                   key={option.id}
@@ -115,30 +128,36 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
               ))}
             </div>
           ) : null}
-          <input
-            ref={startRef}
-            type="date"
-            value={from}
-            onChange={(event) => {
-              const value = event.target.value;
-              if (!value) return;
-              setDraftStart(value);
-              setStep("end");
-              openPicker(endRef.current);
-            }}
-            className="pointer-events-none absolute h-0 w-0 opacity-0"
-          />
-          <input
-            ref={endRef}
-            type="date"
-            value={to}
-            onChange={(event) => {
-              const value = event.target.value;
-              if (!value) return;
-              apply(draftStart, value);
-            }}
-            className="pointer-events-none absolute h-0 w-0 opacity-0"
-          />
+          <label className="sr-only">
+            Start date
+            <input
+              ref={startRef}
+              type="date"
+              value={from}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (!value) return;
+                setDraftStart(value);
+                setStep("end");
+                openPicker(endRef.current);
+              }}
+              className="fixed left-1/2 top-24 h-9 w-40 -translate-x-1/2 opacity-0"
+            />
+          </label>
+          <label className="sr-only">
+            End date
+            <input
+              ref={endRef}
+              type="date"
+              value={to}
+              onChange={(event) => {
+                const value = event.target.value;
+                if (!value) return;
+                apply(draftStart, value);
+              }}
+              className="fixed left-1/2 top-24 h-9 w-40 -translate-x-1/2 opacity-0"
+            />
+          </label>
         </div>
       </div>
       <div className="mt-4 min-w-0 overflow-hidden">

@@ -178,19 +178,30 @@ export default function StoreClient({
 
   const card = (product: Product) => {
     const stock = stockState(product.stock);
+    const qty = cart[product.id] || 0;
     return (
-      <button key={product.id} type="button" onClick={() => openProduct(product)} className="flex h-full flex-col text-left">
-        <div className="aspect-square overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50">
-          {product.image_url ? (
-            <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center bg-zinc-100 text-2xl font-semibold text-zinc-400">{initial(product.name)}</div>
-          )}
-        </div>
-        <h2 className="mt-3 min-h-10 line-clamp-2 text-sm font-semibold leading-5 text-zinc-900">{product.name}</h2>
-        <p className="mt-1 text-base font-bold text-zinc-950">₦{Number(product.price).toLocaleString()}</p>
-        <p className="mt-0.5 text-xs text-zinc-500">{stock.label}</p>
-      </button>
+      <article key={product.id} className="flex h-full flex-col rounded-3xl border border-zinc-100 bg-white p-2">
+        <button type="button" onClick={() => openProduct(product)} className="text-left">
+          <div className="aspect-square overflow-hidden rounded-2xl bg-zinc-50">
+            {product.image_url ? (
+              <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-zinc-100 text-2xl font-semibold text-zinc-400">{initial(product.name)}</div>
+            )}
+          </div>
+          <h2 className="mt-3 min-h-10 line-clamp-2 px-1 text-sm font-semibold leading-5 text-zinc-900">{product.name}</h2>
+          <p className="mt-1 px-1 text-base font-bold text-zinc-950">₦{Number(product.price).toLocaleString()}</p>
+          <p className={`mt-0.5 px-1 text-xs ${product.stock <= 0 ? "text-rose-600" : product.stock <= 5 ? "text-amber-600" : "text-emerald-600"}`}>{stock.label}</p>
+        </button>
+        {product.stock <= 0 ? (
+          <button type="button" disabled className="mt-3 h-11 w-full rounded-full bg-zinc-100 text-sm font-semibold text-zinc-400">Out of stock</button>
+        ) : (
+          <button type="button" onClick={() => setQty(product.id, Math.min(product.stock, qty + 1))} className="mt-3 inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#635BFF] text-sm font-semibold text-white">
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M6 6h15l-1.5 9h-12z" /><path d="M6 6 5 3H2" /><circle cx="9" cy="20" r="1" /><circle cx="18" cy="20" r="1" /></svg>
+            {qty > 0 ? `Added · ${qty}` : "Add to Cart"}
+          </button>
+        )}
+      </article>
     );
   };
 
@@ -285,17 +296,40 @@ export default function StoreClient({
           )}
         </section>
 
-        <footer className="mt-10 bg-zinc-900 px-6 py-10 text-center text-white">
+        {business.address ? (
+          <section className="px-4 pt-8">
+            <h2 className="text-xl font-bold">Visit Our Store</h2>
+            <div className="mt-3 flex items-start gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#635BFF]/10 text-[#635BFF]">
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 21s7-6 7-11a7 7 0 1 0-14 0c0 5 7 11 7 11Z" /><circle cx="12" cy="10" r="2.5" /></svg>
+              </span>
+              <div>
+                <p className="text-sm font-semibold">Shop Address</p>
+                <p className="mt-0.5 text-sm text-zinc-500">{business.address}</p>
+              </div>
+            </div>
+          </section>
+        ) : null}
+
+        <footer className="mt-8 bg-zinc-900 px-6 py-6 text-center text-white">
           <p className="text-lg font-semibold uppercase tracking-wide">{business.name}</p>
-          <p className="mt-6 text-sm text-white/70">Follow us on social media</p>
-          <div className="mt-4 flex items-center justify-center gap-5">
-            {social.length === 0 ? <span className="text-sm text-white/40">No social links yet</span> : social.map(([label, url]) => (
-              <a key={label} href={url} target="_blank" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-sm" aria-label={label}>{label.slice(0, 1)}</a>
+          <p className="mt-3 text-sm text-white/70">Follow us on social media</p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            {social.length === 0 ? <span className="text-sm text-white/40">No social links yet</span> : social.map(([label, url, kind]) => (
+              <a key={label} href={url} target="_blank" className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20" aria-label={label}>
+                {kind === "ig" ? (
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3.5" /><circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" /></svg>
+                ) : kind === "tt" ? (
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor"><path d="M14 4c.4 2.4 1.8 4 4 4.3v2.2c-1.4 0-2.7-.4-4-1.2v5.4A5.7 5.7 0 1 1 9.8 9.2v2.3a3.4 3.4 0 1 0 2.2 3.2V4H14Z" /></svg>
+                ) : (
+                  <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="8" /><path d="M4 12h16M12 4c2.5 2.5 2.5 13.5 0 16M12 4c-2.5 2.5-2.5 13.5 0 16" /></svg>
+                )}
+              </a>
             ))}
           </div>
-          <div className="mx-auto mt-8 h-px w-full max-w-xs bg-white/15" />
-          <p className="mt-6 text-xs text-white/60">© {new Date().getFullYear()} {business.name.toUpperCase()}. All rights reserved.</p>
-          <p className="mt-3 text-sm text-[#A5A0FF]">Powered by Brinset</p>
+          <div className="mx-auto mt-4 h-px w-full max-w-xs bg-white/15" />
+          <p className="mt-3 text-xs text-white/60">© {new Date().getFullYear()} {business.name.toUpperCase()}. All rights reserved.</p>
+          <p className="mt-2 text-sm text-[#A5A0FF]">Powered by Brinset</p>
         </footer>
       </div>
 

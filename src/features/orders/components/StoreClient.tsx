@@ -55,9 +55,9 @@ function titleCase(value?: string | null) {
 }
 
 function stockState(stock: number) {
-  if (stock <= 0) return { label: "Out of stock", className: "bg-rose-500/15 text-rose-200" };
-  if (stock <= 5) return { label: "Low stock", className: "bg-amber-500/15 text-amber-200" };
-  return { label: "In stock", className: "bg-emerald-500/15 text-emerald-200" };
+  if (stock <= 0) return { label: "Out of stock", className: "bg-rose-50 text-rose-700" };
+  if (stock <= 5) return { label: "Low stock", className: "bg-amber-50 text-amber-700" };
+  return { label: "In stock", className: "bg-emerald-50 text-emerald-700" };
 }
 
 export default function StoreClient({
@@ -179,7 +179,7 @@ export default function StoreClient({
   const card = (product: Product) => {
     const stock = stockState(product.stock);
     return (
-      <button key={product.id} type="button" onClick={() => openProduct(product)} className="text-left">
+      <button key={product.id} type="button" onClick={() => openProduct(product)} className="flex h-full flex-col text-left">
         <div className="aspect-square overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50">
           {product.image_url ? (
             <img src={product.image_url} alt={product.name} className="h-full w-full object-cover" />
@@ -187,7 +187,7 @@ export default function StoreClient({
             <div className="flex h-full w-full items-center justify-center bg-zinc-100 text-2xl font-semibold text-zinc-400">{initial(product.name)}</div>
           )}
         </div>
-        <h2 className="mt-3 line-clamp-2 text-sm font-semibold text-zinc-900">{product.name}</h2>
+        <h2 className="mt-3 min-h-10 line-clamp-2 text-sm font-semibold leading-5 text-zinc-900">{product.name}</h2>
         <p className="mt-1 text-base font-bold text-zinc-950">₦{Number(product.price).toLocaleString()}</p>
         <p className="mt-0.5 text-xs text-zinc-500">{stock.label}</p>
       </button>
@@ -212,10 +212,6 @@ export default function StoreClient({
   return (
     <main className="min-h-screen bg-white text-zinc-950">
       <div className="mx-auto max-w-lg sm:max-w-3xl">
-        <div className="bg-[#635BFF] px-4 py-3 text-center text-sm font-medium text-white">
-          Welcome to our store — Shop with us today
-        </div>
-
         <header className="flex items-center justify-between px-4 py-4">
           <div className="flex min-w-0 items-center gap-3">
             {business.logo_url ? (
@@ -246,14 +242,14 @@ export default function StoreClient({
         ) : null}
 
         <section className="px-4">
-          <div className="relative h-72 overflow-hidden rounded-3xl bg-zinc-900 sm:h-80">
-            {business.hero_url ? <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover" /> : null}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10" />
+          <div className="relative h-[460px] overflow-hidden rounded-3xl bg-zinc-900 sm:h-[520px]">
+            {business.hero_url ? <img src={business.hero_url} alt="" className="absolute inset-0 h-full w-full object-cover object-center" /> : null}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/30 to-black/10" />
             <div className="relative flex h-full flex-col justify-center px-6 text-white">
               <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/80">{titleCase(business.category) || "The new collection"}</p>
-              <h1 className="mt-2 max-w-[14rem] text-4xl font-bold leading-tight">{headline}</h1>
-              <p className="mt-3 max-w-[16rem] text-sm text-white/80">{description}</p>
-              <button type="button" onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })} className="mt-5 h-11 w-fit rounded-xl bg-white px-6 text-sm font-semibold text-zinc-950">SHOP NOW</button>
+              <h1 className="mt-2 max-w-xs text-4xl font-bold leading-[1.05]">{headline}</h1>
+              <p className="mt-3 max-w-xs text-sm leading-5 text-white/85">{description}</p>
+              <button type="button" onClick={() => document.getElementById("products")?.scrollIntoView({ behavior: "smooth" })} className="mt-5 h-11 w-fit rounded-full bg-white px-6 text-sm font-semibold text-zinc-950">SHOP NOW</button>
             </div>
           </div>
         </section>
@@ -276,10 +272,7 @@ export default function StoreClient({
         ) : null}
 
         <section id="products" className="px-4 pt-8">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">{category === "All" ? "Our Products" : titleCase(category)}</h2>
-            <button type="button" onClick={() => { setCategory("All"); setView("all"); setQuery(""); }} className="text-sm font-medium text-[#635BFF]">View all →</button>
-          </div>
+          <h2 className="text-2xl font-bold">{category === "All" ? "Our Products" : titleCase(category)}</h2>
           <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
             {([["all", "All"], ["new", "New Products"], ["best", "Best Sellers"]] as const).map(([id, label]) => (
               <button key={id} type="button" onClick={() => setView(id)} className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium ${view === id ? "bg-[#635BFF] text-white" : "bg-zinc-100 text-zinc-700"}`}>{label}</button>
@@ -288,7 +281,7 @@ export default function StoreClient({
           {shown.length === 0 ? (
             <p className="mt-6 text-sm text-zinc-500">No products in this view yet.</p>
           ) : (
-            <div className="mt-4 grid grid-cols-2 gap-4">{shown.map((product) => card(product))}</div>
+            <div className="mt-4 grid grid-cols-2 items-stretch gap-4">{shown.map((product) => card(product))}</div>
           )}
         </section>
 
@@ -340,7 +333,7 @@ export default function StoreClient({
           <div className="absolute inset-x-0 bottom-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[440px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">Product</h2>
-              <button type="button" onClick={() => setSelected(null)} className="text-sm text-zinc-400">Close</button>
+              <button type="button" onClick={() => setSelected(null)} className="text-sm font-medium text-zinc-700">Close</button>
             </div>
             <div className="mt-5 overflow-hidden rounded-3xl bg-white">
               {selected.image_url ? (
@@ -352,9 +345,9 @@ export default function StoreClient({
             <h3 className="mt-5 text-2xl font-semibold">{selected.name}</h3>
             <p className="mt-2 text-lg font-semibold">₦{Number(selected.price).toLocaleString()}</p>
             <span className={`mt-3 inline-flex rounded-full px-3 py-1 text-xs ${stockState(selected.stock).className}`}>{stockState(selected.stock).label}</span>
-            {selected.description ? <p className="mt-4 text-sm leading-6 text-zinc-400">{selected.description}</p> : null}
+            {selected.description ? <p className="mt-4 text-sm leading-6 text-zinc-700">{selected.description}</p> : null}
             <div className="mt-6 flex items-center justify-between">
-              <p className="text-sm text-zinc-400">Quantity</p>
+              <p className="text-sm font-medium text-zinc-700">Quantity</p>
               <div className="flex items-center rounded-full bg-white p-1 text-zinc-950">
                 <button type="button" onClick={() => setDetailQty((value) => Math.max(1, value - 1))} className="h-8 w-8">−</button>
                 <span className="w-6 text-center text-sm">{detailQty}</span>
@@ -384,7 +377,7 @@ export default function StoreClient({
           <div className="absolute inset-x-0 bottom-0 max-h-[90vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[420px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{orderNumber ? "Order sent" : "Your cart"}</h2>
-              <button type="button" onClick={() => setOpen(false)} className="text-sm text-zinc-400">Close</button>
+              <button type="button" onClick={() => setOpen(false)} className="text-sm font-medium text-zinc-700">Close</button>
             </div>
             {orderNumber ? (
               <div className="mt-10 text-center">
@@ -417,14 +410,14 @@ export default function StoreClient({
                 ))}
                 <div className="border-t border-zinc-200 pt-4">
                   <div className="mb-4 flex items-center justify-between">
-                    <p className="text-sm text-zinc-400">Total</p>
-                    <p className="text-lg font-semibold">₦{total.toLocaleString()}</p>
+                    <p className="text-sm font-medium text-zinc-700">Total</p>
+                    <p className="text-lg font-semibold text-zinc-950">₦{total.toLocaleString()}</p>
                   </div>
                   {errorMessage ? <p className="mb-3 text-sm text-red-400">{errorMessage}</p> : null}
                   <Input value={name} onChange={(event) => setName(event.target.value)} placeholder="Your name" />
                   <Input className="mt-3" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="Your phone" />
                   <Input className="mt-3" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Delivery address" />
-                  <Button type="button" className="mt-4 h-12 w-full bg-white text-zinc-950 hover:bg-zinc-200" disabled={pending || lines.length === 0} onClick={submit}>
+                  <Button type="button" className="mt-4 h-12 w-full bg-[#635BFF] text-white hover:bg-[#5248e6]" disabled={pending || lines.length === 0} onClick={submit}>
                     {pending ? "Sending..." : `Send order · ₦${total.toLocaleString()}`}
                   </Button>
                 </div>

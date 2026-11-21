@@ -306,6 +306,35 @@ export default function StoreClient({
         </footer>
       </div>
 
+      {shopWhatsapp ? (
+        <a
+          href={shopWhatsapp}
+          target="_blank"
+          aria-label="WhatsApp"
+          className="fixed z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg"
+          style={waPos ? { left: waPos.x, top: waPos.y } : { right: 16, bottom: 24 }}
+          onPointerDown={(event) => {
+            const rect = event.currentTarget.getBoundingClientRect();
+            waDrag.current = { x: event.clientX, y: event.clientY, left: rect.left, top: rect.top, moved: false };
+          }}
+          onPointerMove={(event) => {
+            const drag = waDrag.current;
+            if (!drag) return;
+            const dx = event.clientX - drag.x;
+            const dy = event.clientY - drag.y;
+            if (Math.abs(dx) + Math.abs(dy) > 4) drag.moved = true;
+            setWaPos({ x: drag.left + dx, y: drag.top + dy });
+          }}
+          onPointerUp={(event) => {
+            if (waDrag.current?.moved) event.preventDefault();
+            waDrag.current = null;
+          }}
+          onClick={(event) => { if (waDrag.current?.moved) event.preventDefault(); }}
+        >
+          <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor"><path d="M20 11.5A8.5 8.5 0 0 1 6.7 18.2L4 20l1.9-2.6A8.5 8.5 0 1 1 20 11.5Zm-8.5 7a7 7 0 0 0 3.5-.9l.3-.2 2.1.6-.6-2 .2-.3a7 7 0 1 0-5.5 2.8Zm3.8-5.2c-.2-.1-1.2-.6-1.4-.7-.2-.1-.3-.1-.5.1l-.4.5c-.1.1-.3.2-.5.1a5.7 5.7 0 0 1-1.7-1 6.3 6.3 0 0 1-1.2-1.5c-.1-.2 0-.3.1-.5l.3-.4.1-.3c0-.1 0-.3-.1-.4l-.6-1.5c-.2-.4-.3-.3-.5-.3h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 1.9s.8 2.2.9 2.3c.1.2 1.6 2.5 3.9 3.4 1.4.6 1.7.6 2.3.5.4-.1 1.2-.5 1.3-1 .2-.5.2-.9.1-1 0-.1-.2-.1-.4-.2Z"/></svg>
+        </a>
+      ) : null}
+
       {selected ? (
         <div className="fixed inset-0 z-40 bg-black/70" onClick={() => setSelected(null)}>
           <div className="absolute inset-x-0 bottom-0 max-h-[92vh] overflow-y-auto rounded-t-3xl bg-white p-5 sm:inset-y-0 sm:left-auto sm:right-0 sm:w-[440px] sm:rounded-none" onClick={(event) => event.stopPropagation()}>

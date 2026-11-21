@@ -7,6 +7,7 @@ import { getTodayExpenses, getTodayCosts } from "@/features/expenses/queries";
 import { getOrdersToDo } from "@/features/orders/queries";
 import { redirect } from "next/navigation";
 import SavedHome from "@/features/dashboard/components/SavedHome";
+import { getAlertCount } from "@/features/notifications/queries";
 
 function money(value: number) {
   const amount = Number(value) || 0;
@@ -107,8 +108,11 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
         ["Orders to do", String(ordersToDo.length)],
       ];
 
+  const unreadAlerts = isOwner ? await getAlertCount() : 0;
+
   return (
     <SavedHome
+      unreadAlerts={unreadAlerts}
       snapshot={{
         category: business.category,
         name: business.name,

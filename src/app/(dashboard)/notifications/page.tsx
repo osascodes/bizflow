@@ -3,6 +3,7 @@ import { ShoppingBag } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getCurrentBusiness } from "@/features/business/queries";
 import { getNotifications } from "@/features/notifications/queries";
+import MarkAlertsSeen from "@/features/notifications/components/MarkAlertsSeen";
 
 function waPhone(phone: string) {
   const digits = phone.replace(/\D/g, "");
@@ -29,6 +30,7 @@ export default async function NotificationsPage() {
 
   return (
     <main className="px-4 py-8 md:px-8">
+      <MarkAlertsSeen />
       <div className="mx-auto max-w-3xl">
         <h1 className="text-2xl font-semibold text-zinc-950">Alerts</h1>
         <p className="mt-2 text-sm text-zinc-400">Low stock, new store orders, and unpaid debts.</p>

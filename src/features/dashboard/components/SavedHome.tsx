@@ -69,7 +69,7 @@ function getTimeAgo(dateStr?: string) {
   return `${days} day${days === 1 ? "" : "s"} ago`;
 }
 
-export default function SavedHome({ snapshot, offline = false }: { snapshot?: Snapshot | null; offline?: boolean }) {
+export default function SavedHome({ snapshot, offline = false, unreadAlerts = 0 }: { snapshot?: Snapshot | null; offline?: boolean; unreadAlerts?: number }) {
   const [saved, setSaved] = useState<Snapshot | null>(snapshot || null);
   const [menu, setMenu] = useState(false);
 
@@ -208,7 +208,7 @@ export default function SavedHome({ snapshot, offline = false }: { snapshot?: Sn
           <div className="relative flex items-center gap-2">
             <Link href="/notifications" className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white border border-zinc-100 shadow-sm" aria-label="Notifications">
               <Bell className="h-5 w-5 text-zinc-800" />
-              <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />
+              {unreadAlerts > 0 ? <span className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" /> : null}
             </Link>
             <button type="button" onClick={() => setMenu((value) => !value)} className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-zinc-200" aria-label="Account">
               {saved.avatarUrl ? <img src={saved.avatarUrl} alt="" className="h-full w-full object-cover" /> : <User className="h-5 w-5 text-zinc-700" />}

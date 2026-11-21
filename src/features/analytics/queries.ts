@@ -45,7 +45,7 @@ function parseRequestedStart(value?: string) {
   return lagosStartUtc(year, month - 1, day);
 }
 
-export async function getAnalytics(from?: string, to?: string) {
+export async function getAnalytics(from?: string, to?: string, range?: string) {
   const business = await getCurrentBusiness();
   if (!business) {
     return {
@@ -62,6 +62,7 @@ export async function getAnalytics(from?: string, to?: string) {
       chartDays: [],
       chartFrom: "",
       chartTo: "",
+      chartRange: "7",
       topProducts: [],
       lowStock: [],
     };
@@ -73,10 +74,17 @@ export async function getAnalytics(from?: string, to?: string) {
   prevWeekStart.setDate(prevWeekStart.getDate() - 7);
   const monthStart = currentMonthStart(now);
   const prevMonthStart = previousMonthStart(now);
+  const lagosTodayEarly = lagosDate(now);
+  const todayKeyEarly = new Date(Date.UTC(lagosTodayEarly.getUTCFullYear(), lagosTodayEarly.getUTCMonth(), lagosTodayEarly.getUTCDate()));
+  const addDays = (date: Date, days: number) => new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate() + days));
+  const selectedRange = ["today", "yesterday", "7", "30", "week", "month", "custom"].includes(range || "") ? range : "7";
+  let earlyStart = addDays(todayKeyEarly, -6);
+  if (selectedRange === "30") earlyStart = addDays(todayKeyEarly, -29);
+  if (selectedRange === "month") earlyStart = new Date(Date.UTC(todayKeyEarly.getUTCFullYear(), todayKeyEarly.getUTCMonth(), 1));
+  if (selectedRange === "custom") earlyStart = parseRequestedStart(from) || earlyStart;
   const chartStart = new Date(now);
   chartStart.setDate(chartStart.getDate() - 6);
-  const requestedStart = parseRequestedStart(from);
-  const fetchStart = [prevMonthStart, prevWeekStart, chartStart, requestedStart].filter((date): date is Date => Boolean(date)).sort((a, b) => a.getTime() - b.getTime())[0];
+  const fetchStart = [prevMonthStart, prevWeekStart, chartStart, earlyStart].sort((a, b) => a.getTime() - b.getTime())[0];
 
   const supabase = await createServerSupabase();
   const [{ data: sales }, { data: expenses }, products] = await Promise.all([
@@ -147,16 +155,36 @@ export async function getAnalytics(from?: string, to?: string) {
     if (date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
     return date;
   };
-  let rangeStart = parseDay(from);
-  let rangeEnd = parseDay(to);
-  if (!rangeStart || !rangeEnd) {
+  let rangeStart = addDays(todayKey, -6);
+  let rangeEnd = todayKey;
+  if (selectedRange === "today") {
+    rangeStart = todayKey;
     rangeEnd = todayKey;
-    rangeStart = new Date(Date.UTC(todayKey.getUTCFullYear(), todayKey.getUTCMonth(), todayKey.getUTCDate() - 6));
+  } else if (selectedRange === "yesterday") {
+    rangeStart = addDays(todayKey, -1);
+    rangeEnd = rangeStart;
+  } else if (selectedRange === "30") {
+    rangeStart = addDays(todayKey, -29);
+    rangeEnd = todayKey;
+  } else if (selectedRange === "week") {
+    const weekday = todayKey.getUTCDay();
+    const mondayOffset = weekday === 0 ? 6 : weekday - 1;
+    rangeStart = addDays(todayKey, -mondayOffset);
+    rangeEnd = addDays(rangeStart, 6);
+  } else if (selectedRange === "month") {
+    rangeStart = new Date(Date.UTC(todayKey.getUTCFullYear(), todayKey.getUTCMonth(), 1));
+    rangeEnd = new Date(Date.UTC(todayKey.getUTCFullYear(), todayKey.getUTCMonth() + 1, 0));
+  } else if (selectedRange === "custom") {
+    const customStart = parseDay(from);
+    const customEnd = parseDay(to);
+    if (customStart && customEnd) {
+      rangeStart = customStart;
+      rangeEnd = customEnd;
+    }
+    if (rangeEnd < rangeStart) [rangeStart, rangeEnd] = [rangeEnd, rangeStart];
+    const span = Math.round((rangeEnd.getTime() - rangeStart.getTime()) / 86400000);
+    if (span > 61) rangeStart = addDays(rangeEnd, -61);
   }
-  if (rangeEnd < rangeStart) [rangeStart, rangeEnd] = [rangeEnd, rangeStart];
-  if (rangeEnd > todayKey) rangeEnd = todayKey;
-  const span = Math.round((rangeEnd.getTime() - rangeStart.getTime()) / 86400000);
-  if (span > 61) rangeStart = new Date(Date.UTC(rangeEnd.getUTCFullYear(), rangeEnd.getUTCMonth(), rangeEnd.getUTCDate() - 61));
 
   const days = Array.from({ length: 7 }, (_, index) => {
     const day = new Date(Date.UTC(
@@ -220,6 +248,7 @@ export async function getAnalytics(from?: string, to?: string) {
     chartDays,
     chartFrom: rangeStart.toISOString().slice(0, 10),
     chartTo: rangeEnd.toISOString().slice(0, 10),
+    chartRange: selectedRange,
     topProducts,
     lowStock,
   };

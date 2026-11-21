@@ -18,7 +18,7 @@ function pct(current: number, previous: number): number | null {
   return Math.max(-999, Math.min(999, raw));
 }
 
-export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ from?: string; to?: string }> }) {
+export default async function AnalyticsPage({ searchParams }: { searchParams: Promise<{ from?: string; to?: string; range?: string }> }) {
   const { offline } = await getAuthState();
   let business = null;
   try {
@@ -37,7 +37,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
   if (business.role !== "owner") redirect("/dashboard");
 
   const params = await searchParams;
-  const analytics = await getAnalytics(params.from, params.to);
+  const analytics = await getAnalytics(params.from, params.to, params.range);
   const left = analytics.netProfit;
   const prevLeft = analytics.prevNetProfit;
 
@@ -144,7 +144,7 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           })}
         </div>
 
-        <SalesOverview days={analytics.chartDays} from={analytics.chartFrom} to={analytics.chartTo} />
+        <SalesOverview days={analytics.chartDays} from={analytics.chartFrom} to={analytics.chartTo} range={analytics.chartRange || "7"} />
 
         {/* Top-selling products — immediately visible after compact chart */}
         <section className="mt-4 rounded-2xl border border-zinc-200 bg-white p-4">

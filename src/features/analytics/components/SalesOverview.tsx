@@ -2,8 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Calendar } from "lucide-react";
 
 type ChartDay = { key: string; label: string; date: number; total: number };
+
+const OPTIONS = [
+  { id: "today", label: "Today" },
+  { id: "yesterday", label: "Yesterday" },
+  { id: "7", label: "Last 7 days" },
+  { id: "30", label: "Last 30 days" },
+  { id: "week", label: "This week" },
+  { id: "month", label: "This month" },
+  { id: "custom", label: "Custom date range" },
+];
 
 function formatMoneyShort(value: number) {
   const amount = Math.abs(Number(value) || 0);
@@ -37,67 +48,37 @@ function niceScale(max: number) {
 function formatRange(from: string, to: string) {
   const start = new Date(`${from}T00:00:00`);
   const end = new Date(`${to}T00:00:00`);
-  const same = from === to;
-  const opts: Intl.DateTimeFormatOptions = { day: "numeric", month: "short" };
-  if (same) return start.toLocaleDateString("en-NG", { ...opts, year: "numeric" });
-  const startText = start.toLocaleDateString("en-NG", opts);
-  const endText = end.toLocaleDateString("en-NG", { ...opts, year: "numeric" });
-  return `${startText} – ${endText}`;
+  if (from === to) return start.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
+  return `${start.toLocaleDateString("en-NG", { day: "numeric", month: "short" })} – ${end.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" })}`;
 }
 
-function monthDays(month: Date) {
-  const year = month.getFullYear();
-  const monthIndex = month.getMonth();
-  const first = new Date(year, monthIndex, 1);
-  const startOffset = first.getDay();
-  const count = new Date(year, monthIndex + 1, 0).getDate();
-  return { year, monthIndex, startOffset, count };
-}
-
-function iso(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-export default function SalesOverview({ days, from, to }: { days: ChartDay[]; from: string; to: string }) {
+export default function SalesOverview({ days, from, to, range }: { days: ChartDay[]; from: string; to: string; range: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [custom, setCustom] = useState(range === "custom");
   const [draftStart, setDraftStart] = useState(from);
   const [draftEnd, setDraftEnd] = useState(to);
-  const [month, setMonth] = useState(() => new Date(`${to || from}T00:00:00`));
   const scale = useMemo(() => niceScale(Math.max(...days.map((day) => day.total), 0)), [days]);
   const hasSales = days.some((day) => day.total > 0);
-  const calendar = monthDays(month);
-  const today = iso(new Date());
+  const label = range === "custom" ? formatRange(from, to) : OPTIONS.find((option) => option.id === range)?.label || "Last 7 days";
 
-  function pick(date: string) {
-    if (date > today) return;
-    if (!draftStart || (draftStart && draftEnd && draftStart !== draftEnd)) {
-      setDraftStart(date);
-      setDraftEnd(date);
+  function choose(id: string) {
+    if (id === "custom") {
+      setCustom(true);
       return;
     }
-    if (date < draftStart) {
-      setDraftEnd(draftStart);
-      setDraftStart(date);
-      return;
-    }
-    setDraftEnd(date);
+    setCustom(false);
+    setOpen(false);
+    router.push(`/analytics?range=${id}`);
   }
 
   function apply() {
+    if (!draftStart || !draftEnd) return;
     const start = draftStart <= draftEnd ? draftStart : draftEnd;
     const end = draftStart <= draftEnd ? draftEnd : draftStart;
     setOpen(false);
-    router.push(`/analytics?from=${start}&to=${end}`);
+    router.push(`/analytics?range=custom&from=${start}&to=${end}`);
   }
-
-  const cells = [
-    ...Array.from({ length: calendar.startOffset }, () => null),
-    ...Array.from({ length: calendar.count }, (_, index) => index + 1),
-  ];
 
   return (
     <section className="mt-5 rounded-2xl border border-zinc-200 bg-white p-4">
@@ -107,42 +88,39 @@ export default function SalesOverview({ days, from, to }: { days: ChartDay[]; fr
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-zinc-200 bg-white px-3 text-xs font-medium text-zinc-700"
+            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-medium text-[#635BFF]"
           >
-            <svg viewBox="0 0 24 24" className="h-4 w-4 text-[#635BFF]" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
-            {formatRange(from, to)}
+            <Calendar className="h-3.5 w-3.5" />
+            {label}
           </button>
           {open ? (
-            <div className="absolute right-0 z-20 mt-2 w-72 rounded-2xl border border-zinc-200 bg-white p-3 shadow-lg">
-              <div className="mb-2 flex items-center justify-between">
-                <button type="button" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))} className="h-8 w-8 rounded-lg text-zinc-500">‹</button>
-                <p className="text-sm font-semibold">{month.toLocaleDateString("en-NG", { month: "long", year: "numeric" })}</p>
-                <button type="button" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() + 1, 1))} className="h-8 w-8 rounded-lg text-zinc-500">›</button>
-              </div>
-              <div className="grid grid-cols-7 gap-1 text-center text-[10px] text-zinc-400">
-                {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => <span key={`${day}-${index}`}>{day}</span>)}
-              </div>
-              <div className="mt-1 grid grid-cols-7 gap-1">
-                {cells.map((day, index) => {
-                  if (!day) return <span key={`empty-${index}`} />;
-                  const date = iso(new Date(calendar.year, calendar.monthIndex, day));
-                  const selected = date >= draftStart && date <= draftEnd;
-                  const edge = date === draftStart || date === draftEnd;
-                  const disabled = date > today;
-                  return (
-                    <button
-                      key={date}
-                      type="button"
-                      disabled={disabled}
-                      onClick={() => pick(date)}
-                      className={`h-8 rounded-lg text-xs ${edge ? "bg-[#635BFF] font-semibold text-white" : selected ? "bg-[#635BFF]/10 text-[#635BFF]" : "text-zinc-700"} disabled:text-zinc-300`}
-                    >
-                      {day}
-                    </button>
-                  );
-                })}
-              </div>
-              <button type="button" onClick={apply} className="mt-3 h-10 w-full rounded-xl bg-[#635BFF] text-sm font-semibold text-white">Apply</button>
+            <div className="absolute right-0 z-20 mt-2 w-64 rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg">
+              {OPTIONS.map((option) => (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => choose(option.id)}
+                  className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-sm ${option.id === range ? "bg-[#635BFF]/10 font-semibold text-[#635BFF]" : "text-zinc-700"}`}
+                >
+                  {option.label}
+                </button>
+              ))}
+              {custom ? (
+                <div className="mt-2 border-t border-zinc-100 p-2">
+                  <label className="mb-2 flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-[#635BFF]">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <input type="date" value={draftStart} onChange={(event) => setDraftStart(event.target.value)} className="w-full bg-transparent text-[#635BFF] outline-none" />
+                  </label>
+                  <label className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-[#635BFF]">
+                    <Calendar className="h-3.5 w-3.5" />
+                    <input type="date" value={draftEnd} onChange={(event) => setDraftEnd(event.target.value)} className="w-full bg-transparent text-[#635BFF] outline-none" />
+                  </label>
+                  <div className="mt-3 flex items-center justify-between">
+                    <button type="button" onClick={() => { setOpen(false); router.push("/analytics?range=7"); }} className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold text-white">Reset</button>
+                    <button type="button" onClick={apply} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#635BFF] text-white">✓</button>
+                  </div>
+                </div>
+              ) : null}
             </div>
           ) : null}
         </div>

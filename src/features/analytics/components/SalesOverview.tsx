@@ -73,7 +73,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
     if (id === "custom") {
       setOpen(false);
       setStep("start");
-      setTimeout(() => openPicker(startRef.current), 50);
+      openPicker(startRef.current);
       return;
     }
     setOpen(false);
@@ -89,20 +89,20 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
   }
 
   return (
-    <section className="mt-5 rounded-2xl border border-zinc-200 bg-white p-4">
+    <section className="mt-5 w-full min-w-0 overflow-hidden rounded-2xl border border-zinc-200 bg-white p-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="font-semibold">Sales overview</h2>
         <div className="relative">
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="inline-flex h-9 items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-medium text-[#635BFF]"
+            className="inline-flex h-9 max-w-[8.5rem] items-center gap-1.5 rounded-full border border-zinc-200 bg-white px-3 text-xs font-medium text-[#635BFF]"
           >
-            <Calendar className="h-3.5 w-3.5" />
-            {label}
+            <Calendar className="h-3.5 w-3.5 shrink-0" />
+            <span className="truncate">{label}</span>
           </button>
           {open ? (
-            <div className="absolute right-0 z-20 mt-2 w-64 rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg">
+            <div className="absolute right-0 z-20 mt-2 w-52 max-w-[calc(100vw-2.5rem)] rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg">
               {OPTIONS.map((option) => (
                 <button
                   key={option.id}
@@ -124,7 +124,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
               if (!value) return;
               setDraftStart(value);
               setStep("end");
-              setTimeout(() => openPicker(endRef.current), 50);
+              openPicker(endRef.current);
             }}
             className="pointer-events-none absolute h-0 w-0 opacity-0"
           />
@@ -141,7 +141,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
           />
         </div>
       </div>
-      <div className="mt-4">
+      <div className="mt-4 min-w-0 overflow-hidden">
         <div className="relative" style={{ height: "180px" }}>
           {scale.ticks.map((tick) => (
             <div key={tick} className="absolute left-0 right-0 flex items-center gap-1" style={{ top: `${((scale.max - tick) / scale.max) * 100}%` }}>
@@ -159,7 +159,7 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
                     style={{ height: height > 0 ? `calc(${height}% - 1px)` : "2px", animation: `barRise 600ms ease ${index * 40}ms both` }}
                   >
                     {height > 0 && days.length <= 7 ? (
-                      <span className="absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap text-[9px] font-semibold text-zinc-600">{formatMoneyShort(day.total)}</span>
+                      <span className="absolute -top-5 left-1/2 max-w-[4.2rem] -translate-x-1/2 truncate text-[9px] font-semibold text-zinc-600">{formatMoneyShort(day.total)}</span>
                     ) : null}
                   </div>
                 </div>

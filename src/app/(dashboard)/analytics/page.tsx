@@ -107,8 +107,8 @@ export default async function AnalyticsPage({ searchParams }: { searchParams: Pr
           lowStock: analytics.lowStock,
         }}
       />
-    <main className="px-4 py-6 pb-24 md:px-8">
-      <div className="mx-auto max-w-5xl">
+    <main className="w-full overflow-x-hidden px-4 py-6 pb-24 md:px-8">
+      <div className="mx-auto w-full max-w-5xl min-w-0">
         {/* Header */}
         <div className="flex items-start justify-between gap-3">
           <div>

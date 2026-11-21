@@ -33,7 +33,7 @@ export default async function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-zinc-950">
+    <div className="min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-950">
       <SyncSales />
       <SyncCosts />
       <SyncPayments />

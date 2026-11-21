@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar } from "lucide-react";
 
@@ -55,29 +55,37 @@ function formatRange(from: string, to: string) {
 export default function SalesOverview({ days, from, to, range }: { days: ChartDay[]; from: string; to: string; range: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [custom, setCustom] = useState(range === "custom");
+  const [step, setStep] = useState<"start" | "end" | null>(null);
   const [draftStart, setDraftStart] = useState(from);
-  const [draftEnd, setDraftEnd] = useState(to);
+  const startRef = useRef<HTMLInputElement>(null);
+  const endRef = useRef<HTMLInputElement>(null);
   const scale = useMemo(() => niceScale(Math.max(...days.map((day) => day.total), 0)), [days]);
   const hasSales = days.some((day) => day.total > 0);
   const label = range === "custom" ? formatRange(from, to) : OPTIONS.find((option) => option.id === range)?.label || "Last 7 days";
 
+  function openPicker(input: HTMLInputElement | null) {
+    if (!input) return;
+    input.focus();
+    if (typeof input.showPicker === "function") input.showPicker();
+  }
+
   function choose(id: string) {
     if (id === "custom") {
-      setCustom(true);
+      setOpen(false);
+      setStep("start");
+      setTimeout(() => openPicker(startRef.current), 50);
       return;
     }
-    setCustom(false);
     setOpen(false);
     router.push(`/analytics?range=${id}`);
   }
 
-  function apply() {
-    if (!draftStart || !draftEnd) return;
-    const start = draftStart <= draftEnd ? draftStart : draftEnd;
-    const end = draftStart <= draftEnd ? draftEnd : draftStart;
-    setOpen(false);
-    router.push(`/analytics?range=custom&from=${start}&to=${end}`);
+  function apply(start: string, end: string) {
+    if (!start || !end) return;
+    const fromDate = start <= end ? start : end;
+    const toDate = start <= end ? end : start;
+    setStep(null);
+    router.push(`/analytics?range=custom&from=${fromDate}&to=${toDate}`);
   }
 
   return (
@@ -105,24 +113,32 @@ export default function SalesOverview({ days, from, to, range }: { days: ChartDa
                   {option.label}
                 </button>
               ))}
-              {custom ? (
-                <div className="mt-2 border-t border-zinc-100 p-2">
-                  <label className="mb-2 flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-[#635BFF]">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <input type="date" value={draftStart} onChange={(event) => setDraftStart(event.target.value)} className="w-full bg-transparent text-[#635BFF] outline-none" />
-                  </label>
-                  <label className="flex items-center gap-1 rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-medium text-[#635BFF]">
-                    <Calendar className="h-3.5 w-3.5" />
-                    <input type="date" value={draftEnd} onChange={(event) => setDraftEnd(event.target.value)} className="w-full bg-transparent text-[#635BFF] outline-none" />
-                  </label>
-                  <div className="mt-3 flex items-center justify-between">
-                    <button type="button" onClick={() => { setOpen(false); router.push("/analytics?range=7"); }} className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold text-white">Reset</button>
-                    <button type="button" onClick={apply} className="flex h-9 w-9 items-center justify-center rounded-full bg-[#635BFF] text-white">✓</button>
-                  </div>
-                </div>
-              ) : null}
             </div>
           ) : null}
+          <input
+            ref={startRef}
+            type="date"
+            value={from}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (!value) return;
+              setDraftStart(value);
+              setStep("end");
+              setTimeout(() => openPicker(endRef.current), 50);
+            }}
+            className="pointer-events-none absolute h-0 w-0 opacity-0"
+          />
+          <input
+            ref={endRef}
+            type="date"
+            value={to}
+            onChange={(event) => {
+              const value = event.target.value;
+              if (!value) return;
+              apply(draftStart, value);
+            }}
+            className="pointer-events-none absolute h-0 w-0 opacity-0"
+          />
         </div>
       </div>
       <div className="mt-4">
